@@ -47,4 +47,5 @@ indent-style = "space"
 
 [tool.mypy]
 strict = true
+ignore_missing_imports = true
 exclude = [".venv", ".vscode", ".git", ".mypy_cache"]
