@@ -1,0 +1,11 @@
+{
+    "editor.tabSize": 4,
+    "ruff.nativeServer": true,
+    "mypy-type-checker.args": [
+        "--check-untyped-defs",
+        "--strict"
+    ],
+    "ruff.lint.run": "onSave",
+    "ruff.enable": true,
+    "ruff.configuration": "",
+}
