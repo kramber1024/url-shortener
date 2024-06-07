@@ -4,7 +4,13 @@ from pydantic import BaseModel
 from pydantic_settings import BaseSettings
 
 
+class IDGeneratorSettings(BaseModel):
+    WORKER_ID: int = 1023 # int in range [1, 1023]
+
+
 class DatabaseSettings(BaseModel):
+    gen: IDGeneratorSettings = IDGeneratorSettings()
+
     URL: str = "sqlite+aiosqlite:///./database/database.sqlite3"
 
 
