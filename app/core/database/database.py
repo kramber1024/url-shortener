@@ -9,21 +9,26 @@ from sqlalchemy.ext.asyncio import (
 
 from app.core import settings
 
-_engine: AsyncEngine = create_async_engine(
-    settings.DATABASE_URI,
-    connect_args={"check_same_thread": False},
+
+class Database:
+    engine: AsyncEngine
+    session_factory: async_sessionmaker[AsyncSession]
+
+    def __init__(self, url: str, *, debug: bool) -> None:
+        self.engine = create_async_engine(
+            url=url,
+            echo=debug,
+        )
+
+        self.session_factory = async_sessionmaker(
+            bind=self.engine,
+            autocommit=False,
+            autoflush=False,
+            expire_on_commit=False,
+        )
+
+
+db: Database = Database(
+    url=settings.db.URL,
+    debug=settings.env.DEBUG,
 )
-_session_local: async_sessionmaker[AsyncSession] = async_sessionmaker(
-    bind=_engine,
-    autocommit=False,
-    autoflush=False,
-)
-
-async def get_db() -> AsyncGenerator[AsyncSession, None]:
-    database: AsyncSession = _session_local()
-
-    try:
-        yield database
-
-    finally:
-        await database.close()
