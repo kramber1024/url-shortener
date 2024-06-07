@@ -1,7 +1,10 @@
+from pathlib import Path
 from typing import Literal
 
 from pydantic import BaseModel
 from pydantic_settings import BaseSettings
+
+BASE_DIRERCTORY = Path(__file__).parent.parent
 
 
 class IDGeneratorSettings(BaseModel):
@@ -11,7 +14,7 @@ class IDGeneratorSettings(BaseModel):
 class DatabaseSettings(BaseModel):
     gen: IDGeneratorSettings = IDGeneratorSettings()
 
-    URL: str = "sqlite+aiosqlite:///./database/database.sqlite3"
+    URL: str = f"sqlite+aiosqlite:///{BASE_DIRERCTORY/"core"/"database"/"database.sqlite3"}"
 
 
 class AppSettings(BaseModel):
