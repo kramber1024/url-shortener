@@ -8,7 +8,7 @@ from app.api.v1.schemes import ErrorResponse as ErrorResponseScheme
 
 async def validation_exception_handler(
     _: Request,
-    exc: RequestValidationError,
+    exc: RequestValidationError | Exception,
 ) -> JSONResponse:
 
     errors_map: dict[str, str] = {
@@ -17,21 +17,33 @@ async def validation_exception_handler(
         "value_error": "The {} format is invalid.",
         "missing": "The {} field is required.",
         "string_type": "The {} should be a string.",
+        "json_invalid": (
+            "Request should be a valid JSON. "
+            "Check JSON for trailing comma."
+        ),
     }
 
     errors: list[ErrorScheme] = []
-    for error in exc.errors():
-        message: str = errors_map.get(
-            error["type"],
-            f"Invalid value ({error["type"]}).",
-        ).format(error["loc"][1])
-
+    if isinstance(exc, Exception):
         errors.append(
             ErrorScheme(
-                message=message,
-                type=error["loc"][1],
+                message="Iternal server error.",
+                type="server",
             ),
         )
+    else:
+        for error in exc.errors():
+            message: str = errors_map.get(
+                error["type"],
+                f"Invalid value ({error["type"]}).",
+            ).format(error["loc"][1])
+
+            errors.append(
+                ErrorScheme(
+                    message=message,
+                    type=str(error["loc"][1]),
+                ),
+            )
 
     response: ErrorResponseScheme = ErrorResponseScheme(
         errors=errors,
@@ -40,6 +52,6 @@ async def validation_exception_handler(
     )
 
     return JSONResponse(
-        status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
         content=response.model_dump(),
+        status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
     )
