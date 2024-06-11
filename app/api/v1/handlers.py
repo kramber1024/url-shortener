@@ -2,6 +2,7 @@ from fastapi import Request, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
+from app.api.v1.exceptions import ErrorException
 from app.api.v1.schemes import Error as ErrorScheme
 from app.api.v1.schemes import ErrorResponse as ErrorResponseScheme
 
@@ -54,4 +55,27 @@ async def validation_exception_handler(
     return JSONResponse(
         content=response.model_dump(),
         status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+    )
+
+
+async def error_exception_handler(
+    _: Request,
+    exc: ErrorException | Exception,
+) -> JSONResponse:
+
+    if isinstance(exc, ErrorException):
+        return JSONResponse(
+            content=exc.response,
+            status_code=exc.status_code,
+        )
+
+    server_error: ErrorException = ErrorException(
+        errors=[],
+        message="Internal server error.",
+        status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+    )
+
+    return JSONResponse(
+        content=server_error.response,
+        status_code=server_error.status_code,
     )
