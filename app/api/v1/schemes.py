@@ -59,7 +59,6 @@ class UserRegistration(BaseModel):
         Field(
             min_length=3,
             max_length=32,
-            title="User nickname",
             description="Displayed in User's profile.",
             examples=["kramber"],
         ),
@@ -69,7 +68,6 @@ class UserRegistration(BaseModel):
         Field(
             min_length=len("*@*.*"),
             max_length=64,
-            title="Email address",
             description="Used for authentication and notifications.",
             examples=["email@domain.tld"],
         ),
@@ -79,7 +77,27 @@ class UserRegistration(BaseModel):
         Field(
             min_length=8,
             max_length=256,
-            title="Password",
+            description="Used for authentication.",
+            examples=["My$uper$ecretPa$$word"],
+        ),
+    ]
+
+
+class UserLogin(BaseModel):
+    email: Annotated[
+        EmailStr,
+        Field(
+            min_length=len("*@*.*"),
+            max_length=64,
+            description="Used for authentication.",
+            examples=["email@domain.tld"],
+        ),
+    ]
+    password: Annotated[
+        str,
+        Field(
+            min_length=8,
+            max_length=256,
             description="Used for authentication.",
             examples=["My$uper$ecretPa$$word"],
         ),
@@ -90,7 +108,6 @@ class User(BaseModel):
     id: Annotated[
         str,
         Field(
-            title="ID",
             description="Unique identifier.",
             examples=["7205649978688008192"],
             max_length=len("7205649978688008192"),
@@ -102,7 +119,6 @@ class User(BaseModel):
         Field(
             min_length=3,
             max_length=32,
-            title="User nickname",
             description="Displayed in profile.",
             examples=["kramber"],
         ),
