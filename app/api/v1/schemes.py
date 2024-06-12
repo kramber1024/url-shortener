@@ -32,10 +32,7 @@ class ErrorResponse(BaseModel):
     errors: Annotated[
         list[Error],
         Field(
-            description=(
-                "List of errors. "
-                "Type property should be used for frontend logic e.g. form validation."
-            ),
+            description="List of errors.",
         ),
     ]
     message: Annotated[
@@ -48,8 +45,10 @@ class ErrorResponse(BaseModel):
     status: Annotated[
         int,
         Field(
-            description="HTTP status code. An integer in [100, 599] range.",
+            description="HTTP status code.",
             examples=[422],
+            ge=100,
+            le=599,
         ),
     ]
 
