@@ -1,17 +1,18 @@
 from typing import TYPE_CHECKING, Annotated
 
-from fastapi import APIRouter, Body, status
+from fastapi import APIRouter, Body, Depends, status
 from fastapi.responses import JSONResponse
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import crud
-from app.api.v1.dependencies import SessionDependency
 from app.api.v1.exceptions import ErrorException
 from app.api.v1.schemes import ErrorResponse as ErrorResponseScheme
 from app.api.v1.schemes import TokenResponse as TokenResponseScheme
 from app.api.v1.schemes import User as UserScheme
 from app.api.v1.schemes import UserLogin as UserLoginScheme
 from app.api.v1.schemes import UserRegistration as UserRegistrationScheme
-from app.core.utils.auth import generate_access_token, generate_refresh_token
+from app.core.database import db
+from app.core.utils import jwt_auth
 
 if TYPE_CHECKING:
     from app.core.database.models import User
@@ -89,8 +90,14 @@ router: APIRouter = APIRouter(prefix="/auth")
     },
 )
 async def register_user(
-    new_user: Annotated[UserRegistrationScheme, Body],
-    session: SessionDependency,
+    new_user: Annotated[
+        UserRegistrationScheme,
+        Body(),
+    ],
+    session: Annotated[
+        AsyncSession,
+        Depends(db.scoped_session_dependency),
+    ],
 ) -> JSONResponse:
 
     if await crud.get_user_by_email(
@@ -190,8 +197,14 @@ async def register_user(
     },
 )
 async def authenticate_user(
-    user_credentials: Annotated[UserLoginScheme, Body],
-    session: SessionDependency,
+    user_credentials: Annotated[
+        UserLoginScheme,
+        Body(),
+    ],
+    session: Annotated[
+        AsyncSession,
+        Depends(db.scoped_session_dependency),
+    ],
 ) -> JSONResponse:
 
     user: User | None = await crud.get_user_by_email(
@@ -207,8 +220,8 @@ async def authenticate_user(
         )
 
     token_response: TokenResponseScheme = TokenResponseScheme(
-        access_token=generate_access_token(user.id, user.name, user.email),
-        refresh_token=generate_refresh_token(user.id, user.name, user.email),
+        access_token=jwt_auth.generate_access_token(user.id, user.name, user.email),
+        refresh_token=jwt_auth.generate_refresh_token(user.id, user.name, user.email),
     )
 
     return JSONResponse(
