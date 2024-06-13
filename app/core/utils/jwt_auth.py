@@ -1,10 +1,20 @@
 import datetime
-from typing import Literal
+from typing import Annotated, Literal
 
 import jwt
+from fastapi import Depends
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from sqlalchemy.ext.asyncio import AsyncSession
 
+from app import crud
+from app.api.v1.exceptions import ErrorException
 from app.core.config import settings
+from app.core.database import db
+from app.core.database.models import User
 
+http_bearer: HTTPBearer = HTTPBearer(
+    auto_error=False,
+)
 
 def _encode_jwt(
     jwt_type: Literal["access", "refresh"],
@@ -72,11 +82,33 @@ def get_token_payload(
     token: str,
     jwt_type: Literal["access", "refresh"],
 ) -> dict[str, str | int] | None:
+    """Get payload from a JWT token.
 
+    Args:
+    ----
+        token: The JWT token.
+        jwt_type: The type of JWT token. Either "access" or "refresh".
+
+    Returns:
+    -------
+        dict[str, str | int] | None: The payload of the JWT token if the
+        token type matches and signature is valid, otherwise None.
+
+    Raises:
+    ------
+        None
+
+    Example:
+    -------
+        >>> token = "eyJhbGciOiJIUzasdasd5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwib\
+        FtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNasdasdyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+        >>> jwt_type = "access"
+        >>> get_token_payload(token, jwt_type)
+        {'sub': '1234567890', 'name': 'John Doe', 'iat': 1516239022}
+
+    """
     try:
-        # Read the header and check the token type without verifying the signature
-        # Signature verification will be done later
-        if jwt.get_unverified_header(token).get("typ", "NO_TOKEN_TYP") != jwt_type:
+        if jwt.get_unverified_header(token).get("typ", "") != jwt_type:
             return None
 
         token_payload: dict[str, str | int] = jwt.decode(
@@ -100,3 +132,48 @@ def get_token_payload(
         return None
 
     return token_payload
+
+
+async def get_current_user(
+    session: Annotated[
+        AsyncSession,
+        Depends(db.scoped_session_dependency),
+    ],
+    token: Annotated[
+        HTTPAuthorizationCredentials,
+        Depends(http_bearer),
+    ],
+) -> User:
+
+    if token is None:
+        raise ErrorException(
+            errors=[],
+            message="Authorization required.",
+            status=401,
+        )
+
+    payload: dict[str, str | int] | None = get_token_payload(
+        token.credentials,
+        jwt_type="access",
+    )
+
+    if payload is None:
+        raise ErrorException(
+            errors=[],
+            message="Invalid token.",
+            status=400,
+        )
+
+    user: User | None = await crud.get_user_by_id(
+        session=session,
+        _id=int(payload.get("sub", -1)),
+    )
+
+    if user is None:
+        raise ErrorException(
+            errors=[],
+            message="Invalid token.",
+            status=400,
+        )
+
+    return user
