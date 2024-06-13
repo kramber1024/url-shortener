@@ -66,3 +66,37 @@ def generate_refresh_token(
             "email": email,
         },
     )
+
+
+def validate_token(
+    token: str,
+    jwt_type: Literal["access", "refresh"],
+) -> bool:
+
+    try:
+        # Read the header and check the token type without verifying the signature
+        # Signature verification will be done later
+        if jwt.get_unverified_header(token).get("typ", "NO_TOKEN_TYP") != jwt_type:
+            return False
+
+        jwt.decode(
+            token,
+            settings.jwt.SECRET,
+            algorithms=[settings.jwt.ALGORITHM],
+            options={
+                "require": [
+                    "sub",
+                    "name",
+                    "email",
+                    "exp",
+                    "iat",
+                ],
+                "verify_exp": True,
+                "verify_signature": True,
+            },
+        )
+
+    except jwt.InvalidTokenError:
+        return False
+
+    return True
