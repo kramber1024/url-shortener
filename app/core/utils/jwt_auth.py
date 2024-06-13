@@ -68,18 +68,18 @@ def generate_refresh_token(
     )
 
 
-def validate_token(
+def get_token_payload(
     token: str,
     jwt_type: Literal["access", "refresh"],
-) -> bool:
+) -> dict[str, str | int] | None:
 
     try:
         # Read the header and check the token type without verifying the signature
         # Signature verification will be done later
         if jwt.get_unverified_header(token).get("typ", "NO_TOKEN_TYP") != jwt_type:
-            return False
+            return None
 
-        jwt.decode(
+        token_payload: dict[str, str | int] = jwt.decode(
             token,
             settings.jwt.SECRET,
             algorithms=[settings.jwt.ALGORITHM],
@@ -97,6 +97,6 @@ def validate_token(
         )
 
     except jwt.InvalidTokenError:
-        return False
+        return None
 
-    return True
+    return token_payload
