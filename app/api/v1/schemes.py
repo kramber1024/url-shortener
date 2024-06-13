@@ -156,10 +156,20 @@ class User(BaseModel):
             examples=["kramber"],
         ),
     ]
+    email: Annotated[
+        EmailStr,
+        Field(
+            min_length=len("*@*.*"),
+            max_length=64,
+            description="Used for authentication.",
+            examples=["email@domain.tld"],
+        ),
+    ]
 
     @classmethod
     def from_model(cls: type["User"], user: UserModel) -> "User":
         return cls(
             id=str(user.id),
             name=user.name,
+            email=user.email,
         )
