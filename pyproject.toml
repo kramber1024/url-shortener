@@ -38,7 +38,12 @@ exclude = [
 [tool.ruff.lint]
 select = ["ALL"]
 ignore = [
-    "D",      # Disable the D error code
+    "D100",   # Disable check for missing docstring in public module
+    "D101",   # Disable check for missing docstring in public class
+    "D102",   # Disable check for missing docstring in public method
+    "D103",   # Disable check for missing docstring in public function
+    "D104",   # Disable check for missing docstring in public package
+    "D107",   # Disable check for missing docstring in __init__
     "ANN101", # Disable check for missing type annotation for self in method
 ]
 fixable = ["ALL"]
