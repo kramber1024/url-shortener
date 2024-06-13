@@ -18,21 +18,11 @@ async def validation_exception_handler(
         "value_error": "The {} format is invalid.",
         "missing": "The {} field is required.",
         "string_type": "The {} should be a string.",
-        "json_invalid": (
-            "Request should be a valid JSON. "
-            "Check JSON for trailing comma."
-        ),
+        "json_invalid":  "Request should be a valid JSON. ",
     }
-
     errors: list[ErrorScheme] = []
-    if isinstance(exc, Exception):
-        errors.append(
-            ErrorScheme(
-                message="Iternal server error.",
-                type="server",
-            ),
-        )
-    else:
+
+    if isinstance(exc, RequestValidationError):
         for error in exc.errors():
             message: str = errors_map.get(
                 error["type"],
@@ -45,6 +35,14 @@ async def validation_exception_handler(
                     type=str(error["loc"][1]),
                 ),
             )
+
+    else:
+        errors.append(
+            ErrorScheme(
+                message="Iternal server error.",
+                type="server",
+            ),
+        )
 
     response: ErrorResponseScheme = ErrorResponseScheme(
         errors=errors,
