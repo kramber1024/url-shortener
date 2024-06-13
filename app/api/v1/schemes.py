@@ -83,6 +83,39 @@ class UserRegistration(BaseModel):
     ]
 
 
+class TokenResponse(BaseModel):
+    access_token: Annotated[
+        str,
+        Field(
+            description="JWT access token.",
+            examples=[
+                (
+                    "eyJhbGciOiJIUzI1NiIsInR5cCI6ImFjY2VzcyJ9."
+                    "eyJzdWIiOiItMSIsIm5hbWUiOiJPbGVnIiwiZW1ha"
+                    "WwiOiJpbnZhbGlkIGVtYWlsIHRsZCIsImV4cCI6MT"
+                    "cxODI5MjM4OSwiaWF0IjoxNzE4Mjg4Nzg5fQ.Rdg3"
+                    "SUU62lvXQJV0gIwT_XHPpj4P5sG4WOskMs6kN5I"
+                ),
+            ],
+        ),
+    ]
+    refresh_token: Annotated[
+        str,
+        Field(
+            description="JWT refresh token.",
+            examples=[
+                (
+                    "eyJhbGciOiJIUzI1NiIsInR5cCI6InJlZnJlc2gifQ."
+                    "eyJzdWIiOiItMSIsIm5hbWUiOiJPbGVnIiwiZW1haWw"
+                    "iOiJpbnZhbGlkIGVtYWlsIHRsZCIsImV4cCI6MTcyMD"
+                    "g4MDc4OSwiaWF0IjoxNzE4Mjg4Nzg5fQ.yF-PoA1vRv"
+                    "nSJeXUro0Uu2eN7qM7kjFzGN93OeIck3Y"
+                ),
+            ],
+        ),
+    ]
+
+
 class UserLogin(BaseModel):
     email: Annotated[
         EmailStr,
