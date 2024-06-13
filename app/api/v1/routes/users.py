@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 
-from app.api.v1.models import User as UserResponse
+from app.api.v1.dependencies import SessionDependency
+from app.api.v1.schemes import User as UserResponse
 
 router: APIRouter = APIRouter(prefix="/users")
 
@@ -34,10 +35,5 @@ router: APIRouter = APIRouter(prefix="/users")
         },
     },
 )
-async def read_users_me() -> dict[str, str]:
-    response: dict[str, str] = {
-        "name": "Oleg",
-        "avatar": "https://avatars.githubusercontent.com/u/26481850?v=4",
-    }
-
-    return response
+async def read_users_me(session: SessionDependency) -> dict[str, str]:
+    return {"a": "a"}

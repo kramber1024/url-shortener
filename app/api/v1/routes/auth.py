@@ -4,7 +4,7 @@ from fastapi import APIRouter, Body, status
 from fastapi.responses import JSONResponse
 
 from app import crud
-from app.api.v1.dependencies import SessionDependence
+from app.api.v1.dependencies import SessionDependency
 from app.api.v1.exceptions import ErrorException
 from app.api.v1.schemes import ErrorResponse as ErrorResponseScheme
 from app.api.v1.schemes import TokenResponse as TokenResponseScheme
@@ -90,7 +90,7 @@ router: APIRouter = APIRouter(prefix="/auth")
 )
 async def register_user(
     new_user: Annotated[UserRegistrationScheme, Body],
-    session: SessionDependence,
+    session: SessionDependency,
 ) -> JSONResponse:
 
     if await crud.get_user_by_email(
@@ -191,7 +191,7 @@ async def register_user(
 )
 async def authenticate_user(
     user_credentials: Annotated[UserLoginScheme, Body],
-    session: SessionDependence,
+    session: SessionDependency,
 ) -> JSONResponse:
 
     user: User | None = await crud.get_user_by_email(
