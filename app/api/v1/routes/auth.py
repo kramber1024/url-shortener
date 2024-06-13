@@ -7,9 +7,11 @@ from app import crud
 from app.api.v1.dependencies import SessionDependence
 from app.api.v1.exceptions import ErrorException
 from app.api.v1.schemes import ErrorResponse as ErrorResponseScheme
+from app.api.v1.schemes import TokenResponse as TokenResponseScheme
 from app.api.v1.schemes import User as UserScheme
 from app.api.v1.schemes import UserLogin as UserLoginScheme
 from app.api.v1.schemes import UserRegistration as UserRegistrationScheme
+from app.core.utils.auth import generate_access_token, generate_refresh_token
 
 if TYPE_CHECKING:
     from app.core.database.models import User
@@ -120,22 +122,33 @@ async def register_user(
     description="Authenticates a user in the system using email and password.",
     status_code=200,
     responses={
-        # TODO(kramber): Add real response for 201. Change 'model' and 'example'.
-        # 001
-        201: {
-            "description": "New user registered successfully.",
-            "model": UserScheme,
+        200: {
+            "description": "User authenticated successfully.",
+            "model": TokenResponseScheme,
             "content": {
                 "application/json": {
                     "example": {
-                        "PLACEHOLDER": "PLACEHOLDER",
+                        "access_token": (
+                            "eyJhbGciOiJIUzI1NiIsInR5cCI6ImFjY2VzcyJ9."
+                            "eyJzdWIiOiItMSIsIm5hbWUiOiJPbGVnIiwiZW1ha"
+                            "WwiOiJpbnZhbGlkIGVtYWlsIHRsZCIsImV4cCI6MT"
+                            "cxODI5MjM4OSwiaWF0IjoxNzE4Mjg4Nzg5fQ.Rdg3"
+                            "SUU62lvXQJV0gIwT_XHPpj4P5sG4WOskMs6kN5I"
+                        ),
+                        "refresh_token": (
+                            "eyJhbGciOiJIUzI1NiIsInR5cCI6InJlZnJlc2gifQ."
+                            "eyJzdWIiOiItMSIsIm5hbWUiOiJPbGVnIiwiZW1haWw"
+                            "iOiJpbnZhbGlkIGVtYWlsIHRsZCIsImV4cCI6MTcyMD"
+                            "g4MDc4OSwiaWF0IjoxNzE4Mjg4Nzg5fQ.yF-PoA1vRv"
+                            "nSJeXUro0Uu2eN7qM7kjFzGN93OeIck3Y"
+                        ),
                     },
                 },
             },
         },
         401: {
-            "description": "New user registered successfully.",
-            "model": UserScheme,
+            "description": "The email or password is incorrect.",
+            "model": ErrorResponseScheme,
             "content": {
                 "application/json": {
                     "example": {
@@ -150,7 +163,7 @@ async def register_user(
             "description": (
                 "Validation error. "
                 "The email format is invalid and/or the password length is incorrect "
-                "(either too short or too long). Same goes for name field. "
+                "(either too short or too long). "
                 "Also you can get this error if "
                 "you forgot to fill in the required fields."
             ),
@@ -158,7 +171,18 @@ async def register_user(
             "content": {
                 "application/json": {
                     "example": {
-                        "PLACEHOLDER": "PLACEHOLDER",
+                          "errors": [
+                                {
+                                    "message": "The email field is required.",
+                                    "type": "email",
+                                },
+                                {
+                                    "message": "The password length is invalid.",
+                                    "type": "password",
+                                },
+                            ],
+                            "message": "Validation error.",
+                            "status": 422,
                     },
                 },
             },
@@ -175,21 +199,19 @@ async def authenticate_user(
         email=user_credentials.email,
     )
 
-    if user is None:
+    if user is None or not user.is_password_valid(user_credentials.password):
         raise ErrorException(
             errors=[],
             message="The email or password is incorrect.",
             status=status.HTTP_401_UNAUTHORIZED,
         )
 
-    if not user.is_password_valid(user_credentials.password):
-        raise ErrorException(
-            errors=[],
-            message="The email or password is incorrect.",
-            status=status.HTTP_401_UNAUTHORIZED,
-        )
+    token_response: TokenResponseScheme = TokenResponseScheme(
+        access_token=generate_access_token(user.id, user.name, user.email),
+        refresh_token=generate_refresh_token(user.id, user.name, user.email),
+    )
 
     return JSONResponse(
-        content=UserScheme.from_model(user).model_dump(),
+        content=token_response.model_dump(),
         status_code=status.HTTP_200_OK,
     )
