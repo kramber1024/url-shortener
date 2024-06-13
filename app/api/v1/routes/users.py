@@ -1,39 +1,63 @@
-from fastapi import APIRouter
+from typing import Annotated
 
-from app.api.v1.dependencies import SessionDependency
-from app.api.v1.schemes import User as UserResponse
+from fastapi import APIRouter, Depends, status
+from fastapi.responses import JSONResponse
+from sqlalchemy.ext.asyncio import AsyncSession
 
-router: APIRouter = APIRouter(prefix="/users")
+from app.api.v1.schemes import ErrorResponse as ErrorResponseScheme
+from app.api.v1.schemes import User as UserScheme
+from app.core.database.models import User
+from app.core.utils import jwt_auth
 
-
-@router.get(
-    "/me",
-    summary="Get current user",
-    description="Get information about the current user",
-    response_model=UserResponse,
+router: APIRouter = APIRouter(
+    prefix="/users",
     responses={
-        200: {
-            "description": "Successful response",
+        400: {
+            "description": "Provided token is not valid.",
+            "model": ErrorResponseScheme,
             "content": {
                 "application/json": {
                     "example": {
-                        "name": "Oleg",
-                        "avatar": "https://avatars.githubusercontent.com/u/26481850?v=4",
+                        "errors": [],
+                        "message": "Invalid token.",
+                        "status": 400,
                     },
                 },
             },
         },
-        404: {
-            "description": "User not found",
+        401: {
+            "description": "Authorization required. Provide a valid token in headers.",
+            "model": ErrorResponseScheme,
             "content": {
                 "application/json": {
                     "example": {
-                        "message": "User not found",
+                        "errors": [],
+                        "message": "Authorization required.",
+                        "status": 401,
                     },
                 },
             },
         },
     },
 )
-async def read_users_me(session: SessionDependency) -> dict[str, str]:
-    return {"a": "a"}
+
+
+@router.get(
+    "/me",
+    summary="Get current user",
+    description="Get information about the current user",
+    # TODO(kramber): Add scheme for successful response.
+    # 001
+    responses={},
+)
+async def get_users_me(
+    user: Annotated[
+        User,
+        Depends(jwt_auth.get_current_user),
+    ],
+) -> JSONResponse:
+
+    return JSONResponse(
+        content=UserScheme.from_model(user).model_dump(),
+        status_code=status.HTTP_200_OK,
+    )
