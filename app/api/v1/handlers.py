@@ -77,3 +77,20 @@ async def error_exception_handler(
         content=server_error.response,
         status_code=server_error.status_code,
     )
+
+
+async def server_error_exception_handler(
+    _: Request,
+    __: Exception,
+) -> JSONResponse:
+
+    server_error: ErrorException = ErrorException(
+        errors=[],
+        message="Internal server error.",
+        status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+    )
+
+    return JSONResponse(
+        content=server_error.response,
+        status_code=server_error.status_code,
+    )
