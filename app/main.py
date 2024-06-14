@@ -19,6 +19,7 @@ app.add_exception_handler(RequestValidationError, validation_exception_handler)
 app.add_exception_handler(ErrorException, error_exception_handler)
 app.add_exception_handler(Exception, server_error_exception_handler)
 
+
 async def main() -> None:
     await db.create_db(hard_rest=False)
 
