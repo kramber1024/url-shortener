@@ -53,6 +53,25 @@ class ErrorResponse(BaseModel):
     ]
 
 
+class SuccessResponse(BaseModel):
+    message: Annotated[
+        str,
+        Field(
+            description="Success message.",
+            examples=["Operation completed successfully."],
+        ),
+    ]
+    status: Annotated[
+        int,
+        Field(
+            description="HTTP status code.",
+            examples=[200],
+            ge=100,
+            le=599,
+        ),
+    ]
+
+
 class UserRegistration(BaseModel):
     name: Annotated[
         str,
@@ -122,7 +141,7 @@ class UserLogin(BaseModel):
         Field(
             min_length=len("*@*.*"),
             max_length=64,
-            description="Used for authentication.",
+            description="Email used for authentication.",
             examples=["email@domain.tld"],
         ),
     ]
@@ -131,7 +150,7 @@ class UserLogin(BaseModel):
         Field(
             min_length=8,
             max_length=256,
-            description="Used for authentication.",
+            description="Password used for authentication.",
             examples=["My$uper$ecretPa$$word"],
         ),
     ]
@@ -141,7 +160,7 @@ class User(BaseModel):
     id: Annotated[
         str,
         Field(
-            description="Unique identifier.",
+            description="Unique identifier for the user.",
             examples=["7205649978688008192"],
             max_length=len("7205649978688008192"),
             min_length=len("7205649978688008192"),
