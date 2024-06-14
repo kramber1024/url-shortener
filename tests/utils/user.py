@@ -1,5 +1,5 @@
 from app.core.database.models import User
-from app.tests.utils.utils import random_email, random_string_of_random_length
+from tests.utils.utils import random_email, random_string_of_random_length
 
 
 def random_user_credentials() -> tuple[str, str, str]:

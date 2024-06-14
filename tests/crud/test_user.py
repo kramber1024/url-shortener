@@ -4,7 +4,7 @@ import pytest
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import crud
-from app.tests import utils
+from tests import utils
 
 if TYPE_CHECKING:
     from app.core.database.models import User

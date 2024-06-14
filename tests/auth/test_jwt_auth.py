@@ -7,7 +7,7 @@ import pytest
 
 from app.core.auth import jwt_auth
 from app.core.config import settings
-from app.tests import utils
+from tests import utils
 
 
 @pytest.mark.parametrize(

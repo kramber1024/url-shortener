@@ -44,7 +44,7 @@ class TestIDGeneratorSettings(BaseModel):
 class TestDatabaseSettings(BaseModel):
     gen: TestIDGeneratorSettings = TestIDGeneratorSettings()
 
-    URL: str = f"sqlite+aiosqlite:///{BASE_DIRERCTORY/"tests"/"database"/"testdatabase.sqlite3"}"
+    URL: str = f"sqlite+aiosqlite:///{BASE_DIRERCTORY.parent/"tests"/"database"/"testdatabase.sqlite3"}"
 
 
 class TestSettings(BaseModel):

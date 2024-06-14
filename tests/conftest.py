@@ -9,6 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_scoped_session
 from app.core.config import settings
 from app.core.database import Database
 from app.core.database.models import User
+from app.main import app
 
 
 @pytest_asyncio.fixture(scope="session")
@@ -39,11 +40,10 @@ async def session(db: Database) -> AsyncGenerator[AsyncSession, None]:
         await async_session.remove()
 
 
-@pytest.fixture(name="async_client")
-async def async_client(initialize_backend_test_application: fastapi.FastAPI) -> httpx.AsyncClient:  # type: ignore
+@pytest_asyncio.fixture(name="module")
+async def client() -> AsyncGenerator[httpx.AsyncClient, None]:
     async with httpx.AsyncClient(
-        app=initialize_backend_test_application,
-        base_url="http://testserver",
+        app=app,
         headers={"Content-Type": "application/json"},
     ) as client:
         yield client
