@@ -95,7 +95,7 @@ async def register_user(
     ],
     session: Annotated[
         AsyncSession,
-        Depends(db.scoped_session_dependency),
+        Depends(db.scoped_session),
     ],
 ) -> JSONResponse:
 
@@ -207,7 +207,7 @@ async def authenticate_user(
     ],
     session: Annotated[
         AsyncSession,
-        Depends(db.scoped_session_dependency),
+        Depends(db.scoped_session),
     ],
 ) -> JSONResponse:
 

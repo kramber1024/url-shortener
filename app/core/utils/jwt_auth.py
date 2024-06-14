@@ -137,7 +137,7 @@ def get_token_payload(
 async def get_current_user(
     session: Annotated[
         AsyncSession,
-        Depends(db.scoped_session_dependency),
+        Depends(db.scoped_session),
     ],
     token: Annotated[
         HTTPAuthorizationCredentials,

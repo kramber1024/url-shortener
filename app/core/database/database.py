@@ -31,7 +31,7 @@ class Database:
             expire_on_commit=False,
         )
 
-    async def scoped_session_dependency(
+    async def scoped_session(
         self,
     ) -> AsyncGenerator[async_scoped_session[AsyncSession], None]:
 
