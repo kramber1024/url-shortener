@@ -11,7 +11,7 @@ from sqlalchemy.ext.asyncio import (
 )
 
 from app.core import settings
-from app.core.database.models import Base
+from app.core.database.models import Base, User
 
 
 class Database:
@@ -50,8 +50,18 @@ class Database:
             async with self.engine.begin() as connection:
                 await connection.run_sync(Base.metadata.create_all)
 
+            if settings.debug.IS_DEBUG:
+                async with self.session_factory() as session:
+                    admin_user: User = User(
+                        name=settings.debug.USER_NAME,
+                        email=settings.debug.USER_EMAIL,
+                        password=settings.debug.USER_PASSWORD,
+                    )
+                    session.add(admin_user)
+                    await session.commit()
+
 
 db: Database = Database(
     url=settings.db.URL,
-    debug=settings.env.DEBUG,
+    debug=settings.debug.IS_DEBUG,
 )
