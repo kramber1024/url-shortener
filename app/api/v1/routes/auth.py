@@ -7,8 +7,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app import crud
 from app.api.v1.exceptions import ErrorException
 from app.api.v1.schemes import ErrorResponse as ErrorResponseScheme
+from app.api.v1.schemes import SuccessResponse as SuccessResponseScheme
 from app.api.v1.schemes import TokenResponse as TokenResponseScheme
-from app.api.v1.schemes import User as UserScheme
 from app.api.v1.schemes import UserLogin as UserLoginScheme
 from app.api.v1.schemes import UserRegistration as UserRegistrationScheme
 from app.core.database import db
@@ -26,15 +26,14 @@ router: APIRouter = APIRouter(prefix="/auth")
     description="Registers new user in the system.",
     status_code=201,
     responses={
-        # TODO(kramber): Add real response for 201. Change 'model' and 'example'.
-        # 001
         201: {
             "description": "New user registered successfully.",
-            "model": UserScheme,
+            "model": SuccessResponseScheme,
             "content": {
                 "application/json": {
                     "example": {
-                        "PLACEHOLDER": "PLACEHOLDER",
+                        "message": "User registered successfully.",
+                        "status": 201,
                     },
                 },
             },
@@ -110,15 +109,20 @@ async def register_user(
             status=status.HTTP_409_CONFLICT,
         )
 
-    user: User = await crud.create_user(
+    await crud.create_user(
         session=session,
         name=new_user.name,
         email=new_user.email,
         password=new_user.password,
     )
 
+    response: SuccessResponseScheme = SuccessResponseScheme(
+        message="User registered successfully.",
+        status=status.HTTP_201_CREATED,
+    )
+
     return JSONResponse(
-        content=UserScheme.from_model(user).model_dump(),
+        content=response.model_dump(),
         status_code=status.HTTP_201_CREATED,
     )
 
