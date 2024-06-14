@@ -7,7 +7,6 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import crud
-from app.api.v1.exceptions import ErrorException
 from app.core.config import settings
 from app.core.database import db
 from app.core.database.models import User
@@ -144,6 +143,7 @@ async def get_current_user(
         Depends(http_bearer),
     ],
 ) -> User:
+    from app.api.v1.exceptions import ErrorException
 
     if token is None:
         raise ErrorException(
