@@ -29,9 +29,15 @@ def random_string_of_random_length(
     return random_string(length, include_uppercase=include_uppercase)
 
 
-def random_email() -> str:
+def random_email(
+    *,
+    max_length: int = 64,
+) -> str:
+
+    max_length -= 5 # @.tld
+
     return (
-        f"{random_string_of_random_length(1, 20)}"
-        f"@{random_string_of_random_length(1, 20)}"
+        f"{random_string_of_random_length(1, max_length // 2)}"
+        f"@{random_string_of_random_length(1, max_length // 2)}"
         f".{random_string_of_random_length(2, 3, include_uppercase=False)}"
     )
