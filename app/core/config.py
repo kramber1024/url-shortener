@@ -30,15 +30,17 @@ class AppSettings(BaseModel):
     NAME: str = "ushort"
 
 
-class EnviromentSettings(BaseModel):
-    TYPE: Literal["development", "production"] = "development"
-    DEBUG: bool = bool(TYPE == "development")
+class DebugSettings(BaseModel):
+    IS_DEBUG: bool = True
+    USER_NAME: str = "test"
+    USER_EMAIL: str = "a@a.a"
+    USER_PASSWORD: str = "12345678"
 
 
 class Settings(BaseSettings):
     db: DatabaseSettings = DatabaseSettings()
     app: AppSettings = AppSettings()
-    env: EnviromentSettings = EnviromentSettings()
+    debug: DebugSettings = DebugSettings()
     jwt: JWTSettings = JWTSettings()
 
 
