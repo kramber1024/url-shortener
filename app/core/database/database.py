@@ -32,7 +32,7 @@ class Database:
             expire_on_commit=False,
         )
 
-        self.url = url
+        self.url = url.split("///")[1]
 
     async def scoped_session(
         self,
