@@ -40,3 +40,7 @@ def random_email(
         f"@{random_string_of_random_length(1, max_length // 2)}"
         f".{random_string_of_random_length(2, 3, include_uppercase=False)}"
     )
+
+
+def random_id() -> int:
+    return secrets.randbelow(10**19 - 10**18) + 10**18
