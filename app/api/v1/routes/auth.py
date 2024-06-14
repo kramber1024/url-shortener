@@ -11,8 +11,8 @@ from app.api.v1.schemes import SuccessResponse as SuccessResponseScheme
 from app.api.v1.schemes import TokenResponse as TokenResponseScheme
 from app.api.v1.schemes import UserLogin as UserLoginScheme
 from app.api.v1.schemes import UserRegistration as UserRegistrationScheme
+from app.core.auth import jwt_auth
 from app.core.database import db
-from app.core.utils import jwt_auth
 
 if TYPE_CHECKING:
     from app.core.database.models import User

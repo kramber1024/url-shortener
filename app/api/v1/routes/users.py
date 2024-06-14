@@ -6,8 +6,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.v1.schemes import ErrorResponse as ErrorResponseScheme
 from app.api.v1.schemes import User as UserScheme
+from app.core.auth import jwt_auth
 from app.core.database.models import User
-from app.core.utils import jwt_auth
 
 router: APIRouter = APIRouter(
     prefix="/users",
