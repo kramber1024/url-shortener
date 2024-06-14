@@ -15,6 +15,7 @@ async def test_create_user(
     session: AsyncSession,
 ) -> None:
     name, email, password = utils.random_user_credentials()
+    email_formatted: str = email.split("@")[0] + "@" + email.split("@")[1].lower()
 
     user: User = await crud.create_user(
         session=session,
@@ -25,7 +26,7 @@ async def test_create_user(
 
     assert isinstance(user.id, int)
     assert user.name == name
-    assert user.email == email
+    assert user.email == email_formatted
     assert user.is_password_valid(password)
     assert user.active
 
@@ -35,6 +36,7 @@ async def test_get_user_by_email(
     session: AsyncSession,
 ) -> None:
     name, email, password = utils.random_user_credentials()
+    email_formatted: str = email.split("@")[0] + "@" + email.split("@")[1].lower()
 
     user: User = await crud.create_user(
         session=session,
@@ -45,13 +47,13 @@ async def test_get_user_by_email(
 
     found_user: User | None = await crud.get_user_by_email(
         session=session,
-        email=email,
+        email=email_formatted,
     )
 
     assert found_user is not None
     assert found_user.id == user.id
     assert found_user.name == name
-    assert found_user.email == email
+    assert found_user.email == email_formatted
     assert found_user.is_password_valid(password)
     assert found_user.active
 
@@ -61,6 +63,7 @@ async def test_get_user_by_email_not_found(
     session: AsyncSession,
 ) -> None:
     name, email, password = utils.random_user_credentials()
+    email_formatted: str = email.split("@")[0] + "@" + email.split("@")[1].lower()
 
     await crud.create_user(
         session=session,
@@ -71,7 +74,7 @@ async def test_get_user_by_email_not_found(
 
     not_found_user: User | None = await crud.get_user_by_email(
         session=session,
-        email="email@notreal.tld;",
+        email=email_formatted + ";",
     )
 
     assert not_found_user is None
@@ -82,6 +85,7 @@ async def test_get_user_by_id(
     session: AsyncSession,
 ) -> None:
     name, email, password = utils.random_user_credentials()
+    email_formatted: str = email.split("@")[0] + "@" + email.split("@")[1].lower()
 
     user: User = await crud.create_user(
         session=session,
@@ -98,7 +102,7 @@ async def test_get_user_by_id(
     assert found_user is not None
     assert found_user.id == user.id
     assert found_user.name == name
-    assert found_user.email == email
+    assert found_user.email == email_formatted
     assert found_user.is_password_valid(password)
     assert found_user.active
 
