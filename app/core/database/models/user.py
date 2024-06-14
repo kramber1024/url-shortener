@@ -16,7 +16,7 @@ class User(Base):
     def __init__(self, *, name: str, email: str, password: str) -> None:
         super().__init__()
         self.name = name
-        self.email = email
+        self.email = email.split("@")[0] + "@" + email.split("@")[1].lower()
         self.password = hashpw(password.encode("utf-8"), gensalt(rounds=15)).decode()
         self.active = True
 
