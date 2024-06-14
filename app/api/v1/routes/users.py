@@ -46,9 +46,21 @@ router: APIRouter = APIRouter(
     "/me",
     summary="Get current user",
     description="Get information about the current user",
-    # TODO(kramber): Add scheme for successful response.
-    # 001
-    responses={},
+    responses={
+        200: {
+            "description": "User information retrieved successfully.",
+            "model": UserScheme,
+            "content": {
+                "application/json": {
+                    "example": {
+                        "id": "7207306656936357888",
+                        "name": "kramber",
+                        "email": "email@domain.tld",
+                    },
+                },
+            },
+        },
+    },
 )
 async def get_users_me(
     user: Annotated[
