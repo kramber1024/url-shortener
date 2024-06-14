@@ -54,7 +54,10 @@ fixable = ["ALL"]
 unfixable = []
 
 [tool.ruff.lint.per-file-ignores]
-"**test**" = ["S101"] # Disable check for use of assert in tests
+"**test**" = [
+    "S101",   # Disable check for use of assert in tests
+    "SLF001", # Disable check for use of private members in tests
+] 
 
 [tool.ruff.format]
 quote-style = "double"
