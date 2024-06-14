@@ -35,5 +35,3 @@ def random_email() -> str:
         f"@{random_string_of_random_length(1, 20)}"
         f".{random_string_of_random_length(2, 3, include_uppercase=False)}"
     )
-
-
