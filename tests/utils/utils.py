@@ -38,7 +38,7 @@ def random_email(
     return (
         f"{random_string_of_random_length(1, max_length // 2)}"
         f"@{random_string_of_random_length(1, max_length // 2)}"
-        f".{random_string_of_random_length(2, 3, include_uppercase=False)}"
+        f".{random_string_of_random_length(2, 3)}"
     )
 
 
