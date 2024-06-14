@@ -17,6 +17,7 @@ from app.core.database.models import Base, User
 class Database:
     engine: AsyncEngine
     session_factory: async_sessionmaker[AsyncSession]
+    url: str
 
     def __init__(self, url: str, *, debug: bool) -> None:
         self.engine = create_async_engine(
@@ -31,26 +32,30 @@ class Database:
             expire_on_commit=False,
         )
 
+        self.url = url
+
     async def scoped_session(
         self,
     ) -> AsyncGenerator[async_scoped_session[AsyncSession], None]:
-
-        session: async_scoped_session[AsyncSession] = async_scoped_session(
-            session_factory=self.session_factory,
-            scopefunc=current_task,
-        )
-        yield session
-        await session.close()
+        try:
+            session: async_scoped_session[AsyncSession] = async_scoped_session(
+                session_factory=self.session_factory,
+                scopefunc=current_task,
+            )
+            yield session
+        finally:
+            await session.close()
 
     async def create_db(self, *, hard_rest: bool) -> None:
-        if hard_rest:
-            Path.unlink(Path(settings.db.URL))
+        if hard_rest and Path.exists(Path(self.url)):
+            Path.unlink(Path(self.url))
 
-        if not Path.exists(Path(settings.db.URL)):
+        if not Path.exists(Path(self.url)):
             async with self.engine.begin() as connection:
                 await connection.run_sync(Base.metadata.create_all)
 
-            if settings.debug.IS_DEBUG:
+            # Create a default user for debugging
+            if settings.debug.IS_DEBUG and "tests" not in self.url:
                 async with self.session_factory() as session:
                     admin_user: User = User(
                         name=settings.debug.USER_NAME,
