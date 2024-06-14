@@ -3,7 +3,7 @@ import string
 
 
 def random_string(
-    length: int,
+    length: int = 8,
     *,
     include_uppercase: bool = True,
 ) -> str:
@@ -30,7 +30,6 @@ def random_string_of_random_length(
 
 
 def random_email(
-    *,
     max_length: int = 64,
 ) -> str:
 
