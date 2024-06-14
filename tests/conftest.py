@@ -1,13 +1,14 @@
 from asyncio import current_task
 from collections.abc import AsyncGenerator
 
-import httpx
 import pytest_asyncio
+from httpx import ASGITransport, AsyncClient
 from sqlalchemy import delete
 from sqlalchemy.ext.asyncio import AsyncSession, async_scoped_session
 
 from app.core.config import settings
 from app.core.database import Database
+from app.core.database import db as database
 from app.core.database.models import User
 from app.main import app
 
@@ -40,10 +41,15 @@ async def session(db: Database) -> AsyncGenerator[AsyncSession, None]:
         await async_session.remove()
 
 
-@pytest_asyncio.fixture(name="module")
-async def client() -> AsyncGenerator[httpx.AsyncClient, None]:
-    async with httpx.AsyncClient(
-        app=app,
+@pytest_asyncio.fixture(scope="function")
+async def client(db: Database) -> AsyncGenerator[AsyncClient, None]:
+    app.dependency_overrides[database.scoped_session] = db.scoped_session
+
+    async with AsyncClient(
+        transport=ASGITransport(app=app), # type: ignore[arg-type]
+        base_url="http://127.0.0.1:8000",
         headers={"Content-Type": "application/json"},
-    ) as client:
-        yield client
+    ) as c:
+        yield c
+
+    app.dependency_overrides.clear()
