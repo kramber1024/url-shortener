@@ -37,11 +37,26 @@ class DebugSettings(BaseModel):
     USER_PASSWORD: str = "12345678"
 
 
+class TestIDGeneratorSettings(BaseModel):
+    WORKER_ID: int = 1000 # int in range [1, 1023]
+
+
+class TestDatabaseSettings(BaseModel):
+    gen: TestIDGeneratorSettings = TestIDGeneratorSettings()
+
+    URL: str = f"sqlite+aiosqlite:///{BASE_DIRERCTORY/"tests"/"database"/"testdatabase.sqlite3"}"
+
+
+class TestSettings(BaseModel):
+    db: TestDatabaseSettings = TestDatabaseSettings()
+
+
 class Settings(BaseSettings):
     db: DatabaseSettings = DatabaseSettings()
     app: AppSettings = AppSettings()
     debug: DebugSettings = DebugSettings()
     jwt: JWTSettings = JWTSettings()
+    test: TestSettings = TestSettings()
 
 
 settings: Settings = Settings()
