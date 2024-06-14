@@ -52,6 +52,9 @@ ignore = [
 fixable = ["ALL"]
 unfixable = []
 
+[tool.ruff.lint.per-file-ignores]
+"**test**" = ["S101"] # Disable check for use of assert in tests
+
 [tool.ruff.format]
 quote-style = "double"
 indent-style = "space"
