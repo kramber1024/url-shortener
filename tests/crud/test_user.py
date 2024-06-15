@@ -15,7 +15,7 @@ async def test_create_user(
     session: AsyncSession,
 ) -> None:
     name, email, password = utils.random_user_credentials()
-    email_formatted: str = email.split("@")[0] + "@" + email.split("@")[1].lower()
+    email_formatted: str = utils.format_email(email)
 
     user: User = await crud.create_user(
         session=session,
@@ -36,7 +36,7 @@ async def test_get_user_by_email(
     session: AsyncSession,
 ) -> None:
     name, email, password = utils.random_user_credentials()
-    email_formatted: str = email.split("@")[0] + "@" + email.split("@")[1].lower()
+    email_formatted: str = utils.format_email(email)
 
     user: User = await crud.create_user(
         session=session,
@@ -63,7 +63,7 @@ async def test_get_user_by_email_not_found(
     session: AsyncSession,
 ) -> None:
     name, email, password = utils.random_user_credentials()
-    email_formatted: str = email.split("@")[0] + "@" + email.split("@")[1].lower()
+    email_formatted: str = utils.format_email(email)
 
     await crud.create_user(
         session=session,
@@ -85,7 +85,7 @@ async def test_get_user_by_id(
     session: AsyncSession,
 ) -> None:
     name, email, password = utils.random_user_credentials()
-    email_formatted: str = email.split("@")[0] + "@" + email.split("@")[1].lower()
+    email_formatted: str = utils.format_email(email)
 
     user: User = await crud.create_user(
         session=session,
