@@ -2,8 +2,8 @@ import os
 
 from pydantic_settings import BaseSettings
 
-from app.core.configs.debug import debug_settings
-from app.core.configs.test import test_settings
+from app.core.configs.debug import DebugSettings, debug_settings
+from app.core.configs.test import AppSettings, test_settings
 
 
 async def settings() -> BaseSettings:
@@ -13,5 +13,7 @@ async def settings() -> BaseSettings:
 
 
 __all__ = (
+    "DebugSettings",
+    "AppSettings",
     "settings",
 )
