@@ -1,5 +1,6 @@
 from .user import random_user_credentials
 from .utils import (
+    format_email,
     random_email,
     random_id,
     random_string,
@@ -12,4 +13,5 @@ __all__ = (
     "random_email",
     "random_user_credentials",
     "random_id",
+    "format_email",
 )

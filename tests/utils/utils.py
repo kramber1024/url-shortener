@@ -42,5 +42,9 @@ def random_email(
     )
 
 
+def format_email(email: str) -> str:
+    return email.split("@")[0] + "@" + email.split("@")[1].lower()
+
+
 def random_id() -> int:
     return secrets.randbelow(10**19 - 10**18) + 10**18
