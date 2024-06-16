@@ -54,7 +54,7 @@ class Database:
             async with self.engine.begin() as connection:
                 await connection.run_sync(Base.metadata.create_all)
 
-print(settings.db.URL)
+
 db: Database =  Database(
     url=settings.db.URL,
     debug=settings.state.DEBUG,
