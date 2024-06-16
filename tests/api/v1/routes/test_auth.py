@@ -7,6 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import crud
 from tests import utils
+from tests.data import INVALID_USER_DATA, VALID_USER_DATA
 
 if TYPE_CHECKING:
     from httpx import Response
@@ -16,53 +17,26 @@ if TYPE_CHECKING:
 
 @pytest.mark.asyncio()
 @pytest.mark.parametrize(
-    ("name", "email", "password"), [
-        (
-            f"{utils.random_string(5)}\n{utils.random_string(5)}",
-            utils.random_string(8), # Invalid email
-            utils.random_string(8),
-        ),
-        (
-            "", # Invalid name
-            f"{utils.random_string(5)}@{utils.random_string(15)}", # Invalid email
-            utils.random_string(8),
-        ),
-        (
-            utils.random_string(5),
-            utils.random_email(max_length=64),
-            utils.random_string(5), # Invalid password
-        ),
-        (
-            utils.random_string_of_random_length(4, 16),
-            utils.random_string(5), # Invalid email
-            None, # No password
-        ),
-        (
-            None, None, None, # No name, email, and password
-        ),
-        (
-            None, # No name
-            None, # No email
-            utils.random_string_of_random_length(32, 64),
-        ),
-    ],
+    ("name", "email", "password"),
+    INVALID_USER_DATA,
 )
 async def test_register_user_validation_error(
     session: AsyncSession,
     client: AsyncClient,
-    name: str | None,
-    email: str | None,
-    password: str | None,
+    name: str,
+    email: str,
+    password: str,
 ) -> None:
+
     json: dict[str, str] = {}
 
-    if name is not None:
+    if name != "":
         json["name"] = name
 
-    if email is not None:
+    if email != "":
         json["email"] = email
 
-    if password is not None:
+    if password != "":
         json["password"] = password
 
     response: Response = await client.post(
@@ -71,8 +45,6 @@ async def test_register_user_validation_error(
     )
 
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
-
-    email = "" if email is None else email
 
     user: User | None = await crud.get_user_by_email(
         session=session,
@@ -83,26 +55,32 @@ async def test_register_user_validation_error(
 
 
 @pytest.mark.asyncio()
+@pytest.mark.parametrize(
+    ("name", "email", "password"),
+    VALID_USER_DATA,
+)
 async def test_register_user_email_conflict(
     session: AsyncSession,
     client: AsyncClient,
+    name: str,
+    email: str,
+    password: str,
 ) -> None:
-    name, email, password = utils.random_user_credentials()
-    formatted_email: str = utils.format_email(email)
 
     user: User = await crud.create_user(
         session=session,
         name=name,
         email=email,
         password=password,
+        salt_rounds=4,
     )
 
     response: Response = await client.post(
         "/api/v1/auth/register",
         json={
-            "name": utils.random_string_of_random_length(4, 16),
+            "name": name[:-1] + "2",
             "email": email,
-            "password": utils.random_string_of_random_length(32, 64),
+            "password": password[:-1] + "2",
         },
     )
 
@@ -110,7 +88,7 @@ async def test_register_user_email_conflict(
 
     found_user: User | None = await crud.get_user_by_email(
         session=session,
-        email=formatted_email,
+        email=utils.format_email(email),
     )
 
     assert found_user is not None
@@ -122,11 +100,18 @@ async def test_register_user_email_conflict(
 
 
 @pytest.mark.asyncio()
+@pytest.mark.parametrize(
+    ("name", "email", "password"),
+    VALID_USER_DATA,
+)
 async def test_register_user_success(
     session: AsyncSession,
     client: AsyncClient,
+    name: str,
+    email: str,
+    password: str,
 ) -> None:
-    name, email, password = utils.random_user_credentials()
+
     formatted_email: str = utils.format_email(email)
 
     response: Response = await client.post(
@@ -154,45 +139,25 @@ async def test_register_user_success(
 
 @pytest.mark.asyncio()
 @pytest.mark.parametrize(
-    ("email", "password"), [
-        (
-            f"{utils.random_string(5)}@{utils.random_string(5)}", # Invalid email
-            utils.random_string(16),
-        ),
-        (
-            "", # Invalid email
-            f"{utils.random_string(5)}@{utils.random_string(15)}",
-        ),
-        (
-            utils.random_string(5), # Invalid email
-            utils.random_string(1024), # Invalid password
-        ),
-        (
-            utils.random_string_of_random_length(4, 16), # Invalid email
-            utils.random_string(5), # Invalid password
-        ),
-        (
-            None, None, # No email, and password
-        ),
-        (
-            "", # Invalid email
-            "", # Invalid password
-        ),
-    ],
+    ("name", "email", "password"),
+    INVALID_USER_DATA,
 )
 async def test_authenticate_user_validation_error(
     session: AsyncSession,
     client: AsyncClient,
-    email: str | None,
-    password: str | None,
+    name: str,
+    email: str,
+    password: str,
 ) -> None:
 
-    json: dict[str, str] = {}
+    json: dict[str, str] = {
+        "name": name,
+    }
 
-    if email is not None:
+    if email != "":
         json["email"] = email
 
-    if password is not None:
+    if password != "":
         json["password"] = password
 
     response: Response = await client.post(
@@ -201,8 +166,6 @@ async def test_authenticate_user_validation_error(
     )
 
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
-
-    email = "" if email is None else email
 
     user: User | None = await crud.get_user_by_email(
         session=session,
@@ -213,12 +176,18 @@ async def test_authenticate_user_validation_error(
 
 
 @pytest.mark.asyncio()
+@pytest.mark.parametrize(
+    ("name", "email", "password"),
+    VALID_USER_DATA,
+)
 async def test_authenticate_user_incorrect_credentials(
     session: AsyncSession,
     client: AsyncClient,
+    name: str,
+    email: str,
+    password: str,
 ) -> None:
 
-    name, email, password = utils.random_user_credentials()
     formatted_email: str = utils.format_email(email)
 
     user: User = await crud.create_user(
@@ -226,13 +195,14 @@ async def test_authenticate_user_incorrect_credentials(
         name=name,
         email=email,
         password=password,
+        salt_rounds=4,
     )
 
     response_1: Response = await client.post(
         "/api/v1/auth/login",
         json={
-            "email": email,
-            "password": password[:-5] + utils.random_string(5),
+            "email": formatted_email,
+            "password": "12345678",
         },
     )
 
@@ -241,7 +211,7 @@ async def test_authenticate_user_incorrect_credentials(
     response_2: Response = await client.post(
         "/api/v1/auth/login",
         json={
-            "email": utils.random_email(),
+            "email": email[:-1] + "klol",
             "password": password,
         },
     )
@@ -271,12 +241,18 @@ async def test_authenticate_user_incorrect_credentials(
 
 
 @pytest.mark.asyncio()
+@pytest.mark.parametrize(
+    ("name", "email", "password"),
+    VALID_USER_DATA,
+)
 async def test_authenticate_user_success(
     session: AsyncSession,
     client: AsyncClient,
+    name: str,
+    email: str,
+    password: str,
 ) -> None:
 
-    name, email, password = utils.random_user_credentials()
     formatted_email: str = utils.format_email(email)
 
     user: User = await crud.create_user(
@@ -284,6 +260,7 @@ async def test_authenticate_user_success(
         name=name,
         email=email,
         password=password,
+        salt_rounds=4,
     )
 
     response: Response = await client.post(
