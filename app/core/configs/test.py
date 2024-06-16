@@ -1,43 +1,45 @@
 from pathlib import Path
-from typing import Literal
 
-from pydantic import BaseModel
-from pydantic_settings import BaseSettings
+from app.core.configs.settings import (
+    AppSettings,
+    DatabaseSettings,
+    JWTSettings,
+    Settings,
+    SnowflakeSettings,
+    StateSettings,
+)
 
-BASE_DIRERCTORY = Path(__file__).parent.parent
+BASE_DIRERCTORY = Path(__file__).parent.parent.parent
 
+snowflake_settings: SnowflakeSettings = SnowflakeSettings(
+    WORKER_ID=888,
+)
 
-class SnowflakeSettings(BaseModel):
-    WORKER_ID: int = 777
+database_settings: DatabaseSettings = DatabaseSettings(
+    gen=snowflake_settings,
+    URL=f"sqlite+aiosqlite:///{BASE_DIRERCTORY/"tests"/"database"/"test_database.sqlite3"}",
+)
 
+jwt_settings: JWTSettings = JWTSettings(
+    ALGORITHM="HS256",
+    SECRET="",
+    ACCESS_TOKEN_EXPIRE_MINUTES=60,
+    REFRESH_TOKEN_EXPIRE_DAYS=30,
+)
 
-class DatabaseSettings(BaseModel):
-    gen: SnowflakeSettings = SnowflakeSettings()
+state_settings: StateSettings = StateSettings(
+    PROD=True, # Lying about the state
+    DEBUG=False,
+    TEST=True,
+)
 
-    URL: str = f"sqlite+aiosqlite:///{BASE_DIRERCTORY.parent/"tests"/"database"/"test_database.sqlite3"}"
+app_settings: AppSettings = AppSettings(
+    NAME="ushort",
+)
 
-
-class JWTSettings(BaseModel):
-    ALGORITHM: Literal["HS256"] = "HS256"
-    SECRET: str = "NOTASECRET"
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
-    REFRESH_TOKEN_EXPIRE_DAYS: int = 30
-
-
-class StateSettings(BaseModel):
-    production: bool = True
-    debug: bool = False
-    test: bool = True
-
-
-class AppSettings(BaseModel):
-    name: str = "ushort"
-
-
-class TestSettings(BaseSettings):
-    db: DatabaseSettings = DatabaseSettings()
-    jwt: JWTSettings = JWTSettings()
-    state: StateSettings = StateSettings()
-
-
-test_settings: TestSettings = TestSettings()
+test_settings: Settings = Settings(
+    db=database_settings,
+    jwt=jwt_settings,
+    state=state_settings,
+    app=app_settings,
+)

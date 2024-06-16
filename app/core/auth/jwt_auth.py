@@ -7,7 +7,7 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import crud
-from app.core.config import settings
+from app.core.configs import settings
 from app.core.database import db
 from app.core.database.models import User
 

@@ -1,19 +1,12 @@
-import os
+from app.core.configs.debug import debug_settings
+from app.core.configs.settings import Settings
+from app.core.configs.test import test_settings
 
-from pydantic_settings import BaseSettings
-
-from app.core.configs.debug import DebugSettings, debug_settings
-from app.core.configs.test import AppSettings, test_settings
-
-
-async def settings() -> BaseSettings:
-    if bool(os.getenv("TEST")):
-        return test_settings
-    return debug_settings
-
+settings: Settings = debug_settings
 
 __all__ = (
-    "DebugSettings",
-    "AppSettings",
-    "settings",
+    "settings"
+    "debug_settings",
+    "test_settings",
+    "Settings",
 )

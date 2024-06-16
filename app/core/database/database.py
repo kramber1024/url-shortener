@@ -10,8 +10,8 @@ from sqlalchemy.ext.asyncio import (
     create_async_engine,
 )
 
-from app.core import settings
-from app.core.database.models import Base, User
+from app.core.configs import settings
+from app.core.database.models import Base
 
 
 class Database:
@@ -54,19 +54,8 @@ class Database:
             async with self.engine.begin() as connection:
                 await connection.run_sync(Base.metadata.create_all)
 
-            # Create a default user for debugging
-            if settings.debug.IS_DEBUG and "tests" not in self.url:
-                async with self.session_factory() as session:
-                    admin_user: User = User(
-                        name=settings.debug.USER_NAME,
-                        email=settings.debug.USER_EMAIL,
-                        password=settings.debug.USER_PASSWORD,
-                    )
-                    session.add(admin_user)
-                    await session.commit()
-
-
-db: Database = Database(
+print(settings.db.URL)
+db: Database =  Database(
     url=settings.db.URL,
-    debug=settings.debug.IS_DEBUG,
+    debug=settings.state.DEBUG,
 )
