@@ -15,12 +15,14 @@ async def create_user(
     name: str,
     email: str,
     password: str,
+    salt_rounds: int = 15,
 ) -> User:
 
     user: User = User(
         name=name,
         email=email,
         password=password,
+        salt_rounds=salt_rounds,
     )
 
     session.add(user)
