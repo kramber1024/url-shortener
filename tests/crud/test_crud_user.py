@@ -4,7 +4,8 @@ import pytest
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import crud
-from tests import utils
+from tests.data import INVALID_USER_DATA, VALID_USER_DATA
+from tests.utils import format_email
 
 if TYPE_CHECKING:
     from app.core.database.models import User
@@ -13,13 +14,7 @@ if TYPE_CHECKING:
 @pytest.mark.asyncio()
 @pytest.mark.parametrize(
     ("name", "email", "password"),
-    [
-        ("John", "JOHN@EMAIL.TLD", "password"),
-        ("JussiSeikola", "JussiSeikola@MyMaIl.co", "!#$%&'()*,./:;<=>?@[]^_`{|}~"),
-        ("Лайма Назарова", "YetererCOOLDomain.com", "'''''''%$#@#!123123zxc///\\"),
-        ("", "", ""),
-        ("W"*32, "X"*64, "E"*256),
-    ],
+    INVALID_USER_DATA + VALID_USER_DATA,
 )
 async def test_create_user(
     session: AsyncSession,
@@ -33,30 +28,22 @@ async def test_create_user(
         name=name,
         email=email,
         password=password,
+        salt_rounds=4,
     )
 
     assert user is not None
     assert isinstance(user.id, int)
     assert user.name == name
-    assert user.email == utils.format_email(email)
+    assert user.email == format_email(email)
     assert user.password != password
     assert user.is_password_valid(password)
     assert user.active
 
+
 @pytest.mark.asyncio()
 @pytest.mark.parametrize(
     ("name", "email", "password"),
-    [
-        ("Valérie Dodier", "ValerieDodier@daYSrep.cOm", "Aingo2ShAingo2Sh5123"),
-        ("Chyou Mao", "ChyouMao@Extraville.fi", "!#$%&'()*,./:;<=>?@[]^_`{|}~"),
-        (
-            "Larissa Fernandes Barros",
-            "LarissaFernandesBarros@josagafffrapide.com",
-            "'''''''%$#@#!123123c///\\"*8,
-        ),
-        ("", "", ""),
-        ("1"*32, "2"*64, "3"*256),
-    ],
+    INVALID_USER_DATA + VALID_USER_DATA,
 )
 async def test_get_user_by_email(
     session: AsyncSession,
@@ -70,11 +57,12 @@ async def test_get_user_by_email(
         name=name,
         email=email,
         password=password,
+        salt_rounds=4,
     )
 
     found_user: User | None = await crud.get_user_by_email(
         session=session,
-        email=utils.format_email(email),
+        email=format_email(email),
     )
 
     assert found_user is not None
@@ -89,9 +77,7 @@ async def test_get_user_by_email(
 @pytest.mark.asyncio()
 @pytest.mark.parametrize(
     ("name", "email", "password"),
-    [
-        ("Sienna Jackson", "ValerieDodier@daYSrep.cOm", "Aingo2ShAingo2Sh5123"),
-    ],
+    INVALID_USER_DATA + VALID_USER_DATA,
 )
 async def test_get_user_by_email_not_found(
     session: AsyncSession,
@@ -105,6 +91,7 @@ async def test_get_user_by_email_not_found(
         name=name,
         email=email,
         password=password,
+        salt_rounds=4,
     )
 
     found_user: User | None = await crud.get_user_by_email(
@@ -118,13 +105,7 @@ async def test_get_user_by_email_not_found(
 @pytest.mark.asyncio()
 @pytest.mark.parametrize(
     ("name", "email", "password"),
-    [
-        ("Tyler Reid", "Ty-.id@ASD.com", "388983c6-f14f-4d19-b661-cb192fdc47da"),
-        ("Hosseed", "TeganAkhtar@Gmail.com", "eL0rithoo"),
-        ("Tegan Akhtar", "GracieWallismail.ru", "!#$%&'()*,./:;<=>?@[]^_`{|}~"),
-        ("", "", ""),
-        ("!"*32, "^"*64, "@"*256),
-    ],
+    INVALID_USER_DATA + VALID_USER_DATA,
 )
 async def test_get_user_by_id(
     session: AsyncSession,
@@ -138,6 +119,7 @@ async def test_get_user_by_id(
         name=name,
         email=email,
         password=password,
+        salt_rounds=4,
     )
 
     found_user: User | None = await crud.get_user_by_id(
@@ -153,12 +135,11 @@ async def test_get_user_by_id(
     assert found_user.is_password_valid(password)
     assert found_user.active == user.active
 
+
 @pytest.mark.asyncio()
 @pytest.mark.parametrize(
     ("name", "email", "password"),
-    [
-        ("Άγιος Γεώργιος", "SpencerCameron@Bitterephe.Yu", "1Z 2F4 451 53 6378"),
-    ],
+    INVALID_USER_DATA + VALID_USER_DATA,
 )
 async def test_get_user_by_id_not_found(
     session: AsyncSession,
@@ -172,6 +153,7 @@ async def test_get_user_by_id_not_found(
         name=name,
         email=email,
         password=password,
+        salt_rounds=4,
     )
 
     found_user: User | None = await crud.get_user_by_id(
