@@ -9,7 +9,7 @@ from app.core.configs.settings import (
     StateSettings,
 )
 
-BASE_DIRERCTORY = Path(__file__).parent.parent.parent
+BASE_DIRERCTORY = Path(__file__).parent.parent.parent.parent
 
 snowflake_settings: SnowflakeSettings = SnowflakeSettings(
     WORKER_ID=888,
