@@ -48,11 +48,11 @@ async def get_user_by_email(
 async def get_user_by_id(
     *,
     session: AsyncSession,
-    _id: int,
+    id_: int,
 ) -> User | None:
 
     result: Result[tuple[User]] = await session.execute(
-        select(User).filter(User.id == _id),
+        select(User).filter(User.id == id_),
     )
     user: User | None = result.scalars().first()
 
