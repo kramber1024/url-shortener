@@ -17,7 +17,7 @@ snowflake_settings: SnowflakeSettings = SnowflakeSettings(
 
 database_settings: DatabaseSettings = DatabaseSettings(
     gen=snowflake_settings,
-    URL=f"sqlite+aiosqlite:///{BASE_DIRERCTORY/"tests"/"database"/"test_database.sqlite3"}",
+    URL=f"sqlite+aiosqlite:///{BASE_DIRERCTORY/"tests"/"core"/"database"/"test_database.sqlite3"}",
 )
 
 jwt_settings: JWTSettings = JWTSettings(
