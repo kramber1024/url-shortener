@@ -166,7 +166,7 @@ async def get_current_user(
 
     user: User | None = await crud.get_user_by_id(
         session=session,
-        _id=int(payload.get("sub", -1)),
+        id_=int(payload.get("sub", -1)),
     )
 
     if user is None:
