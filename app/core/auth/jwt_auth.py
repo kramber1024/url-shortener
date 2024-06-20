@@ -142,14 +142,14 @@ async def get_current_user(
         AsyncSession,
         Depends(db.scoped_session),
     ],
-    token: Annotated[
+    access_token: Annotated[
         HTTPAuthorizationCredentials | None,
         Depends(http_bearer),
     ],
 ) -> User:
     from app.api.v1.exceptions import ErrorException
 
-    if token is None:
+    if access_token is None:
         raise ErrorException(
             errors=[],
             message="Authorization required.",
@@ -157,8 +157,54 @@ async def get_current_user(
         )
 
     payload: dict[str, str | int] | None = get_token_payload(
-        token.credentials,
+        access_token.credentials,
         jwt_type="access",
+    )
+
+    if payload is None:
+        raise ErrorException(
+            errors=[],
+            message="Invalid token.",
+            status=400,
+        )
+
+    user: User | None = await crud.get_user_by_id(
+        session=session,
+        id_=int(payload.get("sub", -1)),
+    )
+
+    if user is None:
+        raise ErrorException(
+            errors=[],
+            message="Invalid token.",
+            status=400,
+        )
+
+    return user
+
+
+async def get_refreshed_user(
+    session: Annotated[
+        AsyncSession,
+        Depends(db.scoped_session),
+    ],
+    refresh_token: Annotated[
+        HTTPAuthorizationCredentials | None,
+        Depends(http_bearer),
+    ],
+) -> User:
+    from app.api.v1.exceptions import ErrorException
+
+    if refresh_token is None:
+        raise ErrorException(
+            errors=[],
+            message="Authorization required.",
+            status=401,
+        )
+
+    payload: dict[str, str | int] | None = get_token_payload(
+        refresh_token.credentials,
+        jwt_type="refresh",
     )
 
     if payload is None:
