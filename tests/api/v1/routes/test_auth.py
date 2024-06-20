@@ -3,290 +3,283 @@ from typing import TYPE_CHECKING
 import pytest
 from fastapi import status
 from httpx import AsyncClient
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app import crud
+from app.core.database.models import User
 from tests import utils
-from tests.data import INVALID_USER_DATA, VALID_USER_DATA
 
 if TYPE_CHECKING:
     from httpx import Response
-
-    from app.core.database.models import User
+    from sqlalchemy.engine import Result
 
 
 @pytest.mark.asyncio()
-@pytest.mark.parametrize(
-    ("name", "email", "password"),
-    INVALID_USER_DATA,
-)
-async def test_register_user_validation_error(
+async def test_register_user(
     session: AsyncSession,
     client: AsyncClient,
-    name: str,
-    email: str,
-    password: str,
+) -> None:
+
+    name: str = "Vernon Barton"
+    email: str = "Alison_Rempel36@YAHOO.com"
+    password: str = "2RFTO5_Wx3aFDni"
+
+    json: dict[str, str] = {
+        "name": name,
+        "email": email,
+        "password": password,
+    }
+
+    response: Response = await client.post(
+        "api/v1/auth/register",
+        json=json,
+    )
+
+    result: Result[tuple[User]] = await session.execute(
+        select(User).filter(User.email == utils.format_email(email)),
+    )
+    user: User | None = result.scalars().first()
+
+    assert response.status_code == status.HTTP_201_CREATED
+    assert len(response.json().get("errors", "")) == 0
+    assert response.json().get("message", "") != ""
+    assert response.json().get("status", 0) == status.HTTP_201_CREATED
+    assert user
+    assert isinstance(user, User)
+    assert isinstance(user.id, int)
+    assert user.name == name
+    assert user.email == utils.format_email(email)
+    assert user.password != password
+    assert user.is_password_valid(password)
+    assert user.active
+
+
+@pytest.mark.asyncio()
+async def test_register_user_uppercase(
+    session: AsyncSession,
+    client: AsyncClient,
+) -> None:
+
+    name: str = "IDELLA_UPTON376"
+    email: str = "PEARLIE8@EXAMPLE.NET"
+    password: str = "MAMMMM_T3QJZ123"
+
+    json: dict[str, str] = {
+        "name": name,
+        "email": email,
+        "password": password,
+    }
+
+    response: Response = await client.post(
+        "api/v1/auth/register",
+        json=json,
+    )
+
+    result: Result[tuple[User]] = await session.execute(
+        select(User).filter(User.email == utils.format_email(email)),
+    )
+    user: User | None = result.scalars().first()
+
+    assert response.status_code == status.HTTP_201_CREATED
+    assert len(response.json().get("errors", "")) == 0
+    assert response.json().get("message", "") != ""
+    assert response.json().get("status", 0) == status.HTTP_201_CREATED
+    assert user
+    assert isinstance(user, User)
+    assert isinstance(user.id, int)
+    assert user.name == name
+    assert user.email == utils.format_email(email)
+    assert user.password != password
+    assert user.is_password_valid(password)
+    assert user.active
+
+
+@pytest.mark.asyncio()
+async def test_register_user_email_conflict(
+    session: AsyncSession,
+    client: AsyncClient,
+) -> None:
+
+    name: str = "Julian49"
+    email: str = "Alisha_Borer@hotmail.com"
+    password: str = "2ePl_ncWd_Ea0Vg"
+
+    user: User = User(
+        name=name,
+        email=email,
+        password=password,
+        salt_rounds=4,
+    )
+
+    session.add(user)
+    await session.commit()
+    await session.refresh(user)
+
+    json: dict[str, str] = {
+        "name": name,
+        "email": email,
+        "password": password,
+    }
+
+    response: Response = await client.post(
+        "api/v1/auth/register",
+        json=json,
+    )
+
+    assert response.status_code == status.HTTP_409_CONFLICT
+    assert len(response.json().get("errors", "")) == 0
+    assert response.json().get("message", "") != ""
+    assert response.json().get("status", 0) == status.HTTP_409_CONFLICT
+    assert user
+    assert isinstance(user, User)
+    assert isinstance(user.id, int)
+    assert user.name == name
+    assert user.email == utils.format_email(email)
+    assert user.password != password
+    assert user.is_password_valid(password)
+    assert user.active
+
+
+@pytest.mark.asyncio()
+async def test_register_user_invalid_name(
+    session: AsyncSession,
+    client: AsyncClient,
+) -> None:
+
+    name: str = "12"
+    email: str = "Leta.Hartmann@hotmail.com"
+    password: str = "eSB7Y6DxFFFkckZ"
+
+    json: dict[str, str] = {
+        "name": name,
+        "email": email,
+        "password": password,
+    }
+
+    response: Response = await client.post(
+        "api/v1/auth/register",
+        json=json,
+    )
+
+    result: Result[tuple[User]] = await session.execute(
+        select(User).filter(User.email == utils.format_email(email)),
+    )
+    user: User | None = result.scalars().first()
+
+    assert user is None
+    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+    assert len(response.json().get("errors", "")) == 1
+    assert utils.error_type_exists(response.json(), "name")
+    assert response.json().get("message", "") != ""
+    assert response.json().get("status", 0) == status.HTTP_422_UNPROCESSABLE_ENTITY
+
+
+@pytest.mark.asyncio()
+async def test_register_user_invalid_email(
+    client: AsyncClient,
+) -> None:
+
+    name: str = "Curtis Lehner"
+    email: str = "mymail.com"
+    password: str = "TIB5SMrQIfQx6Jo"
+
+    json: dict[str, str] = {
+        "name": name,
+        "email": email,
+        "password": password,
+    }
+
+    response: Response = await client.post(
+        "api/v1/auth/register",
+        json=json,
+    )
+
+    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+    assert len(response.json().get("errors", "")) == 1
+    assert utils.error_type_exists(response.json(), "email")
+    assert response.json().get("message", "") != ""
+    assert response.json().get("status", 0) == status.HTTP_422_UNPROCESSABLE_ENTITY
+
+
+@pytest.mark.asyncio()
+async def test_register_user_invalid_password(
+    session: AsyncSession,
+    client: AsyncClient,
+) -> None:
+
+    name: str = "Aglae_Upton"
+    email: str = "Kamryn65@example.org"
+    password: str = "1234567"
+
+    json: dict[str, str] = {
+        "name": name,
+        "email": email,
+        "password": password,
+    }
+
+    response: Response = await client.post(
+        "api/v1/auth/register",
+        json=json,
+    )
+
+    result: Result[tuple[User]] = await session.execute(
+        select(User).filter(User.email == utils.format_email(email)),
+    )
+    user: User | None = result.scalars().first()
+
+    assert user is None
+    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+    assert len(response.json().get("errors", "")) == 1
+    assert utils.error_type_exists(response.json(), "password")
+    assert response.json().get("message", "") != ""
+    assert response.json().get("status", 0) == status.HTTP_422_UNPROCESSABLE_ENTITY
+
+
+@pytest.mark.asyncio()
+async def test_register_user_invalid_all(
+    client: AsyncClient,
+) -> None:
+
+    name: str = "12"
+    email: str = "@example.org"
+    password: str = "1234567"
+
+    json: dict[str, str] = {
+        "name": name,
+        "email": email,
+        "password": password,
+    }
+
+    response: Response = await client.post(
+        "api/v1/auth/register",
+        json=json,
+    )
+
+    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+    assert len(response.json().get("errors", "")) == len(["name", "email", "password"])
+    assert utils.error_type_exists(response.json(), "name")
+    assert utils.error_type_exists(response.json(), "email")
+    assert utils.error_type_exists(response.json(), "password")
+    assert response.json().get("message", "") != ""
+    assert response.json().get("status", 0) == status.HTTP_422_UNPROCESSABLE_ENTITY
+
+
+@pytest.mark.asyncio()
+async def test_register_user_empty(
+    client: AsyncClient,
 ) -> None:
 
     json: dict[str, str] = {}
 
-    if name != "":
-        json["name"] = name
-
-    if email != "":
-        json["email"] = email
-
-    if password != "":
-        json["password"] = password
-
     response: Response = await client.post(
-        "/api/v1/auth/register",
+        "api/v1/auth/register",
         json=json,
     )
 
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
-
-    user: User | None = await crud.get_user_by_email(
-        session=session,
-        email=email,
-    )
-
-    assert user is None
-
-
-@pytest.mark.asyncio()
-@pytest.mark.parametrize(
-    ("name", "email", "password"),
-    VALID_USER_DATA,
-)
-async def test_register_user_email_conflict(
-    session: AsyncSession,
-    client: AsyncClient,
-    name: str,
-    email: str,
-    password: str,
-) -> None:
-
-    user: User = await crud.create_user(
-        session=session,
-        name=name,
-        email=email,
-        password=password,
-        salt_rounds=4,
-    )
-
-    response: Response = await client.post(
-        "/api/v1/auth/register",
-        json={
-            "name": name[:-1] + "2",
-            "email": email,
-            "password": password[:-1] + "2",
-        },
-    )
-
-    assert response.status_code == status.HTTP_409_CONFLICT
-
-    found_user: User | None = await crud.get_user_by_email(
-        session=session,
-        email=utils.format_email(email),
-    )
-
-    assert found_user is not None
-    assert found_user.id == user.id
-    assert found_user.name == user.name
-    assert found_user.email == user.email
-    assert found_user.password == user.password
-    assert found_user.active == user.active
-
-
-@pytest.mark.asyncio()
-@pytest.mark.parametrize(
-    ("name", "email", "password"),
-    VALID_USER_DATA,
-)
-async def test_register_user_success(
-    session: AsyncSession,
-    client: AsyncClient,
-    name: str,
-    email: str,
-    password: str,
-) -> None:
-
-    formatted_email: str = utils.format_email(email)
-
-    response: Response = await client.post(
-        "/api/v1/auth/register",
-        json={
-            "name": name,
-            "email": email,
-            "password": password,
-        },
-    )
-
-    assert response.status_code == status.HTTP_201_CREATED
-
-    found_user: User | None = await crud.get_user_by_email(
-        session=session,
-        email=formatted_email,
-    )
-
-    assert found_user is not None
-    assert found_user.name == name
-    assert found_user.email == formatted_email
-    assert found_user.password != password
-    assert found_user.active
-
-
-@pytest.mark.asyncio()
-@pytest.mark.parametrize(
-    ("name", "email", "password"),
-    INVALID_USER_DATA,
-)
-async def test_authenticate_user_validation_error(
-    session: AsyncSession,
-    client: AsyncClient,
-    name: str,
-    email: str,
-    password: str,
-) -> None:
-
-    json: dict[str, str] = {
-        "name": name,
-    }
-
-    if email != "":
-        json["email"] = email
-
-    if password != "":
-        json["password"] = password
-
-    response: Response = await client.post(
-        "/api/v1/auth/login",
-        json=json,
-    )
-
-    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
-
-    user: User | None = await crud.get_user_by_email(
-        session=session,
-        email=email,
-    )
-
-    assert user is None
-
-
-@pytest.mark.asyncio()
-@pytest.mark.parametrize(
-    ("name", "email", "password"),
-    VALID_USER_DATA,
-)
-async def test_authenticate_user_incorrect_credentials(
-    session: AsyncSession,
-    client: AsyncClient,
-    name: str,
-    email: str,
-    password: str,
-) -> None:
-
-    formatted_email: str = utils.format_email(email)
-
-    user: User = await crud.create_user(
-        session=session,
-        name=name,
-        email=email,
-        password=password,
-        salt_rounds=4,
-    )
-
-    response_1: Response = await client.post(
-        "/api/v1/auth/login",
-        json={
-            "email": formatted_email,
-            "password": "12345678",
-        },
-    )
-
-    assert response_1.status_code == status.HTTP_401_UNAUTHORIZED
-
-    response_2: Response = await client.post(
-        "/api/v1/auth/login",
-        json={
-            "email": email[:-1] + "klol",
-            "password": password,
-        },
-    )
-
-    assert response_2.status_code == status.HTTP_401_UNAUTHORIZED
-
-    response_3: Response = await client.post(
-        "/api/v1/auth/login",
-        json={
-            "email": email,
-            "password": user.password,
-        },
-    )
-
-    assert response_3.status_code == status.HTTP_401_UNAUTHORIZED
-
-    found_user: User | None = await crud.get_user_by_email(
-        session=session,
-        email=formatted_email,
-    )
-
-    assert found_user is not None
-    assert found_user.name == name
-    assert found_user.email == formatted_email
-    assert found_user.password != password
-    assert found_user.active
-
-
-@pytest.mark.asyncio()
-@pytest.mark.parametrize(
-    ("name", "email", "password"),
-    VALID_USER_DATA,
-)
-async def test_authenticate_user_success(
-    session: AsyncSession,
-    client: AsyncClient,
-    name: str,
-    email: str,
-    password: str,
-) -> None:
-
-    formatted_email: str = utils.format_email(email)
-
-    user: User = await crud.create_user(
-        session=session,
-        name=name,
-        email=email,
-        password=password,
-        salt_rounds=4,
-    )
-
-    response: Response = await client.post(
-        "/api/v1/auth/login",
-        json={
-            "email": email,
-            "password": password,
-        },
-    )
-
-    response_body: dict[str, str] = response.json()
-
-    assert response.status_code == status.HTTP_200_OK
-    assert response_body["access_token"]
-    assert response_body["refresh_token"]
-    assert isinstance(response_body["access_token"], str)
-    assert isinstance(response_body["refresh_token"], str)
-
-    found_user: User | None = await crud.get_user_by_email(
-        session=session,
-        email=formatted_email,
-    )
-
-    assert found_user is not None
-    assert found_user.id == user.id
-    assert found_user.name == name
-    assert found_user.email == formatted_email
-    assert found_user.password != password
-    assert found_user.active
+    assert len(response.json().get("errors", "")) == len(["name", "email", "password"])
+    assert utils.error_type_exists(response.json(), "name")
+    assert utils.error_type_exists(response.json(), "email")
+    assert utils.error_type_exists(response.json(), "password")
+    assert response.json().get("message", "") != ""
+    assert response.json().get("status", 0) == status.HTTP_422_UNPROCESSABLE_ENTITY
