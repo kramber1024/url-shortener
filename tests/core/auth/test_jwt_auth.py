@@ -449,3 +449,113 @@ async def test_get_current_user_invalid_token(
 
     assert exc.value.status_code == status.HTTP_400_BAD_REQUEST
     assert exc.value.response.get("errors", "") == []
+
+
+@pytest.mark.asyncio()
+async def test_get_refreshed_user(
+    session: AsyncSession,
+) -> None:
+
+    name: str = "Zella_Wehner69"
+    email: str = "Gerhard52@gmail.com"
+    password: str = "XSVFcSqsGhGpgor"
+
+    user: User = await crud.create_user(
+        session=session,
+        name=name,
+        email=email,
+        password=password,
+        salt_rounds=4,
+    )
+
+    token: str = jwt_auth.generate_refresh_token(
+        user_id=user.id,
+        name=user.name,
+        email=user.email,
+    )
+
+    current_user: User = await jwt_auth.get_refreshed_user(
+        session=session,
+        refresh_token=HTTPAuthorizationCredentials(scheme="Bearer", credentials=token),
+    )
+
+    assert current_user
+    assert current_user.id == user.id
+    assert current_user.name == user.name
+    assert current_user.email == user.email
+    assert current_user.password != password
+    assert current_user.is_password_valid(password)
+    assert current_user.active == user.active
+
+
+@pytest.mark.asyncio()
+async def test_get_refreshed_user_no_token(
+    session: AsyncSession,
+) -> None:
+
+    with pytest.raises(ErrorException) as exc:
+        await jwt_auth.get_refreshed_user(
+            session=session,
+            refresh_token=None,
+        )
+
+    assert exc.value.status_code == status.HTTP_401_UNAUTHORIZED
+    assert exc.value.response.get("errors", "") == []
+
+
+@pytest.mark.asyncio()
+async def test_get_refreshed_user_no_user(
+    session: AsyncSession,
+) -> None:
+
+    id_: int = 5187728381231
+    name: str = "Mrs. Paul Moen"
+    email: str = "Ettie94@gmail.com"
+
+    token: str = jwt_auth.generate_refresh_token(
+        user_id=id_,
+        name=name,
+        email=email,
+    )
+
+    with pytest.raises(ErrorException) as exc:
+        await jwt_auth.get_refreshed_user(
+            session=session,
+            refresh_token=HTTPAuthorizationCredentials(
+                scheme="Bearer",
+                credentials=token,
+            ),
+        )
+
+    assert exc.value.status_code == status.HTTP_400_BAD_REQUEST
+    assert exc.value.response.get("errors", "") == []
+
+
+@pytest.mark.asyncio()
+async def test_get_refreshed_user_invalid_token(
+    session: AsyncSession,
+) -> None:
+
+    name: str = "Terence Turner"
+    email: str = "Leila.Monahan47@gmail.com"
+    password: str = "6njYUvWPjfcG9Gs"
+
+    await crud.create_user(
+        session=session,
+        name=name,
+        email=email,
+        password=password,
+        salt_rounds=4,
+    )
+
+    with pytest.raises(ErrorException) as exc:
+        await jwt_auth.get_refreshed_user(
+            session=session,
+            refresh_token=HTTPAuthorizationCredentials(
+                scheme="Bearer",
+                credentials=f"{name*2}.{email*2}.{password*2}",
+            ),
+        )
+
+    assert exc.value.status_code == status.HTTP_400_BAD_REQUEST
+    assert exc.value.response.get("errors", "") == []
