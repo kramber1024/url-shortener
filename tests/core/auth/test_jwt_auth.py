@@ -379,6 +379,49 @@ async def test_get_current_user(
 
 
 @pytest.mark.asyncio()
+async def test_get_current_user_no_token(
+    session: AsyncSession,
+) -> None:
+
+    with pytest.raises(ErrorException) as exc:
+        await jwt_auth.get_current_user(
+            session=session,
+            token=None,
+        )
+
+    assert exc.value.status_code == status.HTTP_401_UNAUTHORIZED
+    assert exc.value.response.get("errors", "") == []
+
+
+@pytest.mark.asyncio()
+async def test_get_current_user_no_user(
+    session: AsyncSession,
+) -> None:
+
+    id_: int = 1234567890123498
+    name: str = "Ms. Renee Goodwin"
+    email: str = "Christina.Kuvalis@yahoo.com"
+
+    token: str = jwt_auth.generate_access_token(
+        user_id=id_,
+        name=name,
+        email=email,
+    )
+
+    with pytest.raises(ErrorException) as exc:
+        await jwt_auth.get_current_user(
+            session=session,
+            token=HTTPAuthorizationCredentials(
+                scheme="Bearer",
+                credentials=token,
+            ),
+        )
+
+    assert exc.value.status_code == status.HTTP_400_BAD_REQUEST
+    assert exc.value.response.get("errors", "") == []
+
+
+@pytest.mark.asyncio()
 async def test_get_current_user_invalid_token(
     session: AsyncSession,
 ) -> None:
@@ -395,13 +438,14 @@ async def test_get_current_user_invalid_token(
         salt_rounds=4,
     )
 
-    with pytest.raises(ErrorException) as exc_info:
+    with pytest.raises(ErrorException) as exc:
         await jwt_auth.get_current_user(
             session=session,
             token=HTTPAuthorizationCredentials(
                 scheme="Bearer",
-                credentials=f"{name}{email}{password}",
+                credentials=f"{name*2}.{email*2}.{password*2}",
             ),
         )
 
-    assert exc_info.value.status_code == status.HTTP_400_BAD_REQUEST
+    assert exc.value.status_code == status.HTTP_400_BAD_REQUEST
+    assert exc.value.response.get("errors", "") == []
