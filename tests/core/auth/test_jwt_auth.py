@@ -366,7 +366,7 @@ async def test_get_current_user(
 
     current_user: User = await jwt_auth.get_current_user(
         session=session,
-        token=HTTPAuthorizationCredentials(scheme="Bearer", credentials=token),
+        access_token=HTTPAuthorizationCredentials(scheme="Bearer", credentials=token),
     )
 
     assert current_user
@@ -386,7 +386,7 @@ async def test_get_current_user_no_token(
     with pytest.raises(ErrorException) as exc:
         await jwt_auth.get_current_user(
             session=session,
-            token=None,
+            access_token=None,
         )
 
     assert exc.value.status_code == status.HTTP_401_UNAUTHORIZED
@@ -411,7 +411,7 @@ async def test_get_current_user_no_user(
     with pytest.raises(ErrorException) as exc:
         await jwt_auth.get_current_user(
             session=session,
-            token=HTTPAuthorizationCredentials(
+            access_token=HTTPAuthorizationCredentials(
                 scheme="Bearer",
                 credentials=token,
             ),
@@ -441,7 +441,7 @@ async def test_get_current_user_invalid_token(
     with pytest.raises(ErrorException) as exc:
         await jwt_auth.get_current_user(
             session=session,
-            token=HTTPAuthorizationCredentials(
+            access_token=HTTPAuthorizationCredentials(
                 scheme="Bearer",
                 credentials=f"{name*2}.{email*2}.{password*2}",
             ),
