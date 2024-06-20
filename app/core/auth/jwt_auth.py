@@ -3,7 +3,10 @@ from typing import Annotated, Literal
 
 import jwt
 from fastapi import Depends
-from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from fastapi.security import (
+    HTTPAuthorizationCredentials,
+    HTTPBearer,
+)
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import crud
@@ -14,6 +17,7 @@ from app.core.database.models import User
 http_bearer: HTTPBearer = HTTPBearer(
     auto_error=False,
 )
+
 
 def _encode_jwt(
     jwt_type: Literal["access", "refresh"],
