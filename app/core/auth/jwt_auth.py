@@ -139,7 +139,7 @@ async def get_current_user(
         Depends(db.scoped_session),
     ],
     token: Annotated[
-        HTTPAuthorizationCredentials,
+        HTTPAuthorizationCredentials | None,
         Depends(http_bearer),
     ],
 ) -> User:
