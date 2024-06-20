@@ -283,3 +283,244 @@ async def test_register_user_empty(
     assert utils.error_type_exists(response.json(), "password")
     assert response.json().get("message", "") != ""
     assert response.json().get("status", 0) == status.HTTP_422_UNPROCESSABLE_ENTITY
+
+
+@pytest.mark.asyncio()
+async def test_authenticate_user(
+    session: AsyncSession,
+    client: AsyncClient,
+) -> None:
+
+    email: str = "Michael0@hotmail.com"
+    password: str = "cU5EAv8itwutUO9"
+
+    session.add(
+        User(
+            name="Destini_Hyatt52",
+            email=email,
+            password=password,
+            salt_rounds=4,
+        ),
+    )
+    await session.commit()
+
+    json: dict[str, str] = {
+        "email": email,
+        "password": password,
+    }
+
+    response: Response = await client.post(
+        "api/v1/auth/login",
+        json=json,
+    )
+
+    assert response.status_code == status.HTTP_200_OK
+    assert len(response.json().keys()) == len(["access_token", "refresh_token"])
+    assert response.json().get("access_token", "") != ""
+    assert response.json().get("refresh_token", "") != ""
+
+
+@pytest.mark.asyncio()
+async def test_authenticate_user_incorrect_email(
+    session: AsyncSession,
+    client: AsyncClient,
+) -> None:
+
+    name: str = "Nathen_OConner"
+    email: str = "Dusty_Klocko33@hotmail.com"
+    password: str = "uZAsWQ6k_8uuQ2r"
+
+    session.add(
+        User(
+            name=name,
+            email=email,
+            password=password,
+            salt_rounds=4,
+        ),
+    )
+    await session.commit()
+
+    json: dict[str, str] = {
+        "email": "Beth.Bernier@gmail.com",
+        "password": password,
+    }
+
+    response: Response = await client.post(
+        "api/v1/auth/login",
+        json=json,
+    )
+
+    assert response.status_code == status.HTTP_401_UNAUTHORIZED
+    assert len(response.json().get("errors", "")) == 0
+    assert response.json().get("message", "") != ""
+    assert response.json().get("status", 0) == status.HTTP_401_UNAUTHORIZED
+
+
+@pytest.mark.asyncio()
+async def test_authenticate_user_incorrect_password(
+    session: AsyncSession,
+    client: AsyncClient,
+) -> None:
+
+    name: str = "Bessie Haag"
+    email: str = "Marcel33@yahoo.com"
+    password: str = "HNAzs_gQ4zGI2FF"
+
+    session.add(
+        User(
+            name=name,
+            email=email,
+            password=password,
+            salt_rounds=4,
+        ),
+    )
+    await session.commit()
+
+    json: dict[str, str] = {
+        "email": email,
+        "password": "mSdewoS6vAmL8LP",
+    }
+
+    response: Response = await client.post(
+        "api/v1/auth/login",
+        json=json,
+    )
+
+    assert response.status_code == status.HTTP_401_UNAUTHORIZED
+    assert len(response.json().get("errors", "")) == 0
+    assert response.json().get("message", "") != ""
+    assert response.json().get("status", 0) == status.HTTP_401_UNAUTHORIZED
+
+
+@pytest.mark.asyncio()
+async def test_authenticate_user_incorrect_all(
+    session: AsyncSession,
+    client: AsyncClient,
+) -> None:
+
+    name: str = "Eliezer_Hilll"
+    email: str = "Ivy.Hammes7@yahoo.com"
+    password: str = "YT5MqVCjlICQxLA"
+
+    session.add(
+        User(
+            name=name,
+            email=email,
+            password=password,
+            salt_rounds=4,
+        ),
+    )
+    await session.commit()
+
+    json: dict[str, str] = {
+        "email": email + "ma",
+        "password": password + "1",
+    }
+
+    response: Response = await client.post(
+        "api/v1/auth/login",
+        json=json,
+    )
+
+    assert response.status_code == status.HTTP_401_UNAUTHORIZED
+    assert len(response.json().get("errors", "")) == 0
+    assert response.json().get("message", "") != ""
+    assert response.json().get("status", 0) == status.HTTP_401_UNAUTHORIZED
+
+
+@pytest.mark.asyncio()
+async def test_authenticate_user_invalid_email(
+    client: AsyncClient,
+) -> None:
+
+    email: str = "mymailllll.com"
+    password: str = "OzjVn2XgleJ8Mo0"
+
+    json: dict[str, str] = {
+        "email": email,
+        "password": password,
+    }
+
+    response: Response = await client.post(
+        "api/v1/auth/login",
+        json=json,
+    )
+
+    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+    assert len(response.json().get("errors", "")) == 1
+    assert utils.error_type_exists(response.json(), "email")
+    assert response.json().get("message", "") != ""
+    assert response.json().get("status", 0) == status.HTTP_422_UNPROCESSABLE_ENTITY
+
+
+@pytest.mark.asyncio()
+async def test_authenticate_user_invalid_password(
+    client: AsyncClient,
+) -> None:
+
+    email: str = "Marilou5@hotmail.com"
+    password: str = "268"
+
+    json: dict[str, str] = {
+        "email": email,
+        "password": password,
+    }
+
+    response: Response = await client.post(
+        "api/v1/auth/login",
+        json=json,
+    )
+
+    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+    assert len(response.json().get("errors", "")) == 1
+    assert utils.error_type_exists(response.json(), "password")
+    assert response.json().get("message", "") != ""
+    assert response.json().get("status", 0) == status.HTTP_422_UNPROCESSABLE_ENTITY
+
+
+@pytest.mark.asyncio()
+async def test_authenticate_user_invalid_all(
+    client: AsyncClient,
+) -> None:
+
+    name: str = "22"
+    email: str = "Stanford81yahoocom"
+    password: str = "YP2m6v"
+
+    json: dict[str, str] = {
+        "name": name,
+        "email": email,
+        "password": password,
+    }
+
+    response: Response = await client.post(
+        "api/v1/auth/login",
+        json=json,
+    )
+
+    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+    assert len(response.json().get("errors", "")) == len(["email", "password"])
+    assert utils.error_type_exists(response.json(), "email")
+    assert utils.error_type_exists(response.json(), "password")
+    assert response.json().get("message", "") != ""
+    assert response.json().get("status", 0) == status.HTTP_422_UNPROCESSABLE_ENTITY
+
+
+@pytest.mark.asyncio()
+async def test_authenticate_user_empty(
+    client: AsyncClient,
+) -> None:
+
+    json: dict[str, str] = {}
+
+    response: Response = await client.post(
+        "api/v1/auth/login",
+        json=json,
+    )
+
+    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+    assert len(response.json().get("errors", "")) == len(["email", "password"])
+    assert utils.error_type_exists(response.json(), "email")
+    assert utils.error_type_exists(response.json(), "password")
+    assert response.json().get("message", "") != ""
+    assert response.json().get("status", 0) == status.HTTP_422_UNPROCESSABLE_ENTITY
