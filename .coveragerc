@@ -1,6 +1,9 @@
 [run]
 omit =
     tests/*
+concurrency = 
+    greenlet
+
 
 [report]
 exclude_lines = 
