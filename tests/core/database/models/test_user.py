@@ -1,4 +1,4 @@
-from app.core.database.models import User
+from backend.core.database.models import User
 
 
 def test_user_repr() -> None:

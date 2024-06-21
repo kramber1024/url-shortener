@@ -7,13 +7,13 @@ from fastapi import status
 from fastapi.security import HTTPAuthorizationCredentials
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app import crud
-from app.api.v1.exceptions import ErrorException
-from app.core.auth import jwt_auth
-from app.core.configs import test_settings
+from backend import crud
+from backend.api.v1.exceptions import ErrorException
+from backend.core.auth import jwt_auth
+from backend.core.configs import test_settings
 
 if TYPE_CHECKING:
-    from app.core.database.models import User
+    from backend.core.database.models import User
 
 
 def test__encode_jwt_access() -> None:

@@ -4,16 +4,16 @@ from fastapi import APIRouter, Body, Depends, status
 from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app import crud
-from app.api.v1.exceptions import ErrorException
-from app.api.v1.schemes import ErrorResponse as ErrorResponseScheme
-from app.api.v1.schemes import SuccessResponse as SuccessResponseScheme
-from app.api.v1.schemes import TokenResponse as TokenResponseScheme
-from app.api.v1.schemes import UserLogin as UserLoginScheme
-from app.api.v1.schemes import UserRegistration as UserRegistrationScheme
-from app.core.auth import jwt_auth
-from app.core.database import db
-from app.core.database.models import User
+from backend import crud
+from backend.api.v1.exceptions import ErrorException
+from backend.api.v1.schemes import ErrorResponse as ErrorResponseScheme
+from backend.api.v1.schemes import SuccessResponse as SuccessResponseScheme
+from backend.api.v1.schemes import TokenResponse as TokenResponseScheme
+from backend.api.v1.schemes import UserLogin as UserLoginScheme
+from backend.api.v1.schemes import UserRegistration as UserRegistrationScheme
+from backend.core.auth import jwt_auth
+from backend.core.database import db
+from backend.core.database.models import User
 
 router: APIRouter = APIRouter(prefix="/auth")
 

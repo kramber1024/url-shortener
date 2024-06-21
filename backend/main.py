@@ -7,14 +7,14 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
-from app.api import apis_router
-from app.api.v1.exceptions import ErrorException
-from app.api.v1.handlers import (
+from backend.api import apis_router
+from backend.api.v1.exceptions import ErrorException
+from backend.api.v1.handlers import (
     error_exception_handler,
     server_error_exception_handler,
     validation_exception_handler,
 )
-from app.core.database import db
+from backend.core.database import db
 
 app: FastAPI = FastAPI()
 templates: Jinja2Templates = Jinja2Templates(directory="templates")

@@ -10,8 +10,8 @@ from sqlalchemy.ext.asyncio import (
     create_async_engine,
 )
 
-from app.core.configs import settings
-from app.core.database.models import Base
+from backend.core.configs import settings
+from backend.core.database.models import Base
 
 
 class Database:

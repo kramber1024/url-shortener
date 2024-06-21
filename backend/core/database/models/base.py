@@ -1,7 +1,7 @@
 from sqlalchemy import Integer
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
-from app.core.database.generator import gen
+from backend.core.database.generator import gen
 
 
 class Base(DeclarativeBase):

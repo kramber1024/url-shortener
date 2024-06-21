@@ -1,8 +1,8 @@
 import pytest
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app import crud
-from app.core.database.models import User
+from backend import crud
+from backend.core.database.models import User
 from tests import utils
 
 

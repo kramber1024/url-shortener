@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.database.models import User
+from backend.core.database.models import User
 
 if TYPE_CHECKING:
     from sqlalchemy.engine import Result

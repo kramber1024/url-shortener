@@ -9,10 +9,10 @@ from fastapi.security import (
 )
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app import crud
-from app.core.configs import settings
-from app.core.database import db
-from app.core.database.models import User
+from backend import crud
+from backend.core.configs import settings
+from backend.core.database import db
+from backend.core.database.models import User
 
 http_bearer: HTTPBearer = HTTPBearer(
     auto_error=False,
@@ -147,7 +147,7 @@ async def get_current_user(
         Depends(http_bearer),
     ],
 ) -> User:
-    from app.api.v1.exceptions import ErrorException
+    from backend.api.v1.exceptions import ErrorException
 
     if access_token is None:
         raise ErrorException(
@@ -193,7 +193,7 @@ async def get_refreshed_user(
         Depends(http_bearer),
     ],
 ) -> User:
-    from app.api.v1.exceptions import ErrorException
+    from backend.api.v1.exceptions import ErrorException
 
     if refresh_token is None:
         raise ErrorException(

@@ -6,11 +6,11 @@ from httpx import ASGITransport, AsyncClient
 from sqlalchemy import delete
 from sqlalchemy.ext.asyncio import AsyncSession, async_scoped_session
 
-from app.core.configs import test_settings
-from app.core.database import Database
-from app.core.database import db as database
-from app.core.database.models import User
-from app.main import app
+from backend.core.configs import test_settings
+from backend.core.database import Database
+from backend.core.database import db as database
+from backend.core.database.models import User
+from backend.main import app
 
 
 @pytest_asyncio.fixture(scope="session")

@@ -2,7 +2,7 @@ from typing import Annotated
 
 from pydantic import BaseModel, EmailStr, Field
 
-from app.core.database.models import User as UserModel
+from backend.core.database.models import User as UserModel
 
 
 class Error(BaseModel):

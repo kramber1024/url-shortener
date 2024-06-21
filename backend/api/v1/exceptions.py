@@ -1,7 +1,7 @@
 from fastapi import HTTPException
 
-from app.api.v1.schemes import Error as ErrorScheme
-from app.api.v1.schemes import ErrorResponse as ErrorResponseScheme
+from backend.api.v1.schemes import Error as ErrorScheme
+from backend.api.v1.schemes import ErrorResponse as ErrorResponseScheme
 
 
 class ErrorException(HTTPException):

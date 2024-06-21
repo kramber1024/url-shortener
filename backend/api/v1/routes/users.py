@@ -3,10 +3,10 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, status
 from fastapi.responses import JSONResponse
 
-from app.api.v1.schemes import ErrorResponse as ErrorResponseScheme
-from app.api.v1.schemes import User as UserScheme
-from app.core.auth import jwt_auth
-from app.core.database.models import User
+from backend.api.v1.schemes import ErrorResponse as ErrorResponseScheme
+from backend.api.v1.schemes import User as UserScheme
+from backend.core.auth import jwt_auth
+from backend.core.database.models import User
 
 router: APIRouter = APIRouter(
     prefix="/users",

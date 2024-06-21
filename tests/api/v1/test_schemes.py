@@ -1,5 +1,5 @@
-from app.api.v1.schemes import User as UserScheme
-from app.core.database.models import User as UserModel
+from backend.api.v1.schemes import User as UserScheme
+from backend.core.database.models import User as UserModel
 
 
 def test_user_scheme() -> None:

@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from app.core.configs.settings import (
+from backend.core.configs.settings import (
     AppSettings,
     DatabaseSettings,
     JWTSettings,
