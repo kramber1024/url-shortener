@@ -17,7 +17,7 @@ from backend.api.v1.handlers import (
 from backend.core.database import db
 
 app: FastAPI = FastAPI()
-templates: Jinja2Templates = Jinja2Templates(directory="frontend/templates")
+templates: Jinja2Templates = Jinja2Templates(directory="frontend")
 app.mount("/static", StaticFiles(directory="frontend/static"), name="static")
 
 app.include_router(apis_router)
@@ -30,7 +30,7 @@ app.add_exception_handler(Exception, server_error_exception_handler)
 @app.get("/register", response_class=HTMLResponse)
 async def regsiter(request: Request) -> HTMLResponse:
     return templates.TemplateResponse(
-        "register.html",
+        "templates/register.html",
         {
             "request": request,
             "title": "Register",
@@ -41,7 +41,13 @@ async def regsiter(request: Request) -> HTMLResponse:
 async def main() -> None:
     await db.create_db(hard_rest=False)
 
-    uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
+    uvicorn.run(
+        "main:app",
+        host="127.0.0.1",
+        port=8000,
+        reload=True,
+        reload_includes=["*.html", "*.css", "*js"],
+    )
 
 
 if __name__ == "__main__":
