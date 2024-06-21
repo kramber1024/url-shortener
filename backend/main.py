@@ -1,7 +1,7 @@
 import asyncio
 
 import uvicorn
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
@@ -17,14 +17,25 @@ from backend.api.v1.handlers import (
 from backend.core.database import db
 
 app: FastAPI = FastAPI()
-templates: Jinja2Templates = Jinja2Templates(directory="templates")
-app.mount("/static", StaticFiles(directory="static"), name="static")
+templates: Jinja2Templates = Jinja2Templates(directory="frontend/templates")
+app.mount("/static", StaticFiles(directory="frontend/static"), name="static")
 
 app.include_router(apis_router)
 
 app.add_exception_handler(RequestValidationError, validation_exception_handler)
 app.add_exception_handler(ErrorException, error_exception_handler)
 app.add_exception_handler(Exception, server_error_exception_handler)
+
+
+@app.get("/register", response_class=HTMLResponse)
+async def regsiter(request: Request) -> HTMLResponse:
+    return templates.TemplateResponse(
+        "register.html",
+        {
+            "request": request,
+            "title": "Register",
+        },
+    )
 
 
 async def main() -> None:
