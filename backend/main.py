@@ -14,6 +14,7 @@ from backend.api.v1.handlers import (
     server_error_exception_handler,
     validation_exception_handler,
 )
+from backend.core.configs import settings
 from backend.core.database import db
 
 app: FastAPI = FastAPI()
@@ -34,6 +35,7 @@ async def regsiter(request: Request) -> HTMLResponse:
         {
             "request": request,
             "title": "Register",
+            "brand_name": settings.app.NAME,
         },
     )
 
