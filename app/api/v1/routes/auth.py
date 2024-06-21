@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Annotated
+from typing import Annotated
 
 from fastapi import APIRouter, Body, Depends, status
 from fastapi.responses import JSONResponse
@@ -13,9 +13,7 @@ from app.api.v1.schemes import UserLogin as UserLoginScheme
 from app.api.v1.schemes import UserRegistration as UserRegistrationScheme
 from app.core.auth import jwt_auth
 from app.core.database import db
-
-if TYPE_CHECKING:
-    from app.core.database.models import User
+from app.core.database.models import User
 
 router: APIRouter = APIRouter(prefix="/auth")
 
@@ -222,6 +220,82 @@ async def authenticate_user(
             message="The email or password is incorrect.",
             status=status.HTTP_401_UNAUTHORIZED,
         )
+
+    token_response: TokenResponseScheme = TokenResponseScheme(
+        access_token=jwt_auth.generate_access_token(user.id, user.name, user.email),
+        refresh_token=jwt_auth.generate_refresh_token(user.id, user.name, user.email),
+    )
+
+    return JSONResponse(
+        content=token_response.model_dump(),
+        status_code=status.HTTP_200_OK,
+    )
+
+
+@router.post(
+    "/refresh",
+    summary="Refresh access token",
+    description="Refreshes the access token using the refresh token.",
+    status_code=200,
+    responses={
+        200: {
+            "description": "Tokens refreshed successfully.",
+            "model": TokenResponseScheme,
+            "content": {
+                "application/json": {
+                    "example": {
+                        "access_token": (
+                            "eyJhbGciOiJIUzI1NiIsInR5cCI6ImFjY2VzcyJ9."
+                            "eyJzdWIiOiItMSIsIm5hbWUiOiJPbGVnIiwiZW1ha"
+                            "WwiOiJpbnZhbGlkIGVtYWlsIHRsZCIsImV4cCI6MT"
+                            "cxODI5MjM4OSwiaWF0IjoxNzE4Mjg4Nzg5fQ.Rdg3"
+                            "SUU62lvXQJV0gIwT_XHPpj4P5sG4WOskMs6kN5I"
+                        ),
+                        "refresh_token": (
+                            "eyJhbGciOiJIUzI1NiIsInR5cCI6InJlZnJlc2gifQ."
+                            "eyJzdWIiOiItMSIsIm5hbWUiOiJPbGVnIiwiZW1haWw"
+                            "iOiJpbnZhbGlkIGVtYWlsIHRsZCIsImV4cCI6MTcyMD"
+                            "g4MDc4OSwiaWF0IjoxNzE4Mjg4Nzg5fQ.yF-PoA1vRv"
+                            "nSJeXUro0Uu2eN7qM7kjFzGN93OeIck3Y"
+                        ),
+                    },
+                },
+            },
+        },
+        400: {
+            "description": "Provided token is not valid.",
+            "model": ErrorResponseScheme,
+            "content": {
+                "application/json": {
+                    "example": {
+                        "errors": [],
+                        "message": "Invalid token.",
+                        "status": 400,
+                    },
+                },
+            },
+        },
+        401: {
+            "description": "Authorization required. Provide a valid token in headers.",
+            "model": ErrorResponseScheme,
+            "content": {
+                "application/json": {
+                    "example": {
+                        "errors": [],
+                        "message": "Authorization required.",
+                        "status": 401,
+                    },
+                },
+            },
+        },
+    },
+)
+async def refresh_user(
+    user: Annotated[
+        User,
+        Depends(jwt_auth.get_refreshed_user),
+    ],
+) -> JSONResponse:
 
     token_response: TokenResponseScheme = TokenResponseScheme(
         access_token=jwt_auth.generate_access_token(user.id, user.name, user.email),
