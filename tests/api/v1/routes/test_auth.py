@@ -6,6 +6,7 @@ from httpx import AsyncClient
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.auth import jwt_auth
 from app.core.database.models import User
 from tests import utils
 
@@ -524,3 +525,146 @@ async def test_authenticate_user_empty(
     assert utils.error_type_exists(response.json(), "password")
     assert response.json().get("message", "") != ""
     assert response.json().get("status", 0) == status.HTTP_422_UNPROCESSABLE_ENTITY
+
+
+@pytest.mark.asyncio()
+async def test_refresh_user(
+    session: AsyncSession,
+    client: AsyncClient,
+) -> None:
+
+    name: str = "Mrs. Alyssa Lueilwitz"
+    email: str = "Maia_Osinski@hotmail.com"
+    password: str = "G9rA8h3u5XUoqxn"
+
+    user: User = User(
+        name=name,
+        email=email,
+        password=password,
+        salt_rounds=4,
+    )
+
+    session.add(user)
+    await session.commit()
+    await session.refresh(user)
+
+    refresh_token: str = jwt_auth.generate_refresh_token(
+        user_id=user.id,
+        name=user.name,
+        email=user.email,
+    )
+
+    response: Response = await client.post(
+        "api/v1/auth/refresh",
+        headers={"Authorization": f"Bearer {refresh_token}"},
+    )
+
+    assert response.status_code == status.HTTP_200_OK
+    assert len(response.json()) == len(["access_token", "refresh_token"])
+    assert response.json().get("access_token", "") != ""
+    assert response.json().get("refresh_token", "") != ""
+    assert user
+    assert isinstance(user, User)
+    assert isinstance(user.id, int)
+    assert user.name == name
+    assert user.email == utils.format_email(email)
+    assert user.password != password
+    assert user.is_password_valid(password)
+    assert user.active
+
+
+@pytest.mark.asyncio()
+async def test_refresh_user_invalid_token(
+    client: AsyncClient,
+) -> None:
+
+    refresh_token: str = (
+        "wnce8OakjfsPgNSWvlZosGgSWkXPhR."
+        "19Q5n3vX04pJorG6Ps2LYzrmZr1Xdc."
+        "fO43J2Amatx31wE9iLUDFcxm08KPva"
+    )
+
+    response: Response = await client.post(
+        "api/v1/auth/refresh",
+        headers={"Authorization": f"Bearer {refresh_token}"},
+    )
+
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert len(response.json().get("errors", "")) == 0
+    assert response.json().get("message", "") != ""
+    assert response.json().get("status", 0) == status.HTTP_400_BAD_REQUEST
+    assert response.json().get("access_token", "") == ""
+    assert response.json().get("refresh_token", "") == ""
+
+
+@pytest.mark.asyncio()
+async def test_refresh_user_access_token(
+    session: AsyncSession,
+    client: AsyncClient,
+) -> None:
+
+    name: str = "Jermaine Howe"
+    email: str = "Riley.Wilkinson91@yahoo.com"
+    password: str = "NIucXOsGNhCXRkI"
+
+    user: User = User(
+        name=name,
+        email=email,
+        password=password,
+        salt_rounds=4,
+    )
+
+    session.add(user)
+    await session.commit()
+    await session.refresh(user)
+
+    access_token: str = jwt_auth.generate_access_token(
+        user_id=user.id,
+        name=user.name,
+        email=user.email,
+    )
+
+    response: Response = await client.post(
+        "api/v1/auth/refresh",
+        headers={"Authorization": f"Bearer {access_token}"},
+    )
+
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert len(response.json().get("errors", "")) == 0
+    assert response.json().get("message", "") != ""
+    assert response.json().get("status", 0) == status.HTTP_400_BAD_REQUEST
+    assert response.json().get("access_token", "") == ""
+    assert response.json().get("refresh_token", "") == ""
+
+
+@pytest.mark.asyncio()
+async def test_refresh_user_no_authorization(
+    session: AsyncSession,
+    client: AsyncClient,
+) -> None:
+
+    name: str = "Mrs. Geneva Kemmer"
+    email: str = "Leonor60@gmail.com"
+    password: str = "s8g_xP1R6a56y1C"
+
+    user: User = User(
+        name=name,
+        email=email,
+        password=password,
+        salt_rounds=4,
+    )
+
+    session.add(user)
+    await session.commit()
+    await session.refresh(user)
+
+    response: Response = await client.post(
+        "api/v1/auth/refresh",
+    )
+
+    assert response.status_code == status.HTTP_401_UNAUTHORIZED
+    assert len(response.json().get("errors", "")) == 0
+    assert response.json().get("message", "") != ""
+    assert response.json().get("status", 0) == status.HTTP_401_UNAUTHORIZED
+    assert response.json().get("access_token", "") == ""
+    assert response.json().get("refresh_token", "") == ""
