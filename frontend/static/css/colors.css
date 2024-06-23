@@ -1,3 +1,13 @@
+body {
+    --brand: #1463fa;
+    --brand-font-color: #ffffff;
+}
+
 body[data-theme="light"] {
-    --my-color: #123456;
+    --background: #ffffff;
+    --background-font-color: #1A1919;
+    --border-color: #e4e4e7;
+    --placeholder-font-color: #bebebe;
+    --input-background: #fafafa;
+    --b: #394140;
 }
