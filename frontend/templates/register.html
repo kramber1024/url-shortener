@@ -5,11 +5,37 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1, maximum-scale=1, user-scalable=no">
 	<link rel="stylesheet" href="static/css/register.css">
   <link rel="stylesheet" href="static/css/colors.css">
-  <title>{{ title }}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+  <title>{{ brand_name }} - Sign up</title>
 </head>
 <body data-theme="light">
 	<div class="fullpage">
-		hi
+		<nav class="navbar-container">
+      <div class="navbar">
+        <a class="navbar__brand-link" href="/">
+          <div class="brand-link__logo-wrapper">
+            {% include "static/svg/logo.svg" %}
+          </div>
+          <h1 class="brand-link__brand-name no-select">{{ brand_name }}</h1>
+        </a>
+      </div>
+    </nav>
+    <main class="content">
+      <div class="dialog">
+        <h2 class="dialog__title">Sign up</h2>
+        <form>
+          <div class="dialog__form">
+            <label for="name">Name</label>
+            <input id="name" class="form__input" type="text" placeholder="John Smith">
+            <label for="email">Email</label>
+            <input id="email" class="form__input" type="email" placeholder="name@email.tld">
+            <label for="password">Password</label>
+            <input id="password" class="form__input" type="password" placeholder="••••••••">
+            <button class="form__button" type="submit">Create Account</button>
+          </div>
+        </form>
+      </div>
+    </main>
 	</div>
 </body>
 </html>
