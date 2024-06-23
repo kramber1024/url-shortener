@@ -26,12 +26,16 @@
         <form>
           <div class="dialog__form">
             <label for="name">Name</label>
-            <input id="name" class="form__input" type="text" placeholder="John Smith">
+            <input id="name" class="form__input" type="text" placeholder="John Smith" autocomplete="name">
             <label for="email">Email</label>
-            <input id="email" class="form__input" type="email" placeholder="name@email.tld">
+            <input id="email" class="form__input" type="email" placeholder="name@email.tld" autocomplete="email">
             <label for="password">Password</label>
             <input id="password" class="form__input" type="password" placeholder="••••••••">
-            <button class="form__button" type="submit">Create Account</button>
+            <div class="form__terms-container">
+              <input id="terms" type="checkbox" class="terms-container__checkbox">
+              <label for="terms">I agree to the <a href="/terms">terms of use</a></label>
+            </div>
+            <button class="form__button" type="">Create Account</button>
           </div>
         </form>
       </div>
