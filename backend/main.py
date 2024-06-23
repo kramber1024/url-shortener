@@ -34,7 +34,6 @@ async def regsiter(request: Request) -> HTMLResponse:
         "templates/register.html",
         {
             "request": request,
-            "title": "Register",
             "brand_name": settings.app.NAME,
         },
     )
