@@ -168,12 +168,15 @@ label.error {
     color: var(--error-font-color);
 }
 
+label.error[for="checkbox"] {
+    margin-top: -2px;
+}
+
 .form__terms-container {
     display: flex;
     flex-direction: row;
     align-items: center;
     margin-top: 20px;
-    margin-bottom: 14px;
 }
 
 .terms-container__checkbox[type="checkbox"]:checked,
@@ -232,20 +235,20 @@ label.error {
     opacity: 1;
 }
 
-label[for="terms"] {
+label[for="checkbox"] {
     font-size: 0.875rem;
     line-height: 1.25rem;
     font-weight: 500;
 }
 
-label[for="terms"] > a,
+label[for="checkbox"] > a,
 .footer > p > a {
     text-decoration: none;
     color: var(--brand);
     transition: opacity 0.5s ease;
 }
 
-label[for="terms"] > a:hover,
+label[for="checkbox"] > a:hover,
 .footer > p > a:hover {
     opacity: 0.8;
 }
@@ -253,6 +256,7 @@ label[for="terms"] > a:hover,
 .form__button {
     width: 340px;
     height: 48px;
+    margin-top: 14px;
     padding: 14px 18px;
     font-size: 0.9375rem;
     line-height: 1.125rem;
