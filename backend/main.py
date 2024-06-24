@@ -28,10 +28,10 @@ app.add_exception_handler(ErrorException, error_exception_handler)
 app.add_exception_handler(Exception, server_error_exception_handler)
 
 
-@app.get("/register", response_class=HTMLResponse)
+@app.get("/signup", response_class=HTMLResponse)
 async def regsiter(request: Request) -> HTMLResponse:
     return templates.TemplateResponse(
-        "templates/register.html",
+        "templates/signup.html",
         {
             "request": request,
             "brand_name": settings.app.NAME,
