@@ -1,4 +1,4 @@
-from typing import Annotated
+from typing import Annotated, Literal
 
 from pydantic import BaseModel, EmailStr, Field
 
@@ -98,6 +98,13 @@ class UserRegistration(BaseModel):
             max_length=256,
             description="Used for authentication.",
             examples=["My$uper$ecretPa$$word"],
+        ),
+    ]
+    terms: Annotated[
+        Literal["on"],
+        Field(
+            description="User agreement to terms of use.",
+            examples=["on"],
         ),
     ]
 
