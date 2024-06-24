@@ -41,6 +41,27 @@ function hideError(type) {
     document.getElementById(`${type}-error`)?.remove();
 }
 
+/**
+ * @returns {void}
+ */
+function startLoading() {
+    const loaderDiv = document.createElement("div");
+    loaderDiv.className = "loader";
+    const button = document.querySelector("button") ?? HTMLButtonElement.prototype;
+    button.disabled = true
+    button.textContent = "";
+    button.appendChild(loaderDiv);
+}
+
+/**
+ * @returns {void}
+ */
+function stopLoading() {
+    const button = document.querySelector("button") ?? HTMLButtonElement.prototype;
+    button.disabled = false;
+    button.textContent = "Create Account";
+}
+
 const form = document.querySelector("form");
 const nameInput = document.getElementById("name");
 const emailInput = document.getElementById("email");
@@ -104,8 +125,8 @@ form?.addEventListener("submit", async (e) => {
         return;
     }
 
+    startLoading();
     const body = JSON.stringify({ name, email, password, terms });
-
     let response = await fetch("/api/v1/auth/register", {
         method: "POST",
         headers: {
@@ -131,5 +152,6 @@ form?.addEventListener("submit", async (e) => {
     } else if (response.status === 409) {
         showError("email", emailInput?.getAttribute("data-msg-conflict") ?? "");
     }
-    // 201
+    // 201 logic here
+    stopLoading();
 });
