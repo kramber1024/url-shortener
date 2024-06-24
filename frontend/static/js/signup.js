@@ -55,7 +55,7 @@ form?.addEventListener("submit", async (e) => {
     const name = formData.get("name")?.toString().trim();
     const email = formData.get("email")?.toString().trim();
     const password = formData.get("password")?.toString();
-    const checkbox = formData.get("checkbox")?.toString() ? true : false;
+    const terms = formData.get("checkbox")?.toString() ? "on" : undefined;
 
     if (!name) {
         isFormValid = false;
@@ -93,7 +93,7 @@ form?.addEventListener("submit", async (e) => {
         hideError("password");
     }
 
-    if (!checkbox) {
+    if (!terms) {
         isFormValid = false;
         showError("checkbox", checkboxInput?.getAttribute("data-msg-required") ?? "");
     } else {
@@ -104,5 +104,32 @@ form?.addEventListener("submit", async (e) => {
         return;
     }
 
-    
+    const body = JSON.stringify({ name, email, password, terms });
+
+    let response = await fetch("/api/v1/auth/register", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body,
+    });
+    const result = await response.json();
+    /**
+     * @typedef {Object} Error
+     * @property {string} type
+     * @property {string} message
+     */
+    /** @type {Error[]} */
+    const errors = result.errors;
+
+    if (response.status === 422) {
+        errors.forEach(error => {
+            if (error.type === "email") {
+                showError("email", emailInput?.getAttribute("data-msg-invalid") ?? "");
+            }
+        });
+    } else if (response.status === 409) {
+        showError("email", emailInput?.getAttribute("data-msg-conflict") ?? "");
+    }
+    // 201
 });
