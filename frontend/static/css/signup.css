@@ -160,87 +160,63 @@ label[for="password"] {
     margin-bottom: 20px;
 }
 
-.terms-container__checkbox, 
-.terms-container__checkbox *, 
-.terms-container__checkbox *::before, 
-.terms-container__checkbox *::after {
-    -webkit-box-sizing: border-box;
-    box-sizing: border-box;
-}
-
-.terms-container__checkbox {
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-    width: 20px;
-    height: 20px;
-    border-radius: 7px;
-    background: var(--input-background);
-    border: 1px solid var(--border-color);
-    -webkit-transition: all 0.3s;
-    -o-transition: all 0.3s;
-    transition: all 0.3s;
-    cursor: pointer;
-    position: relative;
-}
-
-.terms-container__checkbox::after {
-    content: "";
+.terms-container__checkbox[type="checkbox"]:checked,
+.terms-container__checkbox[type="checkbox"]:not(:checked) {
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    -webkit-box-shadow: 0 0 0 calc(20 / 2.5) var(--brand);
-    box-shadow: 0 0 0 calc(20 / 2.5) var(--brand);
-    border-radius: inherit;
-    opacity: 0;
-    -webkit-transition: all 0.5s cubic-bezier(0.12, 0.4, 0.29, 1.46);
-    -o-transition: all 0.5s cubic-bezier(0.12, 0.4, 0.29, 1.46);
-    transition: all 0.5s cubic-bezier(0.12, 0.4, 0.29, 1.46);
+    left: -9999px;
 }
 
-.terms-container__checkbox::before {
-    top: 40%;
-    left: 50%;
-    content: "";
+.terms-container__checkbox[type="checkbox"]:checked + label,
+.terms-container__checkbox[type="checkbox"]:not(:checked) + label {
+    display: inline-block;
+	position: relative;
+    height: 28px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    padding: 2px 0px 0px 32px;
+	cursor: pointer;
+	background-color: transparent;
+	-webkit-transition: all 0.5s ease;
+	transition: all 0.5s ease;
+}
+
+.terms-container__checkbox[type="checkbox"]:checked + label:before,
+.terms-container__checkbox[type="checkbox"]:not(:checked) + label:before {
     position: absolute;
-    width: 4px;
-    height: 7px;
-    border-right: 2px solid var(--border-color);
-    border-bottom: 2px solid var(--border-color);
-    -webkit-transform: translate(-50%, -50%) rotate(45deg) scale(0);
-    -ms-transform: translate(-50%, -50%) rotate(45deg) scale(0);
-    transform: translate(-50%, -50%) rotate(45deg) scale(0);
+    top: 1px;
+    left: -4px;
+    width: 28px;
+    height: 28px;
+    content: '';
+	background-repeat: no-repeat;
+	background-position: left center;
+	background-image: url('../svg/checkbox.svg');
+}
+
+.terms-container__checkbox[type="checkbox"]:checked + label:after,
+.terms-container__checkbox[type="checkbox"]:not(:checked) + label:after {
+    position: absolute;
+    top: -2px;
+    left: 0px;
+    width: 28px;
+    height: 28px;
+    content: '';
+	background-repeat: no-repeat;
+	background-position: left center;
+	background-image: url('../svg/checkbox-active.svg');
+    -webkit-transition: all 0.5s ease;
+    transition: all 0.3s ease;
+}
+
+.terms-container__checkbox[type="checkbox"]:not(:checked) + label:after {
     opacity: 0;
-    -webkit-transition: all 0.1s cubic-bezier(0.71, -0.46, 0.88, 0.6), opacity 0.1s;
-    -o-transition: all 0.1s cubic-bezier(0.71, -0.46, 0.88, 0.6), opacity 0.1s;
-    transition: all 0.1s cubic-bezier(0.71, -0.46, 0.88, 0.6), opacity 0.1s;
 }
 
-.terms-container__checkbox:checked {
-    background: var(--brand);
-    border-color: transparent;
-}
-
-.terms-container__checkbox:checked::before {
-    opacity: 1;
-    -webkit-transform: translate(-50%, -50%) rotate(45deg) scale(1.2);
-    -ms-transform: translate(-50%, -50%) rotate(45deg) scale(1.2);
-    transform: translate(-50%, -50%) rotate(45deg) scale(1.2);
-}
-
-.terms-container__checkbox:active:not(:checked)::after {
-    -webkit-transition: none;
-    -o-transition: none;
-    -webkit-box-shadow: none;
-    box-shadow: none;
-    transition: none;
+.terms-container__checkbox[type="checkbox"]:checked + label:after {
     opacity: 1;
 }
 
 label[for="terms"] {
-    margin-left: 16px;
     font-size: 0.875rem;
     line-height: 1.25rem;
     font-weight: 500;
