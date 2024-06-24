@@ -24,11 +24,13 @@ async def test_register_user(
     name: str = "Vernon Barton"
     email: str = "Alison_Rempel36@YAHOO.com"
     password: str = "2RFTO5_Wx3aFDni"
+    terms: str = "on"
 
     json: dict[str, str] = {
         "name": name,
         "email": email,
         "password": password,
+        "terms": terms,
     }
 
     response: Response = await client.post(
@@ -64,11 +66,13 @@ async def test_register_user_uppercase(
     name: str = "IDELLA_UPTON376"
     email: str = "PEARLIE8@EXAMPLE.NET"
     password: str = "MAMMMM_T3QJZ123"
+    terms: str = "on"
 
     json: dict[str, str] = {
         "name": name,
         "email": email,
         "password": password,
+        "terms": terms,
     }
 
     response: Response = await client.post(
@@ -104,6 +108,7 @@ async def test_register_user_email_conflict(
     name: str = "Julian49"
     email: str = "Alisha_Borer@hotmail.com"
     password: str = "2ePl_ncWd_Ea0Vg"
+    terms: str = "on"
 
     user: User = User(
         name=name,
@@ -120,6 +125,7 @@ async def test_register_user_email_conflict(
         "name": name,
         "email": email,
         "password": password,
+        "terms": terms,
     }
 
     response: Response = await client.post(
@@ -150,11 +156,13 @@ async def test_register_user_invalid_name(
     name: str = "12"
     email: str = "Leta.Hartmann@hotmail.com"
     password: str = "eSB7Y6DxFFFkckZ"
+    terms: str = "on"
 
     json: dict[str, str] = {
         "name": name,
         "email": email,
         "password": password,
+        "terms": terms,
     }
 
     response: Response = await client.post(
@@ -183,11 +191,13 @@ async def test_register_user_invalid_email(
     name: str = "Curtis Lehner"
     email: str = "mymail.com"
     password: str = "TIB5SMrQIfQx6Jo"
+    terms: str = "on"
 
     json: dict[str, str] = {
         "name": name,
         "email": email,
         "password": password,
+        "terms": terms,
     }
 
     response: Response = await client.post(
@@ -211,11 +221,13 @@ async def test_register_user_invalid_password(
     name: str = "Aglae_Upton"
     email: str = "Kamryn65@example.org"
     password: str = "1234567"
+    terms: str = "on"
 
     json: dict[str, str] = {
         "name": name,
         "email": email,
         "password": password,
+        "terms": terms,
     }
 
     response: Response = await client.post(
@@ -237,6 +249,42 @@ async def test_register_user_invalid_password(
 
 
 @pytest.mark.asyncio()
+async def test_register_user_invalid_terms(
+    session: AsyncSession,
+    client: AsyncClient,
+) -> None:
+
+    name: str = "Sigurd.Douglas57"
+    email: str = "Raheem48@hotmail.com"
+    password: str = "3upLT0fNnAyB0E8"
+    terms: str = "i_dont_accept_these_terms"
+
+    json: dict[str, str] = {
+        "name": name,
+        "email": email,
+        "password": password,
+        "terms": terms,
+    }
+
+    response: Response = await client.post(
+        "api/v1/auth/register",
+        json=json,
+    )
+
+    result: Result[tuple[User]] = await session.execute(
+        select(User).filter(User.email == utils.format_email(email)),
+    )
+    user: User | None = result.scalars().first()
+
+    assert user is None
+    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+    assert len(response.json().get("errors", "")) == 1
+    assert utils.error_type_exists(response.json(), "terms")
+    assert response.json().get("message", "") != ""
+    assert response.json().get("status", 0) == status.HTTP_422_UNPROCESSABLE_ENTITY
+
+
+@pytest.mark.asyncio()
 async def test_register_user_invalid_all(
     client: AsyncClient,
 ) -> None:
@@ -244,11 +292,13 @@ async def test_register_user_invalid_all(
     name: str = "12"
     email: str = "@example.org"
     password: str = "1234567"
+    terms: str = "i_dont_agree"
 
     json: dict[str, str] = {
         "name": name,
         "email": email,
         "password": password,
+        "terms": terms,
     }
 
     response: Response = await client.post(
@@ -257,10 +307,13 @@ async def test_register_user_invalid_all(
     )
 
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
-    assert len(response.json().get("errors", "")) == len(["name", "email", "password"])
+    assert len(response.json().get("errors", "")) == len(
+        ["name", "email", "password", "terms"],
+    )
     assert utils.error_type_exists(response.json(), "name")
     assert utils.error_type_exists(response.json(), "email")
     assert utils.error_type_exists(response.json(), "password")
+    assert utils.error_type_exists(response.json(), "terms")
     assert response.json().get("message", "") != ""
     assert response.json().get("status", 0) == status.HTTP_422_UNPROCESSABLE_ENTITY
 
@@ -278,10 +331,13 @@ async def test_register_user_empty(
     )
 
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
-    assert len(response.json().get("errors", "")) == len(["name", "email", "password"])
+    assert len(response.json().get("errors", "")) == len(
+        ["name", "email", "password", "terms"],
+    )
     assert utils.error_type_exists(response.json(), "name")
     assert utils.error_type_exists(response.json(), "email")
     assert utils.error_type_exists(response.json(), "password")
+    assert utils.error_type_exists(response.json(), "terms")
     assert response.json().get("message", "") != ""
     assert response.json().get("status", 0) == status.HTTP_422_UNPROCESSABLE_ENTITY
 
