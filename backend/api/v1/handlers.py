@@ -19,6 +19,7 @@ async def validation_exception_handler(
         "missing": "The {} field is required.",
         "string_type": "The {} should be a string.",
         "json_invalid":  "Request should be a valid JSON. ",
+        "literal_error": "The {} value is invalid.",
     }
     errors: list[ErrorScheme] = []
 
