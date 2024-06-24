@@ -83,6 +83,7 @@ body {
 
 .content {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     flex: 1;
@@ -230,13 +231,15 @@ label[for="terms"] {
     font-weight: 500;
 }
 
-label[for="terms"] > a[href="/terms"] {
+label[for="terms"] > a,
+.footer > p > a {
     text-decoration: none;
     color: var(--brand);
     transition: opacity 0.5s ease;
 }
 
-label[for="terms"] > a[href="/terms"]:hover {
+label[for="terms"] > a:hover,
+.footer > p > a:hover {
     opacity: 0.8;
 }
 
@@ -263,4 +266,13 @@ label[for="terms"] > a[href="/terms"]:hover {
 
 .form__button:active {
     scale: 0.98;
+}
+
+.footer {
+    margin-top: 40px;
+    font-size: 0.9rem;
+    line-height: 1rem;
+    font-weight: 500;
+    text-decoration: none;
+    color: var(--background-secondary-font-color);
 }

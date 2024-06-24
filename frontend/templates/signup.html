@@ -23,7 +23,7 @@
     <main class="content">
       <div class="dialog">
         <h2 class="dialog__title">Sign up</h2>
-        <form>
+        <form onsubmit="return false" novalidate="novalidate">
           <div class="dialog__form">
             <label for="name">Name</label>
             <input id="name" class="form__input" type="text" placeholder="John Smith" autocomplete="name">
@@ -38,6 +38,9 @@
             <button class="form__button" type="">Create Account</button>
           </div>
         </form>
+      </div>
+      <div class="footer">
+        <p>Already have an account? <a href="/login">Login</a></p>
       </div>
     </main>
 	</div>
