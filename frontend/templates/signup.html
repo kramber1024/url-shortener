@@ -28,13 +28,14 @@
     <main class="content">
       <div class="dialog">
         <h2 class="dialog__title">Sign up</h2>
-        <form onsubmit="return false" novalidate="novalidate">
+        <form novalidate="novalidate" target="_self">
           <div class="dialog__form">
             <label for="name">Name</label>
             <input
               id="name"
-              class="form__input"
+              name="name"
               type="text"
+              class="form__input"
               placeholder="John Smith"
               autocomplete="name"
               data-msg-required="Please enter your name"
@@ -45,8 +46,9 @@
             <label for="email">Email</label>
             <input
               id="email"
-              class="form__input"
+              name="email"
               type="email"
+              class="form__input"
               placeholder="name@email.tld"
               autocomplete="email"
               data-msg-required="Please enter your email address"
@@ -56,8 +58,9 @@
             <label for="password">Password</label>
             <input
               id="password"
-              class="form__input"
+              name="password"
               type="password"
+              class="form__input"
               placeholder="••••••••"
               autocomplete="new-password"
               data-msg-required="Please enter your password"
