@@ -136,7 +136,6 @@ input.form__input:focus {
 
 .form__input[type="password"] {
     letter-spacing: 0.15rem;
-    margin-bottom: 20px;
 }
 
 .dialog__form > .form__input::placeholder,
@@ -173,6 +172,7 @@ label.error {
     display: flex;
     flex-direction: row;
     align-items: center;
+    margin-top: 20px;
     margin-bottom: 14px;
 }
 
@@ -271,8 +271,13 @@ label[for="terms"] > a:hover,
     opacity: 0.9;
 }
 
-.form__button:active {
+.form__button:active:not(:disabled) {
     scale: 0.98;
+}
+
+.form__button:disabled {
+    opacity: 0.6;
+    cursor: default;
 }
 
 .footer {
