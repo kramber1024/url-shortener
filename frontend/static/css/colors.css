@@ -7,8 +7,8 @@ body[data-theme="light"] {
     --background: #ffffff;
     --background-font-color: #1A1919;
     --background-secondary-font-color: #9a9daa;
+    --error-font-color: #ff2e2f;
     --border-color: #e4e4e7;
     --placeholder-font-color: #bebebe;
     --input-background: #fafafa;
-    --b: #394140;
 }
