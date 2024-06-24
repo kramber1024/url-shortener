@@ -254,6 +254,9 @@ label[for="checkbox"] > a:hover,
 }
 
 .form__button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     width: 340px;
     height: 48px;
     margin-top: 14px;
@@ -282,6 +285,58 @@ label[for="checkbox"] > a:hover,
 .form__button:disabled {
     opacity: 0.6;
     cursor: default;
+}
+
+.loader {
+    width: 24px;
+    height: 24px;
+    border: 4px solid var(--background);
+    border-left-color: transparent;
+    border-radius: 50%;
+    animation: spinnning 1s linear infinite;
+    -o-animation: spinnning 1s linear infinite;
+    -moz-animation: spinnning 1s linear infinite;
+    -webkit-animation: spinnning 1s linear infinite;
+}
+
+@keyframes spinnning {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+@-o-keyframes spinnning {
+    0% {
+        -o-transform: rotate(0deg);
+    }
+
+    100% {
+        -o-transform: rotate(360deg);
+    }
+}
+
+@-moz-keyframes spinnning {
+    0% {
+        -moz-transform: rotate(0deg);
+    }
+
+    100% {
+        -moz-transform: rotate(360deg);
+    }
+}
+
+@-webkit-keyframes spinnning {
+    0% {
+        -webkit-transform: rotate(0deg);
+    }
+
+    100% {
+        -webkit-transform: rotate(360deg);
+    }
 }
 
 .footer {
