@@ -26,7 +26,7 @@ body {
     display: flex;
     flex-direction: column;
     width: 100%;
-    height: 100vh;
+    height: 100svh;
     background-color: var(--background);
 }
 
@@ -257,7 +257,7 @@ label[for="checkbox"] > a:hover,
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 340px;
+    width: 100%;
     height: 48px;
     margin-top: 14px;
     padding: 14px 18px;
@@ -345,5 +345,35 @@ label[for="checkbox"] > a:hover,
     line-height: 1rem;
     font-weight: 500;
     text-decoration: none;
+    text-align: center;
     color: var(--background-secondary-font-color);
+}
+
+@media screen and (max-width: 1352px) {
+    .navbar {
+        width: 80%;
+    }
+}
+
+@media screen and (max-width: 500px) {
+    .navbar {
+        width: 100%;
+        padding: 0 12px;
+    }
+
+    .dialog {
+        box-sizing: border-box;
+        width: 100%;
+        box-shadow: unset;
+    }
+
+    .dialog__form {
+        width: 100%;
+    }
+}   
+
+@media screen and (max-width: 180px) {
+    .form__button {
+        margin-top: 38px;
+    }
 }
