@@ -42,6 +42,8 @@ function hideError(type) {
 }
 
 /**
+ * Starts the loading state by disabling the button and displaying a loader.
+ * 
  * @returns {void}
  */
 function startLoading() {
@@ -54,6 +56,8 @@ function startLoading() {
 }
 
 /**
+ * Stops the loading state and enables the button.
+ * 
  * @returns {void}
  */
 function stopLoading() {
