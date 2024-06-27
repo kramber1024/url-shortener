@@ -1,7 +1,9 @@
 /**
- * @param {"name" | "email" | "password" | "checkbox"} type 
- * @param {string} message 
- * @returns {HTMLLabelElement}
+ * Creates an error label element.
+ * 
+ * @param {"name" | "email" | "password" | "checkbox"} type The type of the input element.
+ * @param {string} message The error message to display.
+ * @returns {HTMLLabelElement} The created error label element.
  */
 function createErrorLabel(type, message) {
     const label = document.createElement("label");
@@ -13,8 +15,10 @@ function createErrorLabel(type, message) {
 }
 
 /**
- * @param {"name" | "email" | "password" | "checkbox"} type 
- * @param {string} message
+ * Displays an error message for a specific input type.
+ * 
+ * @param {"name" | "email" | "password" | "checkbox"} type The type of input field that contains errors.
+ * @param {string} message Error message to display.
  * @returns {void}
  */
 function showError(type, message) {
@@ -34,7 +38,9 @@ function showError(type, message) {
 }
 
 /**
- * @param {"name" | "email" | "password" | "checkbox"} type
+ * Hides an error message for a specific input type.
+ * 
+ * @param {"name" | "email" | "password" | "checkbox"} type The type of input field that contains errors.
  * @returns {void}
  */
 function hideError(type) {
@@ -56,7 +62,7 @@ function startLoading() {
 }
 
 /**
- * Stops the loading state and enables the button.
+ * Stops the loading state by hiding loader and enabling the button.
  * 
  * @returns {void}
  */
@@ -82,6 +88,7 @@ form?.addEventListener("submit", async (e) => {
     const password = formData.get("password")?.toString();
     const terms = formData.get("checkbox")?.toString() ? "on" : undefined;
 
+    // Check name
     if (!name) {
         isFormValid = false;
         showError("name", nameInput?.getAttribute("data-msg-required") ?? "");
@@ -95,6 +102,7 @@ form?.addEventListener("submit", async (e) => {
         hideError("name");
     }
 
+    // Check email
     if (!email) {
         isFormValid = false;
         showError("email", emailInput?.getAttribute("data-msg-required") ?? "");
@@ -105,6 +113,7 @@ form?.addEventListener("submit", async (e) => {
         hideError("email");
     }
 
+    // Check password
     if (!password) {
         isFormValid = false;
         showError("password", passwordInput?.getAttribute("data-msg-required") ?? "");
@@ -118,6 +127,7 @@ form?.addEventListener("submit", async (e) => {
         hideError("password");
     }
 
+    // Check terms
     if (!terms) {
         isFormValid = false;
         showError("checkbox", checkboxInput?.getAttribute("data-msg-required") ?? "");
