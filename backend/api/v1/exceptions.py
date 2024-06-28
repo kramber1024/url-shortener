@@ -4,6 +4,9 @@ from backend.api.v1.schemes import Error as ErrorScheme
 from backend.api.v1.schemes import ErrorResponse as ErrorResponseScheme
 
 
+# TODO(kramber): Improve naming of this class
+# (Error exception??????????????)
+# 000
 class ErrorException(HTTPException):
     response: dict[str, str | int | list[dict[str, str]]]
 
