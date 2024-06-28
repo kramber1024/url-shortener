@@ -1,4 +1,8 @@
 from fastapi import APIRouter, Request
+from fastapi.openapi.docs import (
+    get_redoc_html,
+    get_swagger_ui_html,
+)
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 
@@ -16,4 +20,25 @@ async def regsiter(request: Request) -> HTMLResponse:
             "request": request,
             "brand_name": settings.app.NAME,
         },
+    )
+
+# TODO(kramber): Disable /api/docs when in production
+# 000
+@router.get("/api/docs")
+async def swagger() -> HTMLResponse:
+    return get_swagger_ui_html(
+        openapi_url="/openapi.json",
+        title=settings.app.NAME + " - Swagger UI",
+        swagger_js_url="https://unpkg.com/swagger-ui-dist@5/swagger-ui-bundle.js",
+        swagger_css_url="https://unpkg.com/swagger-ui-dist@5/swagger-ui.css",
+    )
+
+# TODO(kramber): Disable /api/redoc when in production
+# 000
+@router.get("/api/redoc")
+async def redoc() -> HTMLResponse:
+    return get_redoc_html(
+        openapi_url="/openapi.json",
+        title=settings.app.NAME + " - ReDoc",
+        redoc_js_url="https://unpkg.com/redoc@next/bundles/redoc.standalone.js",
     )

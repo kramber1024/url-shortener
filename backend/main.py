@@ -15,7 +15,7 @@ from backend.api.v1.handlers import (
 from backend.core.database import db
 from backend.views import router as views_router
 
-app: FastAPI = FastAPI()
+app: FastAPI = FastAPI(docs_url=None, redoc_url=None)
 app.mount("/static", StaticFiles(directory="frontend/static"), name="static")
 app.include_router(apis_router)
 app.include_router(views_router)
