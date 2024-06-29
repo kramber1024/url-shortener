@@ -372,9 +372,10 @@ async def test_authenticate_user(
     )
 
     assert response.status_code == status.HTTP_200_OK
-    assert len(response.json().keys()) == len(["access_token", "refresh_token"])
-    assert response.json().get("access_token", "") != ""
-    assert response.json().get("refresh_token", "") != ""
+    assert response.json().get("message", "") != ""
+    assert response.json().get("status", 0) == status.HTTP_200_OK
+    assert response.cookies.get("access_token", "") != ""
+    assert response.cookies.get("refresh_token", "") != ""
 
 
 @pytest.mark.asyncio()
@@ -610,15 +611,16 @@ async def test_refresh_user(
         email=user.email,
     )
 
+    client.cookies.set("refresh_token", refresh_token)
     response: Response = await client.post(
         "api/v1/auth/refresh",
-        headers={"Authorization": f"Bearer {refresh_token}"},
     )
 
     assert response.status_code == status.HTTP_200_OK
-    assert len(response.json()) == len(["access_token", "refresh_token"])
-    assert response.json().get("access_token", "") != ""
-    assert response.json().get("refresh_token", "") != ""
+    assert response.json().get("message", "") != ""
+    assert response.json().get("status", 0) == status.HTTP_200_OK
+    assert response.cookies.get("access_token", "") != ""
+    assert response.cookies.get("refresh_token", "") != ""
     assert user
     assert isinstance(user, User)
     assert isinstance(user.id, int)
@@ -640,17 +642,17 @@ async def test_refresh_user_invalid_token(
         "fO43J2Amatx31wE9iLUDFcxm08KPva"
     )
 
+    client.cookies.set("refresh_token", refresh_token)
     response: Response = await client.post(
         "api/v1/auth/refresh",
-        headers={"Authorization": f"Bearer {refresh_token}"},
     )
 
     assert response.status_code == status.HTTP_400_BAD_REQUEST
     assert len(response.json().get("errors", "")) == 0
     assert response.json().get("message", "") != ""
     assert response.json().get("status", 0) == status.HTTP_400_BAD_REQUEST
-    assert response.json().get("access_token", "") == ""
-    assert response.json().get("refresh_token", "") == ""
+    assert response.cookies.get("access_token", "") == ""
+    assert response.cookies.get("refresh_token", "") == ""
 
 
 @pytest.mark.asyncio()
@@ -680,17 +682,17 @@ async def test_refresh_user_access_token(
         email=user.email,
     )
 
+    client.cookies.set("refresh_token", access_token)
     response: Response = await client.post(
         "api/v1/auth/refresh",
-        headers={"Authorization": f"Bearer {access_token}"},
     )
 
     assert response.status_code == status.HTTP_400_BAD_REQUEST
     assert len(response.json().get("errors", "")) == 0
     assert response.json().get("message", "") != ""
     assert response.json().get("status", 0) == status.HTTP_400_BAD_REQUEST
-    assert response.json().get("access_token", "") == ""
-    assert response.json().get("refresh_token", "") == ""
+    assert response.cookies.get("access_token", "") == ""
+    assert response.cookies.get("refresh_token", "") == ""
 
 
 @pytest.mark.asyncio()
@@ -722,5 +724,5 @@ async def test_refresh_user_no_authorization(
     assert len(response.json().get("errors", "")) == 0
     assert response.json().get("message", "") != ""
     assert response.json().get("status", 0) == status.HTTP_401_UNAUTHORIZED
-    assert response.json().get("access_token", "") == ""
-    assert response.json().get("refresh_token", "") == ""
+    assert response.cookies.get("access_token", "") == ""
+    assert response.cookies.get("refresh_token", "") == ""
