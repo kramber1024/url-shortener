@@ -2,21 +2,13 @@ import datetime
 from typing import Annotated, Literal
 
 import jwt
-from fastapi import Depends
-from fastapi.security import (
-    HTTPAuthorizationCredentials,
-    HTTPBearer,
-)
+from fastapi import Cookie, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend import crud
 from backend.core.configs import settings
 from backend.core.database import db
 from backend.core.database.models import User
-
-http_bearer: HTTPBearer = HTTPBearer(
-    auto_error=False,
-)
 
 
 def _encode_jwt(
@@ -143,8 +135,8 @@ async def get_current_user(
         Depends(db.scoped_session),
     ],
     access_token: Annotated[
-        HTTPAuthorizationCredentials | None,
-        Depends(http_bearer),
+        str | None,
+        Cookie(),
     ],
 ) -> User:
     from backend.api.v1.exceptions import ErrorException
@@ -157,7 +149,7 @@ async def get_current_user(
         )
 
     payload: dict[str, str | int] | None = get_token_payload(
-        access_token.credentials,
+        access_token,
         jwt_type="access",
     )
 
@@ -189,10 +181,11 @@ async def get_refreshed_user(
         Depends(db.scoped_session),
     ],
     refresh_token: Annotated[
-        HTTPAuthorizationCredentials | None,
-        Depends(http_bearer),
+        str | None,
+        Cookie(),
     ],
 ) -> User:
+
     from backend.api.v1.exceptions import ErrorException
 
     if refresh_token is None:
@@ -203,7 +196,7 @@ async def get_refreshed_user(
         )
 
     payload: dict[str, str | int] | None = get_token_payload(
-        refresh_token.credentials,
+        refresh_token,
         jwt_type="refresh",
     )
 
