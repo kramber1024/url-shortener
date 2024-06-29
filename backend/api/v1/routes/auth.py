@@ -12,6 +12,7 @@ from backend.api.v1.schemes import TokenResponse as TokenResponseScheme
 from backend.api.v1.schemes import UserLogin as UserLoginScheme
 from backend.api.v1.schemes import UserRegistration as UserRegistrationScheme
 from backend.core.auth import jwt_auth
+from backend.core.configs import settings
 from backend.core.database import db
 from backend.core.database.models import User
 
@@ -114,13 +115,13 @@ async def register_user(
         password=new_user.password,
     )
 
-    response: SuccessResponseScheme = SuccessResponseScheme(
+    success_response: SuccessResponseScheme = SuccessResponseScheme(
         message="User registered successfully.",
         status=status.HTTP_201_CREATED,
     )
 
     return JSONResponse(
-        content=response.model_dump(),
+        content=success_response.model_dump(),
         status_code=status.HTTP_201_CREATED,
     )
 
@@ -133,24 +134,12 @@ async def register_user(
     responses={
         200: {
             "description": "User authenticated successfully.",
-            "model": TokenResponseScheme,
+            "model": SuccessResponseScheme,
             "content": {
                 "application/json": {
                     "example": {
-                        "access_token": (
-                            "eyJhbGciOiJIUzI1NiIsInR5cCI6ImFjY2VzcyJ9."
-                            "eyJzdWIiOiItMSIsIm5hbWUiOiJPbGVnIiwiZW1ha"
-                            "WwiOiJpbnZhbGlkIGVtYWlsIHRsZCIsImV4cCI6MT"
-                            "cxODI5MjM4OSwiaWF0IjoxNzE4Mjg4Nzg5fQ.Rdg3"
-                            "SUU62lvXQJV0gIwT_XHPpj4P5sG4WOskMs6kN5I"
-                        ),
-                        "refresh_token": (
-                            "eyJhbGciOiJIUzI1NiIsInR5cCI6InJlZnJlc2gifQ."
-                            "eyJzdWIiOiItMSIsIm5hbWUiOiJPbGVnIiwiZW1haWw"
-                            "iOiJpbnZhbGlkIGVtYWlsIHRsZCIsImV4cCI6MTcyMD"
-                            "g4MDc4OSwiaWF0IjoxNzE4Mjg4Nzg5fQ.yF-PoA1vRv"
-                            "nSJeXUro0Uu2eN7qM7kjFzGN93OeIck3Y"
-                        ),
+                        "message": "User authenticated successfully.",
+                        "status": 200,
                     },
                 },
             },
@@ -221,19 +210,32 @@ async def authenticate_user(
             status=status.HTTP_401_UNAUTHORIZED,
         )
 
-    token_response: TokenResponseScheme = TokenResponseScheme(
-        access_token=jwt_auth.generate_access_token(user.id, user.name, user.email),
-        refresh_token=jwt_auth.generate_refresh_token(user.id, user.name, user.email),
+    access_token: str = jwt_auth.generate_access_token(user.id, user.name, user.email)
+    refresh_token: str = jwt_auth.generate_refresh_token(user.id, user.name, user.email)
+
+    success_response: SuccessResponseScheme = SuccessResponseScheme(
+        message="User authenticated successfully.",
+        status=status.HTTP_200_OK,
     )
 
     response: JSONResponse = JSONResponse(
-        content=token_response.model_dump(),
+        content=success_response.model_dump(),
         status_code=status.HTTP_200_OK,
     )
     response.set_cookie(
         key="access_token",
-        value="TEST",
-        )
+        value=f"Bearer {access_token}",
+        max_age=settings.jwt.ACCESS_TOKEN_EXPIRE_MINUTES * 60,
+        secure=True,
+        httponly=True,
+    )
+    response.set_cookie(
+        key="refresh_token",
+        value=f"Bearer {refresh_token}",
+        max_age=settings.jwt.REFRESH_TOKEN_EXPIRE_DAYS * 24 * 60 * 60,
+        secure=True,
+        httponly=True,
+    )
 
     return response
 
