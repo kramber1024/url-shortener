@@ -4,7 +4,6 @@ from typing import TYPE_CHECKING
 import jwt
 import pytest
 from fastapi import status
-from fastapi.security import HTTPAuthorizationCredentials
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend import crud
@@ -366,7 +365,7 @@ async def test_get_current_user(
 
     current_user: User = await jwt_auth.get_current_user(
         session=session,
-        access_token=HTTPAuthorizationCredentials(scheme="Bearer", credentials=token),
+        access_token=token,
     )
 
     assert current_user
@@ -379,7 +378,7 @@ async def test_get_current_user(
 
 
 @pytest.mark.asyncio()
-async def test_get_current_user_no_token(
+async def test_get_current_user_none_token(
     session: AsyncSession,
 ) -> None:
 
@@ -411,10 +410,7 @@ async def test_get_current_user_no_user(
     with pytest.raises(ErrorException) as exc:
         await jwt_auth.get_current_user(
             session=session,
-            access_token=HTTPAuthorizationCredentials(
-                scheme="Bearer",
-                credentials=token,
-            ),
+            access_token=token,
         )
 
     assert exc.value.status_code == status.HTTP_400_BAD_REQUEST
@@ -441,10 +437,7 @@ async def test_get_current_user_invalid_token(
     with pytest.raises(ErrorException) as exc:
         await jwt_auth.get_current_user(
             session=session,
-            access_token=HTTPAuthorizationCredentials(
-                scheme="Bearer",
-                credentials=f"{name*2}.{email*2}.{password*2}",
-            ),
+            access_token=f"{name*2}.{email*2}.{password*2}",
         )
 
     assert exc.value.status_code == status.HTTP_400_BAD_REQUEST
@@ -476,7 +469,7 @@ async def test_get_refreshed_user(
 
     current_user: User = await jwt_auth.get_refreshed_user(
         session=session,
-        refresh_token=HTTPAuthorizationCredentials(scheme="Bearer", credentials=token),
+        refresh_token=token,
     )
 
     assert current_user
@@ -489,7 +482,7 @@ async def test_get_refreshed_user(
 
 
 @pytest.mark.asyncio()
-async def test_get_refreshed_user_no_token(
+async def test_get_refreshed_user_none_token(
     session: AsyncSession,
 ) -> None:
 
@@ -497,6 +490,20 @@ async def test_get_refreshed_user_no_token(
         await jwt_auth.get_refreshed_user(
             session=session,
             refresh_token=None,
+        )
+
+    assert exc.value.status_code == status.HTTP_401_UNAUTHORIZED
+    assert exc.value.response.get("errors", "") == []
+
+
+@pytest.mark.asyncio()
+async def test_get_refreshed_user_no_token(
+    session: AsyncSession,
+) -> None:
+
+    with pytest.raises(ErrorException) as exc:
+        await jwt_auth.get_refreshed_user(
+            session=session,
         )
 
     assert exc.value.status_code == status.HTTP_401_UNAUTHORIZED
@@ -521,10 +528,7 @@ async def test_get_refreshed_user_no_user(
     with pytest.raises(ErrorException) as exc:
         await jwt_auth.get_refreshed_user(
             session=session,
-            refresh_token=HTTPAuthorizationCredentials(
-                scheme="Bearer",
-                credentials=token,
-            ),
+            refresh_token=token,
         )
 
     assert exc.value.status_code == status.HTTP_400_BAD_REQUEST
@@ -551,10 +555,7 @@ async def test_get_refreshed_user_invalid_token(
     with pytest.raises(ErrorException) as exc:
         await jwt_auth.get_refreshed_user(
             session=session,
-            refresh_token=HTTPAuthorizationCredentials(
-                scheme="Bearer",
-                credentials=f"{name*2}.{email*2}.{password*2}",
-            ),
+            refresh_token=f"{name*2}.{email*2}.{password*2}",
         )
 
     assert exc.value.status_code == status.HTTP_400_BAD_REQUEST
