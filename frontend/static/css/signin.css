@@ -151,7 +151,8 @@ input.form__input:focus {
 }
 
 label[for="email"],
-label[for="password"] {
+label[for="password"],
+.form__password-label-container a {
     margin-top: 20px;
     margin-bottom: 6px;
     font-size: 0.875rem;
@@ -167,12 +168,21 @@ label.error {
     color: var(--error-font-color);
 }
 
+.form__password-label-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.form__password-label-container a,
 .footer > p > a {
+    font-weight: 500;
     text-decoration: none;
     color: var(--brand);
     transition: opacity 0.5s ease;
 }
 
+.form__password-label-container a:hover,
 .footer > p > a:hover {
     opacity: 0.8;
 }
