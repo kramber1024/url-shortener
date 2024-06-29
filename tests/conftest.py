@@ -6,7 +6,7 @@ from httpx import ASGITransport, AsyncClient
 from sqlalchemy import delete
 from sqlalchemy.ext.asyncio import AsyncSession, async_scoped_session
 
-from backend.core.configs import test_settings
+from backend.core.config import settings
 from backend.core.database import Database
 from backend.core.database import db as database
 from backend.core.database.models import User
@@ -16,7 +16,7 @@ from backend.main import app
 @pytest_asyncio.fixture(scope="session")
 async def db() -> AsyncGenerator[Database, None]:
     test_db: Database = Database(
-        url=test_settings.db.URL,
+        url=settings.db.URL.replace("database.sqlite3", "test_database.sqlite3"),
         debug=False,
     )
     await test_db.create_db(hard_rest=True)

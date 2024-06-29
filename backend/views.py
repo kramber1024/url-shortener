@@ -6,7 +6,7 @@ from fastapi.openapi.docs import (
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 
-from backend.core.configs import settings
+from backend.core.config import settings
 
 templates: Jinja2Templates = Jinja2Templates(directory="frontend")
 router: APIRouter = APIRouter(include_in_schema=False)

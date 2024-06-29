@@ -7,7 +7,7 @@ from fastapi.security import APIKeyCookie
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend import crud
-from backend.core.configs import settings
+from backend.core.config import settings
 from backend.core.database import db
 from backend.core.database.models import User
 
@@ -27,9 +27,9 @@ def _encode_jwt(
     now: int = int(datetime.datetime.now(datetime.UTC).timestamp())
 
     if jwt_type == "access":
-        expire: int = now + settings.jwt.ACCESS_TOKEN_EXPIRE_MINUTES * 60
+        expire: int = now + settings.jwt.ACCESS_TOKEN_EXPIRES_MINUTES * 60
     else:
-        expire = now + settings.jwt.REFRESH_TOKEN_EXPIRE_DAYS * 24 * 60 * 60
+        expire = now + settings.jwt.REFRESH_TOKEN_EXPIRES_DAYS * 24 * 60 * 60
 
     payload.update(
         {

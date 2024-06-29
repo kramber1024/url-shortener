@@ -11,7 +11,7 @@ from backend.api.v1.schemes import SuccessResponse as SuccessResponseScheme
 from backend.api.v1.schemes import UserLogin as UserLoginScheme
 from backend.api.v1.schemes import UserRegistration as UserRegistrationScheme
 from backend.core.auth import jwt_auth
-from backend.core.configs import settings
+from backend.core.config import settings
 from backend.core.database import db
 from backend.core.database.models import User
 
@@ -224,14 +224,14 @@ async def authenticate_user(
     response.set_cookie(
         key="access_token",
         value=access_token,
-        max_age=settings.jwt.ACCESS_TOKEN_EXPIRE_MINUTES * 60,
+        max_age=settings.jwt.ACCESS_TOKEN_EXPIRES_MINUTES * 60,
         secure=True,
         httponly=True,
     )
     response.set_cookie(
         key="refresh_token",
         value=refresh_token,
-        max_age=settings.jwt.REFRESH_TOKEN_EXPIRE_DAYS * 24 * 60 * 60,
+        max_age=settings.jwt.REFRESH_TOKEN_EXPIRES_DAYS * 24 * 60 * 60,
         secure=True,
         httponly=True,
     )
@@ -320,14 +320,14 @@ async def refresh_user(
     response.set_cookie(
         key="access_token",
         value=access_token,
-        max_age=settings.jwt.ACCESS_TOKEN_EXPIRE_MINUTES * 60,
+        max_age=settings.jwt.ACCESS_TOKEN_EXPIRES_MINUTES * 60,
         secure=True,
         httponly=True,
     )
     response.set_cookie(
         key="refresh_token",
         value=refresh_token,
-        max_age=settings.jwt.REFRESH_TOKEN_EXPIRE_DAYS * 24 * 60 * 60,
+        max_age=settings.jwt.REFRESH_TOKEN_EXPIRES_DAYS * 24 * 60 * 60,
         secure=True,
         httponly=True,
     )

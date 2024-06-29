@@ -12,7 +12,7 @@ from backend.api.v1.handlers import (
     server_error_exception_handler,
     validation_exception_handler,
 )
-from backend.core.configs import settings
+from backend.core.config import settings
 from backend.core.database import db
 from backend.views import router as views_router
 

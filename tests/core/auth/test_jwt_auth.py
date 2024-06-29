@@ -9,7 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from backend import crud
 from backend.api.v1.exceptions import ErrorException
 from backend.core.auth import jwt_auth
-from backend.core.configs import test_settings
+from backend.core.config import settings
 
 if TYPE_CHECKING:
     from backend.core.database.models import User
@@ -31,20 +31,20 @@ def test__encode_jwt_access() -> None:
     token: str = jwt_auth._encode_jwt(
         jwt_type="access",
         payload=payload,
-        key=test_settings.jwt.SECRET,
-        algorithm=test_settings.jwt.ALGORITHM,
+        key=settings.jwt.SECRET,
+        algorithm=settings.jwt.ALGORITHM,
     )
 
     decoded_headers: dict[str, str] = jwt.get_unverified_header(token)
     decoded_payload: dict[str, str | int] = jwt.decode(
         token,
-        key=test_settings.jwt.SECRET,
-        algorithms=[test_settings.jwt.ALGORITHM],
+        key=settings.jwt.SECRET,
+        algorithms=[settings.jwt.ALGORITHM],
     )
 
     assert "alg" in decoded_headers
     assert "typ" in decoded_headers
-    assert decoded_headers["alg"] == test_settings.jwt.ALGORITHM
+    assert decoded_headers["alg"] == settings.jwt.ALGORITHM
     assert decoded_headers["typ"] == "access"
     assert "sub" in decoded_payload
     assert "name" in decoded_payload
@@ -58,7 +58,7 @@ def test__encode_jwt_access() -> None:
     assert decoded_payload["key"] == extra_value
     assert decoded_payload["exp"] in range(
         int(decoded_payload["iat"]),
-        int(decoded_payload["iat"])+test_settings.jwt.ACCESS_TOKEN_EXPIRE_MINUTES*61,
+        int(decoded_payload["iat"])+settings.jwt.ACCESS_TOKEN_EXPIRES_MINUTES*61,
     )
     assert decoded_payload["iat"] in range(
         int(datetime.datetime.now(datetime.UTC).timestamp()),
@@ -82,20 +82,20 @@ def test__encode_jwt_refresh() -> None:
     token: str = jwt_auth._encode_jwt(
         jwt_type="refresh",
         payload=payload,
-        key=test_settings.jwt.SECRET,
-        algorithm=test_settings.jwt.ALGORITHM,
+        key=settings.jwt.SECRET,
+        algorithm=settings.jwt.ALGORITHM,
     )
 
     decoded_headers: dict[str, str] = jwt.get_unverified_header(token)
     decoded_payload: dict[str, str | int] = jwt.decode(
         token,
-        key=test_settings.jwt.SECRET,
-        algorithms=[test_settings.jwt.ALGORITHM],
+        key=settings.jwt.SECRET,
+        algorithms=[settings.jwt.ALGORITHM],
     )
 
     assert "alg" in decoded_headers
     assert "typ" in decoded_headers
-    assert decoded_headers["alg"] == test_settings.jwt.ALGORITHM
+    assert decoded_headers["alg"] == settings.jwt.ALGORITHM
     assert decoded_headers["typ"] == "refresh"
     assert "sub" in decoded_payload
     assert "name" in decoded_payload
@@ -109,7 +109,7 @@ def test__encode_jwt_refresh() -> None:
     assert decoded_payload["key"] == extra_value
     assert decoded_payload["exp"] in range(
         int(decoded_payload["iat"]),
-        int(decoded_payload["iat"])+test_settings.jwt.REFRESH_TOKEN_EXPIRE_DAYS*24*60*61,
+        int(decoded_payload["iat"])+settings.jwt.REFRESH_TOKEN_EXPIRES_DAYS*24*60*61,
     )
     assert decoded_payload["iat"] in range(
         int(datetime.datetime.now(datetime.UTC).timestamp()),
@@ -131,13 +131,13 @@ def test_generate_access_token() -> None:
     decoded_headers: dict[str, str] = jwt.get_unverified_header(token)
     decoded_payload: dict[str, str | int] = jwt.decode(
         token,
-        key=test_settings.jwt.SECRET,
-        algorithms=[test_settings.jwt.ALGORITHM],
+        key=settings.jwt.SECRET,
+        algorithms=[settings.jwt.ALGORITHM],
     )
 
     assert "alg" in decoded_headers
     assert "typ" in decoded_headers
-    assert decoded_headers["alg"] == test_settings.jwt.ALGORITHM
+    assert decoded_headers["alg"] == settings.jwt.ALGORITHM
     assert decoded_headers["typ"] == "access"
     assert "sub" in decoded_payload
     assert "name" in decoded_payload
@@ -149,7 +149,7 @@ def test_generate_access_token() -> None:
     assert decoded_payload["email"] == email
     assert decoded_payload["exp"] in range(
         int(decoded_payload["iat"]),
-        int(decoded_payload["iat"])+test_settings.jwt.ACCESS_TOKEN_EXPIRE_MINUTES*61,
+        int(decoded_payload["iat"])+settings.jwt.ACCESS_TOKEN_EXPIRES_MINUTES*61,
     )
     assert decoded_payload["iat"] in range(
         int(datetime.datetime.now(datetime.UTC).timestamp()),
@@ -171,13 +171,13 @@ def test_generate_refresh_token() -> None:
     decoded_headers: dict[str, str] = jwt.get_unverified_header(token)
     decoded_payload: dict[str, str | int] = jwt.decode(
         token,
-        key=test_settings.jwt.SECRET,
-        algorithms=[test_settings.jwt.ALGORITHM],
+        key=settings.jwt.SECRET,
+        algorithms=[settings.jwt.ALGORITHM],
     )
 
     assert "alg" in decoded_headers
     assert "typ" in decoded_headers
-    assert decoded_headers["alg"] == test_settings.jwt.ALGORITHM
+    assert decoded_headers["alg"] == settings.jwt.ALGORITHM
     assert decoded_headers["typ"] == "refresh"
     assert "sub" in decoded_payload
     assert "name" in decoded_payload
@@ -189,7 +189,7 @@ def test_generate_refresh_token() -> None:
     assert decoded_payload["email"] == email
     assert decoded_payload["exp"] in range(
         int(decoded_payload["iat"]),
-        int(decoded_payload["iat"])+test_settings.jwt.REFRESH_TOKEN_EXPIRE_DAYS*24*60*61,
+        int(decoded_payload["iat"])+settings.jwt.REFRESH_TOKEN_EXPIRES_DAYS*24*60*61,
     )
     assert decoded_payload["iat"] in range(
         int(datetime.datetime.now(datetime.UTC).timestamp()),
@@ -217,7 +217,7 @@ def test_get_token_payload_access() -> None:
     assert decoded_payload
     assert "alg" in decoded_headers
     assert "typ" in decoded_headers
-    assert decoded_headers["alg"] == test_settings.jwt.ALGORITHM
+    assert decoded_headers["alg"] == settings.jwt.ALGORITHM
     assert decoded_headers["typ"] == "access"
     assert "sub" in decoded_payload
     assert "name" in decoded_payload
@@ -229,7 +229,7 @@ def test_get_token_payload_access() -> None:
     assert decoded_payload["email"] == email
     assert int(decoded_payload["exp"]) in range(
         int(decoded_payload["iat"]),
-        int(decoded_payload["iat"])+test_settings.jwt.ACCESS_TOKEN_EXPIRE_MINUTES*61,
+        int(decoded_payload["iat"])+settings.jwt.ACCESS_TOKEN_EXPIRES_MINUTES*61,
     )
     assert int(decoded_payload["iat"]) in range(
         int(datetime.datetime.now(datetime.UTC).timestamp()),
@@ -257,7 +257,7 @@ def test_get_token_payload_refresh() -> None:
     assert decoded_payload
     assert "alg" in decoded_headers
     assert "typ" in decoded_headers
-    assert decoded_headers["alg"] == test_settings.jwt.ALGORITHM
+    assert decoded_headers["alg"] == settings.jwt.ALGORITHM
     assert decoded_headers["typ"] == "refresh"
     assert "sub" in decoded_payload
     assert "name" in decoded_payload
@@ -269,7 +269,7 @@ def test_get_token_payload_refresh() -> None:
     assert decoded_payload["email"] == email
     assert decoded_payload["exp"] in range(
         int(decoded_payload["iat"]),
-        int(decoded_payload["iat"])+test_settings.jwt.REFRESH_TOKEN_EXPIRE_DAYS*24*60*61,
+        int(decoded_payload["iat"])+settings.jwt.REFRESH_TOKEN_EXPIRES_DAYS*24*60*61,
     )
     assert decoded_payload["iat"] in range(
         int(datetime.datetime.now(datetime.UTC).timestamp()),
@@ -326,7 +326,7 @@ def test_get_token_payload_invalid_signature() -> None:
     token: str = jwt.encode(
         payload,
         key,
-        test_settings.jwt.ALGORITHM,
+        settings.jwt.ALGORITHM,
         headers={
             "typ": "access",
         },

@@ -10,7 +10,7 @@ from sqlalchemy.ext.asyncio import (
     create_async_engine,
 )
 
-from backend.core.configs import settings
+from backend.core.config import settings
 from backend.core.database.models import Base
 
 
@@ -57,5 +57,5 @@ class Database:
 
 db: Database =  Database(
     url=settings.db.URL,
-    debug=settings.state.DEBUG,
+    debug=settings.app.state.DEBUG,
 )

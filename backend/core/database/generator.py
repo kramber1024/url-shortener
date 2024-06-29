@@ -1,6 +1,6 @@
 from snowflake import SnowflakeGenerator
 
-from backend.core.configs import settings
+from backend.core.config import settings
 
 
 class IDGenerator:

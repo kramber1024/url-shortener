@@ -4,7 +4,7 @@ from typing import Annotated, Literal
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-BASE_DIRERCTORY = Path(__file__).parent.parent
+BASE_DIRERCTORY = Path(__file__).parent
 
 
 class SnowflakeSettings(BaseSettings):
