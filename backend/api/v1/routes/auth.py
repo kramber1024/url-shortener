@@ -226,10 +226,16 @@ async def authenticate_user(
         refresh_token=jwt_auth.generate_refresh_token(user.id, user.name, user.email),
     )
 
-    return JSONResponse(
+    response: JSONResponse = JSONResponse(
         content=token_response.model_dump(),
         status_code=status.HTTP_200_OK,
     )
+    response.set_cookie(
+        key="access_token",
+        value="TEST",
+        )
+
+    return response
 
 
 @router.post(
