@@ -12,10 +12,16 @@ from backend.api.v1.handlers import (
     server_error_exception_handler,
     validation_exception_handler,
 )
+from backend.core.configs import settings
 from backend.core.database import db
 from backend.views import router as views_router
 
-app: FastAPI = FastAPI(docs_url=None, redoc_url=None)
+app: FastAPI = FastAPI(
+    title=f"{settings.app.NAME} API",
+    docs_url="/api/docs",
+    redoc_url="/api/redoc",
+    root_path_in_servers=False,
+)
 app.mount("/static", StaticFiles(directory="frontend/static"), name="static")
 app.include_router(apis_router)
 app.include_router(views_router)
