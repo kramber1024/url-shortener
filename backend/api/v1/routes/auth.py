@@ -8,7 +8,6 @@ from backend import crud
 from backend.api.v1.exceptions import ErrorException
 from backend.api.v1.schemes import ErrorResponse as ErrorResponseScheme
 from backend.api.v1.schemes import SuccessResponse as SuccessResponseScheme
-from backend.api.v1.schemes import TokenResponse as TokenResponseScheme
 from backend.api.v1.schemes import UserLogin as UserLoginScheme
 from backend.api.v1.schemes import UserRegistration as UserRegistrationScheme
 from backend.core.auth import jwt_auth
@@ -224,14 +223,14 @@ async def authenticate_user(
     )
     response.set_cookie(
         key="access_token",
-        value=f"Bearer {access_token}",
+        value=access_token,
         max_age=settings.jwt.ACCESS_TOKEN_EXPIRE_MINUTES * 60,
         secure=True,
         httponly=True,
     )
     response.set_cookie(
         key="refresh_token",
-        value=f"Bearer {refresh_token}",
+        value=refresh_token,
         max_age=settings.jwt.REFRESH_TOKEN_EXPIRE_DAYS * 24 * 60 * 60,
         secure=True,
         httponly=True,
@@ -248,24 +247,12 @@ async def authenticate_user(
     responses={
         200: {
             "description": "Tokens refreshed successfully.",
-            "model": TokenResponseScheme,
+            "model": SuccessResponseScheme,
             "content": {
                 "application/json": {
                     "example": {
-                        "access_token": (
-                            "eyJhbGciOiJIUzI1NiIsInR5cCI6ImFjY2VzcyJ9."
-                            "eyJzdWIiOiItMSIsIm5hbWUiOiJPbGVnIiwiZW1ha"
-                            "WwiOiJpbnZhbGlkIGVtYWlsIHRsZCIsImV4cCI6MT"
-                            "cxODI5MjM4OSwiaWF0IjoxNzE4Mjg4Nzg5fQ.Rdg3"
-                            "SUU62lvXQJV0gIwT_XHPpj4P5sG4WOskMs6kN5I"
-                        ),
-                        "refresh_token": (
-                            "eyJhbGciOiJIUzI1NiIsInR5cCI6InJlZnJlc2gifQ."
-                            "eyJzdWIiOiItMSIsIm5hbWUiOiJPbGVnIiwiZW1haWw"
-                            "iOiJpbnZhbGlkIGVtYWlsIHRsZCIsImV4cCI6MTcyMD"
-                            "g4MDc4OSwiaWF0IjoxNzE4Mjg4Nzg5fQ.yF-PoA1vRv"
-                            "nSJeXUro0Uu2eN7qM7kjFzGN93OeIck3Y"
-                        ),
+                        "message": "Tokens refreshed successfully.",
+                        "status": 200,
                     },
                 },
             },
@@ -296,6 +283,19 @@ async def authenticate_user(
                 },
             },
         },
+        422: {
+            "description": "Provided token is not valid.",
+            "model": ErrorResponseScheme,
+            "content": {
+                "application/json": {
+                    "example": {
+                        "errors": [],
+                        "message": "Invalid token.",
+                        "status": 400,
+                    },
+                },
+            },
+        },
     },
 )
 async def refresh_user(
@@ -305,12 +305,31 @@ async def refresh_user(
     ],
 ) -> JSONResponse:
 
-    token_response: TokenResponseScheme = TokenResponseScheme(
-        access_token=jwt_auth.generate_access_token(user.id, user.name, user.email),
-        refresh_token=jwt_auth.generate_refresh_token(user.id, user.name, user.email),
+    access_token: str = jwt_auth.generate_access_token(user.id, user.name, user.email)
+    refresh_token: str = jwt_auth.generate_refresh_token(user.id, user.name, user.email)
+
+    success_response: SuccessResponseScheme = SuccessResponseScheme(
+        message="Tokens refreshed successfully.",
+        status=status.HTTP_200_OK,
     )
 
-    return JSONResponse(
-        content=token_response.model_dump(),
+    response: JSONResponse = JSONResponse(
+        content=success_response.model_dump(),
         status_code=status.HTTP_200_OK,
     )
+    response.set_cookie(
+        key="access_token",
+        value=access_token,
+        max_age=settings.jwt.ACCESS_TOKEN_EXPIRE_MINUTES * 60,
+        secure=True,
+        httponly=True,
+    )
+    response.set_cookie(
+        key="refresh_token",
+        value=refresh_token,
+        max_age=settings.jwt.REFRESH_TOKEN_EXPIRE_DAYS * 24 * 60 * 60,
+        secure=True,
+        httponly=True,
+    )
+
+    return response
