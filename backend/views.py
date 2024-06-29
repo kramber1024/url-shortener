@@ -13,7 +13,7 @@ router: APIRouter = APIRouter(include_in_schema=False)
 
 
 @router.get("/signup", response_class=HTMLResponse)
-async def regsiter(request: Request) -> HTMLResponse:
+async def signup(request: Request) -> HTMLResponse:
     return templates.TemplateResponse(
         "templates/signup.html",
         {
@@ -22,7 +22,19 @@ async def regsiter(request: Request) -> HTMLResponse:
         },
     )
 
+
+@router.get("/login", response_class=HTMLResponse)
+async def signin(request: Request) -> HTMLResponse:
+    return templates.TemplateResponse(
+        "templates/signin.html",
+        {
+            "request": request,
+            "brand_name": settings.app.NAME,
+        },
+    )
+
 # TODO(kramber): Disable /api/docs when in production
+# as well as /openapi.json
 # 000
 @router.get("/api/docs")
 async def swagger() -> HTMLResponse:
