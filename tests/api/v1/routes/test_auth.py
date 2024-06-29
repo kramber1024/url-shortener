@@ -14,6 +14,9 @@ if TYPE_CHECKING:
     from httpx import Response
     from sqlalchemy.engine import Result
 
+# TODO(kramber): Rewrite tests using fixtures user
+# to reduce code duplication and improve readability.
+# 001
 
 @pytest.mark.asyncio()
 async def test_register_user(
