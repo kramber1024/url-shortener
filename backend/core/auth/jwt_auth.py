@@ -3,12 +3,18 @@ from typing import Annotated, Literal
 
 import jwt
 from fastapi import Cookie, Depends
+from fastapi.security import APIKeyCookie
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend import crud
 from backend.core.configs import settings
 from backend.core.database import db
 from backend.core.database.models import User
+
+access_cookie_scheme: APIKeyCookie = APIKeyCookie(
+    name="access_token",
+    auto_error=False,
+)
 
 
 def _encode_jwt(
@@ -136,9 +142,10 @@ async def get_current_user(
     ],
     access_token: Annotated[
         str | None,
-        Cookie(),
+        Depends(access_cookie_scheme),
     ],
 ) -> User:
+
     from backend.api.v1.exceptions import ErrorException
 
     if access_token is None:
@@ -182,8 +189,10 @@ async def get_refreshed_user(
     ],
     refresh_token: Annotated[
         str | None,
-        Cookie(),
-    ],
+        Cookie(
+            description="Refresh token.",
+        ),
+    ] = None,
 ) -> User:
 
     from backend.api.v1.exceptions import ErrorException
