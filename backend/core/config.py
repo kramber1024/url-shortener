@@ -14,6 +14,7 @@ class SnowflakeSettings(BaseSettings):
 class DatabaseSettings(BaseSettings):
     gen: SnowflakeSettings = SnowflakeSettings()
     URL: str = f"sqlite+aiosqlite:///{BASE_DIRERCTORY/"database"/"database.sqlite3"}"
+    SALT_ROUNDS: int = 16
 
 
 class JWTSettings(BaseSettings):
