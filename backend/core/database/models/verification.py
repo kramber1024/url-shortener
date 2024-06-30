@@ -22,6 +22,10 @@ class Verification(Base):
         String(32),
         nullable=False,
     )
+    secret: Mapped[str] = mapped_column(
+        String(256),
+        nullable=False,
+    )
     expiration: Mapped[datetime] = mapped_column(
         DateTime(),
         nullable=False,
@@ -32,12 +36,14 @@ class Verification(Base):
     def __init__(
         self,
         *,
-        user: "User",
+        user_id: int,
         type_: Literal["email"],
+        secret: str,
         expiration: datetime,
     ) -> None:
 
         super().__init__()
-        self.user = user
+        self.user_id = user_id
         self.type = type_
+        self.secret = secret
         self.expiration = expiration
