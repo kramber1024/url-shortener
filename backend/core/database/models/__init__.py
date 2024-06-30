@@ -1,9 +1,9 @@
 from .base import Base
+from .status import Status
 from .user import User
-from .verification import Verification
 
 __all__ = (
     "Base",
+    "Status",
     "User",
-    "Verification",
 )
