@@ -33,9 +33,14 @@ class AppSettings(BaseSettings):
     state: StateSettings = StateSettings() # type: ignore[call-arg]
 
 
+class EmailSettings(BaseSettings):
+    VERIFICATION_EXPIRES_HOURS: int = 24
+
+
 class Settings(BaseSettings):
     db: DatabaseSettings = DatabaseSettings()
     jwt: JWTSettings = JWTSettings() # type: ignore[call-arg]
+    email: EmailSettings = EmailSettings()
     app: AppSettings = AppSettings()
 
     model_config = SettingsConfigDict(
