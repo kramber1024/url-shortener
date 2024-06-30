@@ -9,8 +9,7 @@ class IDGenerator:
     def __init__(self, worker_id: int) -> None:
         self.__snowflake = SnowflakeGenerator(worker_id)
 
-    @property
-    def id(self) -> int:
+    def new_id(self) -> int:
         return int(next(self.__snowflake))
 
 
