@@ -8,11 +8,27 @@ from .base import Base
 class User(Base):
     __tablename__ = "Users"
 
-    name: Mapped[str] = mapped_column(String(32), nullable=False)
-    email: Mapped[str] = mapped_column(String(64), nullable=False, unique=True)
-    password: Mapped[str] = mapped_column(String(60), nullable=False)
-    banned: Mapped[bool] = mapped_column(Boolean(), nullable=False)
-    activated: Mapped[bool] = mapped_column(Boolean(), nullable=False)
+    name: Mapped[str] = mapped_column(
+        String(32),
+        nullable=False,
+    )
+    email: Mapped[str] = mapped_column(
+        String(64),
+        nullable=False,
+        unique=True,
+    )
+    password: Mapped[str] = mapped_column(
+        String(60),
+        nullable=False,
+    )
+    banned: Mapped[bool] = mapped_column(
+        Boolean(),
+        nullable=False,
+    )
+    activated: Mapped[bool] = mapped_column(
+        Boolean(),
+        nullable=False,
+    )
 
     def __init__(
         self,
