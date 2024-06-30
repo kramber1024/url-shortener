@@ -1,12 +1,7 @@
-from typing import TYPE_CHECKING
-
 from sqlalchemy import Boolean, ForeignKey, Integer
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.orm import Mapped, mapped_column
 
-from .base import Base
-
-if TYPE_CHECKING:
-    from .user import User
+from .bases import Base
 
 
 class Status(Base):
@@ -34,8 +29,6 @@ class Status(Base):
         Boolean(),
         nullable=False,
     )
-
-    user: Mapped["User"] = relationship("User", back_populates="status")
 
     def __init__(
         self,

@@ -1,11 +1,16 @@
+from typing import TYPE_CHECKING
+
 import bcrypt
 from sqlalchemy import String
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from .base import Base
+from .bases import IDBase
+
+if TYPE_CHECKING:
+    from .status import Status
 
 
-class User(Base):
+class User(IDBase):
     __tablename__ = "Users"
 
     first_name: Mapped[str] = mapped_column(
@@ -29,6 +34,8 @@ class User(Base):
         String(64),
         nullable=False,
     )
+
+    status: Mapped["Status"] = relationship("Status", lazy="selectin")
 
     def __init__(
         self,

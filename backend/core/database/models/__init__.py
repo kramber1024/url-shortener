@@ -1,4 +1,4 @@
-from .base import Base
+from .bases import Base
 from .status import Status
 from .user import User
 
