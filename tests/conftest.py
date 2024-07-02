@@ -13,10 +13,19 @@ from backend.core.database.models import User
 from backend.main import app
 
 
+@pytest_asyncio.fixture(scope="session", autouse=True)
+async def setup() -> None:
+    settings.db.SALT_ROUNDS = 4
+    settings.db.URL = settings.db.URL.replace(
+        "database.sqlite3",
+        "test_database.sqlite3",
+    )
+
+
 @pytest_asyncio.fixture(scope="session")
 async def db() -> AsyncGenerator[Database, None]:
     test_db: Database = Database(
-        url=settings.db.URL.replace("database.sqlite3", "test_database.sqlite3"),
+        url=settings.db.URL,
         debug=False,
     )
     await test_db.create_db(hard_rest=True)
