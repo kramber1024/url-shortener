@@ -49,7 +49,6 @@ def _encode_jwt(
 
 def generate_access_token(
     user_id: int,
-    name: str,
     email: str,
 ) -> str:
 
@@ -57,7 +56,6 @@ def generate_access_token(
         jwt_type="access",
         payload={
             "sub": str(user_id),
-            "name": name,
             "email": email,
         },
     )
@@ -65,7 +63,6 @@ def generate_access_token(
 
 def generate_refresh_token(
     user_id: int,
-    name: str,
     email: str,
 ) -> str:
 
@@ -73,12 +70,12 @@ def generate_refresh_token(
         jwt_type="refresh",
         payload={
             "sub": str(user_id),
-            "name": name,
             "email": email,
         },
     )
 
-
+# TODO(kramber): Update example
+# 001
 def get_token_payload(
     token: str,
     jwt_type: Literal["access", "refresh"],
