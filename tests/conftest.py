@@ -11,6 +11,7 @@ from backend.core.database import Database
 from backend.core.database import db as database
 from backend.core.database.models import User
 from backend.main import app
+from tests import utils
 
 
 @pytest_asyncio.fixture(scope="session", autouse=True)
@@ -62,3 +63,21 @@ async def client(db: Database) -> AsyncGenerator[AsyncClient, None]:
         yield c
 
     app.dependency_overrides.clear()
+
+
+@pytest_asyncio.fixture(scope="function")
+async def db_user(session: AsyncSession) -> AsyncGenerator[User, None]:
+    user: User = User(
+        first_name="Lavon",
+        last_name="Fisher",
+        email="Dorris92@hotmail.com",
+        password=utils.DB_USER_PASSWORD_HASH,
+    )
+    session.add(user)
+    await session.commit()
+    await session.refresh(user)
+
+    yield user
+
+    await session.delete(user)
+    await session.commit()
