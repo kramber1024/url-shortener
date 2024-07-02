@@ -11,26 +11,26 @@ async def test_create_user(
     session: AsyncSession,
 ) -> None:
 
-    name: str = "Test User"
-    email: str = "test@mail.tld"
-    password: str = "testpassword"
+    first_name: str = "Brenda"
+    last_name: str = "Reichel"
+    email: str = "Terrill90@gmail.com"
+    password: str = "uoqaEB344$#@uuc123$$$.-_==1&77**991239%$#@!455ANcqxdPPNcqxdcAcqx"
 
     user: User = await crud.create_user(
         session=session,
-        name=name,
+        first_name=first_name,
+        last_name=last_name,
         email=email,
         password=password,
-        salt_rounds=4,
     )
 
-    assert user
-    assert isinstance(user, User)
-    assert isinstance(user.id, int)
-    assert user.name == name
+    assert user.id in utils.SNOWFLAKE_RANGE
+    assert user.first_name == first_name
+    assert user.last_name == last_name
     assert user.email == email
+    assert user.phone is None
     assert user.password != password
     assert user.is_password_valid(password)
-    assert user.active
 
 
 @pytest.mark.asyncio()
@@ -38,26 +38,26 @@ async def test_create_user_uppercase(
     session: AsyncSession,
 ) -> None:
 
-    name: str = "TEST USER"
-    email: str = "TEST@EMAIL.TLD"
-    password: str = "TESTPASSWORD"
+    first_name: str = "Teagan".upper()
+    last_name: str = "Reichel".upper()
+    email: str = "Terrill90@gmail.com".upper()
+    password: str = "u44$#@uuc123$$$.-_==1&77**991239%$#@!455ANcqxdPPNcqxdcAcqx".upper()
 
     user: User = await crud.create_user(
         session=session,
-        name=name,
+        first_name=first_name,
+        last_name=last_name,
         email=email,
         password=password,
-        salt_rounds=4,
     )
 
-    assert user
-    assert isinstance(user, User)
-    assert isinstance(user.id, int)
-    assert user.name == name
+    assert user.id in utils.SNOWFLAKE_RANGE
+    assert user.first_name == first_name
+    assert user.last_name == last_name
     assert user.email == utils.format_email(email)
+    assert user.phone is None
     assert user.password != password
     assert user.is_password_valid(password)
-    assert user.active
 
 
 @pytest.mark.asyncio()
@@ -65,147 +65,88 @@ async def test_create_user_empty(
     session: AsyncSession,
 ) -> None:
 
-    name: str = ""
-    email: str = ""
-    password: str = ""
-
     user: User = await crud.create_user(
         session=session,
-        name=name,
-        email=email,
-        password=password,
-        salt_rounds=4,
+        first_name="",
+        last_name=None,
+        email="",
+        password="",
     )
 
-    assert user
-    assert isinstance(user, User)
-    assert isinstance(user.id, int)
-    assert user.name == name
-    assert user.email == email
-    assert user.password != password
-    assert user.is_password_valid(password)
-    assert user.active
+    assert user.id in utils.SNOWFLAKE_RANGE
+    assert user.first_name == ""
+    assert user.last_name is None
+    assert user.email == ""
+    assert user.phone is None
+    assert user.password != ""
+    assert user.is_password_valid("")
 
 
 @pytest.mark.asyncio()
 async def test_get_user_by_email(
     session: AsyncSession,
+    db_user: User,
 ) -> None:
 
-    name: str = "Test User"
-    email: str = "test@mail.tld"
-    password: str = "testpassword"
-
-    session.add(
-        User(
-            name=name,
-            email=email,
-            password=password,
-            salt_rounds=4,
-        ),
-    )
-    await session.commit()
-
-    found_user: User | None = await crud.get_user_by_email(
+    user: User | None = await crud.get_user_by_email(
         session=session,
-        email=email,
+        email=db_user.email,
     )
 
-    assert found_user
-    assert isinstance(found_user, User)
-    assert isinstance(found_user.id, int)
-    assert found_user.name == name
-    assert found_user.email == email
-    assert found_user.password != password
-    assert found_user.is_password_valid(password)
-    assert found_user.active
+    assert user is not None
+    assert user.id == db_user.id
+    assert user.first_name == db_user.first_name
+    assert user.last_name == db_user.last_name
+    assert user.email == db_user.email
+    assert user.phone == db_user.phone
+    assert user.password == db_user.password
+    assert user.is_password_valid(utils.DB_USER_PASSWORD)
 
 
 @pytest.mark.asyncio()
 async def test_get_user_by_email_not_found(
     session: AsyncSession,
+    db_user: User,
 ) -> None:
 
-    name: str = "Test User"
-    email: str = "test@mail.tld"
-    password: str = "testpassword"
-
-    session.add(
-        User(
-            name=name,
-            email=email,
-            password=password,
-            salt_rounds=4,
-        ),
-    )
-    await session.commit()
-
-    found_user: User | None = await crud.get_user_by_email(
+    user: User | None = await crud.get_user_by_email(
         session=session,
-        email=email[::-1],
+        email=db_user.email[::-1],
     )
 
-    assert found_user is None
+    assert user is None
 
 
 @pytest.mark.asyncio()
 async def test_get_user_by_id(
     session: AsyncSession,
+    db_user: User,
 ) -> None:
 
-    name: str = "Test User"
-    email: str = "test@mail.tld"
-    password: str = "testpassword"
-
-    user: User = User(
-        name=name,
-        email=email,
-        password=password,
-        salt_rounds=4,
-    )
-
-    session.add(user)
-    await session.commit()
-    await session.refresh(user)
-
-    found_user: User | None = await crud.get_user_by_id(
+    user: User | None = await crud.get_user_by_id(
         session=session,
-        id_=user.id,
+        id_=db_user.id,
     )
 
-    assert found_user
-    assert isinstance(found_user, User)
-    assert found_user.id == user.id
-    assert found_user.name == name
-    assert found_user.email == email
-    assert found_user.password != password
-    assert found_user.is_password_valid(password)
-    assert found_user.active
+    assert user is not None
+    assert user.id == db_user.id
+    assert user.first_name == db_user.first_name
+    assert user.last_name == db_user.last_name
+    assert user.email == db_user.email
+    assert user.phone == db_user.phone
+    assert user.password == db_user.password
+    assert user.is_password_valid(utils.DB_USER_PASSWORD)
 
 
 @pytest.mark.asyncio()
 async def test_get_user_by_id_not_found(
     session: AsyncSession,
+    db_user: User,
 ) -> None:
 
-    name: str = "Test User"
-    email: str = "test@mail.tld"
-    password: str = "testpassword"
-
-    user: User = User(
-        name=name,
-        email=email,
-        password=password,
-        salt_rounds=4,
-    )
-
-    session.add(user)
-    await session.commit()
-    await session.refresh(user)
-
-    found_user: User | None = await crud.get_user_by_id(
+    user: User | None = await crud.get_user_by_id(
         session=session,
-        id_=user.id - 1,
+        id_=db_user.id-1,
     )
 
-    assert found_user is None
+    assert user is None
