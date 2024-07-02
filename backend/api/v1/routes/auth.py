@@ -20,17 +20,17 @@ router: APIRouter = APIRouter(prefix="/auth")
 
 @router.post(
     "/register",
-    summary="Register new user",
-    description="Registers new user in the system.",
+    summary="Create a new user account",
+    description="Registers new user account in the system.",
     status_code=201,
     responses={
         201: {
-            "description": "New user registered successfully.",
+            "description": "New user account registered successfully.",
             "model": SuccessResponseScheme,
             "content": {
                 "application/json": {
                     "example": {
-                        "message": "User registered successfully.",
+                        "message": "Account created successfully",
                         "status": 201,
                     },
                 },
@@ -39,14 +39,14 @@ router: APIRouter = APIRouter(prefix="/auth")
         409: {
             "description": (
                 "The email is already in use. "
-                "You should use a different email or send a request to /auth/login."
+                "User should use a different email or login."
             ),
             "model": ErrorResponseScheme,
             "content": {
                 "application/json": {
                     "example": {
                         "errors": [],
-                        "message": "The email is already in use.",
+                        "message": "The email is already in use",
                         "status": 409,
                     },
                 },
@@ -56,7 +56,7 @@ router: APIRouter = APIRouter(prefix="/auth")
             "description": (
                 "Validation error. "
                 "The email format is invalid and/or the password length is incorrect "
-                "(either too short or too long). Same goes for name field. "
+                "(either too short or too long). Same goes for name fields. "
                 "Also you can get this error if "
                 "you forgot to fill in the required fields."
             ),
@@ -66,19 +66,19 @@ router: APIRouter = APIRouter(prefix="/auth")
                     "example": {
                         "errors": [
                             {
-                                "message": "The name field is required.",
-                                "type": "name",
+                                "message": "The last_name length is invalid",
+                                "type": "last_name",
                             },
                             {
-                                "message": "The email format is invalid.",
+                                "message": "The email format is invalid",
                                 "type": "email",
                             },
                             {
-                                "message": "The password length is invalid.",
+                                "message": "The password field is required",
                                 "type": "password",
                             },
                         ],
-                        "message": "Validation error.",
+                        "message": "Validation error",
                         "status": 422,
                     },
                 },
@@ -103,19 +103,26 @@ async def register_user(
     ) is not None:
         raise ErrorException(
             errors=[],
-            message="The email is already in use.",
+            message="The email is already in use",
             status=status.HTTP_409_CONFLICT,
         )
 
-    await crud.create_user(
+    user: User = await crud.create_user(
         session=session,
-        name=new_user.name,
+        first_name=new_user.first_name,
+        last_name=new_user.last_name,
         email=new_user.email,
         password=new_user.password,
     )
+    await crud.create_status(
+        session=session,
+        user_id=user.id,
+        active=True,
+        premium=False,
+    )
 
     success_response: SuccessResponseScheme = SuccessResponseScheme(
-        message="User registered successfully.",
+        message="Account created successfully",
         status=status.HTTP_201_CREATED,
     )
 
@@ -239,97 +246,97 @@ async def authenticate_user(
     return response
 
 
-@router.post(
-    "/refresh",
-    summary="Refresh access token",
-    description="Refreshes the access token using the refresh token.",
-    status_code=200,
-    responses={
-        200: {
-            "description": "Tokens refreshed successfully.",
-            "model": SuccessResponseScheme,
-            "content": {
-                "application/json": {
-                    "example": {
-                        "message": "Tokens refreshed successfully.",
-                        "status": 200,
-                    },
-                },
-            },
-        },
-        400: {
-            "description": "Provided token is not valid.",
-            "model": ErrorResponseScheme,
-            "content": {
-                "application/json": {
-                    "example": {
-                        "errors": [],
-                        "message": "Invalid token.",
-                        "status": 400,
-                    },
-                },
-            },
-        },
-        401: {
-            "description": "Authorization required. Provide a valid token in headers.",
-            "model": ErrorResponseScheme,
-            "content": {
-                "application/json": {
-                    "example": {
-                        "errors": [],
-                        "message": "Authorization required.",
-                        "status": 401,
-                    },
-                },
-            },
-        },
-        422: {
-            "description": "Provided token is not valid.",
-            "model": ErrorResponseScheme,
-            "content": {
-                "application/json": {
-                    "example": {
-                        "errors": [],
-                        "message": "Invalid token.",
-                        "status": 400,
-                    },
-                },
-            },
-        },
-    },
-)
-async def refresh_user(
-    user: Annotated[
-        User,
-        Depends(jwt_auth.get_refreshed_user),
-    ],
-) -> JSONResponse:
+# @router.post(
+#     "/refresh",
+#     summary="Refresh access token",
+#     description="Refreshes the access token using the refresh token.",
+#     status_code=200,
+#     responses={
+#         200: {
+#             "description": "Tokens refreshed successfully.",
+#             "model": SuccessResponseScheme,
+#             "content": {
+#                 "application/json": {
+#                     "example": {
+#                         "message": "Tokens refreshed successfully.",
+#                         "status": 200,
+#                     },
+#                 },
+#             },
+#         },
+#         400: {
+#             "description": "Provided token is not valid.",
+#             "model": ErrorResponseScheme,
+#             "content": {
+#                 "application/json": {
+#                     "example": {
+#                         "errors": [],
+#                         "message": "Invalid token.",
+#                         "status": 400,
+#                     },
+#                 },
+#             },
+#         },
+#         401: {
+#             "description": "Authorization required. Provide a valid token in headers.",
+#             "model": ErrorResponseScheme,
+#             "content": {
+#                 "application/json": {
+#                     "example": {
+#                         "errors": [],
+#                         "message": "Authorization required.",
+#                         "status": 401,
+#                     },
+#                 },
+#             },
+#         },
+#         422: {
+#             "description": "Provided token is not valid.",
+#             "model": ErrorResponseScheme,
+#             "content": {
+#                 "application/json": {
+#                     "example": {
+#                         "errors": [],
+#                         "message": "Invalid token.",
+#                         "status": 400,
+#                     },
+#                 },
+#             },
+#         },
+#     },
+# )
+# async def refresh_user(
+#     user: Annotated[
+#         User,
+#         Depends(jwt_auth.get_refreshed_user),
+#     ],
+# ) -> JSONResponse:
 
-    access_token: str = jwt_auth.generate_access_token(user.id, user.name, user.email)
-    refresh_token: str = jwt_auth.generate_refresh_token(user.id, user.name, user.email)
+#     access_token: str = jwt_auth.generate_access_token(user.id, user.name, user.email)
+#     refresh_token: str = jwt_auth.generate_refresh_token(user.id, user.name, user.email)
 
-    success_response: SuccessResponseScheme = SuccessResponseScheme(
-        message="Tokens refreshed successfully.",
-        status=status.HTTP_200_OK,
-    )
+#     success_response: SuccessResponseScheme = SuccessResponseScheme(
+#         message="Tokens refreshed successfully.",
+#         status=status.HTTP_200_OK,
+#     )
 
-    response: JSONResponse = JSONResponse(
-        content=success_response.model_dump(),
-        status_code=status.HTTP_200_OK,
-    )
-    response.set_cookie(
-        key="access_token",
-        value=access_token,
-        max_age=settings.jwt.ACCESS_TOKEN_EXPIRES_MINUTES * 60,
-        secure=True,
-        httponly=True,
-    )
-    response.set_cookie(
-        key="refresh_token",
-        value=refresh_token,
-        max_age=settings.jwt.REFRESH_TOKEN_EXPIRES_DAYS * 24 * 60 * 60,
-        secure=True,
-        httponly=True,
-    )
+#     response: JSONResponse = JSONResponse(
+#         content=success_response.model_dump(),
+#         status_code=status.HTTP_200_OK,
+#     )
+#     response.set_cookie(
+#         key="access_token",
+#         value=access_token,
+#         max_age=settings.jwt.ACCESS_TOKEN_EXPIRES_MINUTES * 60,
+#         secure=True,
+#         httponly=True,
+#     )
+#     response.set_cookie(
+#         key="refresh_token",
+#         value=refresh_token,
+#         max_age=settings.jwt.REFRESH_TOKEN_EXPIRES_DAYS * 24 * 60 * 60,
+#         secure=True,
+#         httponly=True,
+#     )
 
-    return response
+#     return response
