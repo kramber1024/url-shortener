@@ -1,4 +1,4 @@
-from typing import Annotated
+from typing import TYPE_CHECKING, Annotated
 
 from fastapi import APIRouter, Body, Depends, status
 from fastapi.responses import JSONResponse
@@ -13,7 +13,9 @@ from backend.api.v1.schemes import UserRegistration as UserRegistrationScheme
 from backend.core.auth import jwt_auth
 from backend.core.config import settings
 from backend.core.database import db
-from backend.core.database.models import User
+
+if TYPE_CHECKING:
+    from backend.core.database.models import User
 
 router: APIRouter = APIRouter(prefix="/auth")
 
@@ -144,7 +146,7 @@ async def register_user(
             "content": {
                 "application/json": {
                     "example": {
-                        "message": "User authenticated successfully.",
+                        "message": "User authenticated successfully",
                         "status": 200,
                     },
                 },
@@ -157,7 +159,7 @@ async def register_user(
                 "application/json": {
                     "example": {
                         "errors": [],
-                        "message": "The email or password is incorrect.",
+                        "message": "The email or password is incorrect",
                         "status": 401,
                     },
                 },
@@ -175,18 +177,18 @@ async def register_user(
             "content": {
                 "application/json": {
                     "example": {
-                          "errors": [
-                                {
-                                    "message": "The email field is required.",
-                                    "type": "email",
-                                },
-                                {
-                                    "message": "The password length is invalid.",
-                                    "type": "password",
-                                },
-                            ],
-                            "message": "Validation error.",
-                            "status": 422,
+                        "errors": [
+                            {
+                                "message": "The email format is invalid",
+                                "type": "email",
+                            },
+                            {
+                                "message": "The password length is invalid",
+                                "type": "password",
+                            },
+                        ],
+                        "message": "Validation error",
+                        "status": 422,
                     },
                 },
             },
@@ -194,7 +196,7 @@ async def register_user(
     },
 )
 async def authenticate_user(
-    user_credentials: Annotated[
+    user_login: Annotated[
         UserLoginScheme,
         Body(),
     ],
@@ -206,21 +208,18 @@ async def authenticate_user(
 
     user: User | None = await crud.get_user_by_email(
         session=session,
-        email=user_credentials.email,
+        email=user_login.email,
     )
 
-    if user is None or not user.is_password_valid(user_credentials.password):
+    if user is None or not user.is_password_valid(user_login.password):
         raise ErrorException(
             errors=[],
-            message="The email or password is incorrect.",
+            message="The email or password is incorrect",
             status=status.HTTP_401_UNAUTHORIZED,
         )
 
-    access_token: str = jwt_auth.generate_access_token(user.id, user.name, user.email)
-    refresh_token: str = jwt_auth.generate_refresh_token(user.id, user.name, user.email)
-
     success_response: SuccessResponseScheme = SuccessResponseScheme(
-        message="User authenticated successfully.",
+        message="User authenticated successfully",
         status=status.HTTP_200_OK,
     )
 
@@ -230,14 +229,14 @@ async def authenticate_user(
     )
     response.set_cookie(
         key="access_token",
-        value=access_token,
+        value=jwt_auth.generate_access_token(user.id, user.email),
         max_age=settings.jwt.ACCESS_TOKEN_EXPIRES_MINUTES * 60,
         secure=True,
         httponly=True,
     )
     response.set_cookie(
         key="refresh_token",
-        value=refresh_token,
+        value=jwt_auth.generate_refresh_token(user.id, user.email),
         max_age=settings.jwt.REFRESH_TOKEN_EXPIRES_DAYS * 24 * 60 * 60,
         secure=True,
         httponly=True,
