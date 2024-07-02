@@ -13,13 +13,13 @@ async def validation_exception_handler(
 ) -> JSONResponse:
 
     errors_map: dict[str, str] = {
-        "string_too_short": "The {} length is invalid.",
-        "string_too_long": "The {} length is invalid.",
-        "value_error": "The {} format is invalid.",
-        "missing": "The {} field is required.",
-        "string_type": "The {} should be a string.",
-        "json_invalid":  "Request should be a valid JSON. ",
-        "literal_error": "The {} value is invalid.",
+        "string_too_short": "The {} length is invalid",
+        "string_too_long": "The {} length is invalid",
+        "value_error": "The {} format is invalid",
+        "missing": "The {} field is required",
+        "string_type": "The {} should be a string",
+        "json_invalid":  "Request should be a valid JSON",
+        "literal_error": "The {} value is invalid",
     }
     errors: list[ErrorScheme] = []
 
@@ -27,7 +27,7 @@ async def validation_exception_handler(
         for error in exc.errors():
             message: str = errors_map.get(
                 error["type"],
-                f"Invalid value ({error["type"]}).",
+                f"Invalid value ({error["type"]})",
             ).format(error["loc"][1])
 
             errors.append(
@@ -40,14 +40,14 @@ async def validation_exception_handler(
     else:
         errors.append(
             ErrorScheme(
-                message="Iternal server error.",
+                message="Iternal server error",
                 type="server",
             ),
         )
 
     response: ErrorResponseScheme = ErrorResponseScheme(
         errors=errors,
-        message="Validation error.",
+        message="Validation error",
         status=422,
     )
 
@@ -70,7 +70,7 @@ async def error_exception_handler(
 
     server_error: ErrorException = ErrorException(
         errors=[],
-        message="Internal server error.",
+        message="Internal server error",
         status=status.HTTP_500_INTERNAL_SERVER_ERROR,
     )
 
@@ -87,7 +87,7 @@ async def server_error_exception_handler(
 
     server_error: ErrorException = ErrorException(
         errors=[],
-        message="Internal server error.",
+        message="Internal server error",
         status=status.HTTP_500_INTERNAL_SERVER_ERROR,
     )
 
