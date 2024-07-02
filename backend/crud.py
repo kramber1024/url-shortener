@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from backend.core.database.models import User
+from backend.core.database.models import Status, User
 
 if TYPE_CHECKING:
     from sqlalchemy.engine import Result
@@ -12,17 +12,17 @@ if TYPE_CHECKING:
 async def create_user(
     *,
     session: AsyncSession,
-    name: str,
+    first_name: str,
+    last_name: str | None,
     email: str,
     password: str,
-    salt_rounds: int = 15,
 ) -> User:
 
     user: User = User(
-        name=name,
+        first_name=first_name,
+        last_name=last_name,
         email=email,
         password=password,
-        salt_rounds=salt_rounds,
     )
 
     session.add(user)
@@ -57,3 +57,23 @@ async def get_user_by_id(
     user: User | None = result.scalars().first()
 
     return user
+
+
+async def create_status(
+    *,
+    session: AsyncSession,
+    user_id: int,
+    active: bool = True,
+    premium: bool = False,
+) -> Status:
+
+    status: Status = Status(
+        user_id=user_id,
+        active=active,
+        premium=premium,
+    )
+
+    session.add(status)
+    await session.commit()
+    await session.refresh(status)
+    return status
