@@ -53,6 +53,10 @@ class User(IDBase):
         self.phone = None
         self.password = password
 
+    @property
+    def display_name(self) -> str:
+        return f"{self.first_name} {self.last_name or ""}".strip()
+
     def is_password_valid(self, password: str) -> bool:
         return bcrypt.checkpw(
             password.encode("utf-8"),
