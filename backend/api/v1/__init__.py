@@ -13,7 +13,7 @@ api_router: APIRouter = APIRouter(
                 "application/json": {
                     "example": {
                         "errors": [],
-                        "message": "Internal server error.",
+                        "message": "Internal server error",
                         "status": 500,
                     },
                 },
