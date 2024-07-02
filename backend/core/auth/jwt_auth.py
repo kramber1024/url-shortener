@@ -116,7 +116,6 @@ def get_token_payload(
             options={
                 "require": [
                     "sub",
-                    "name",
                     "email",
                     "exp",
                     "iat",
@@ -148,7 +147,7 @@ async def get_current_user(
     if access_token is None:
         raise ErrorException(
             errors=[],
-            message="Authorization required.",
+            message="Authorization required",
             status=401,
         )
 
@@ -160,7 +159,7 @@ async def get_current_user(
     if payload is None:
         raise ErrorException(
             errors=[],
-            message="Invalid token.",
+            message="Invalid token",
             status=400,
         )
 
@@ -172,7 +171,7 @@ async def get_current_user(
     if user is None:
         raise ErrorException(
             errors=[],
-            message="Invalid token.",
+            message="Invalid token",
             status=400,
         )
 
@@ -187,7 +186,7 @@ async def get_refreshed_user(
     refresh_token: Annotated[
         str | None,
         Cookie(
-            description="Refresh token.",
+            description="Refresh token",
         ),
     ] = None,
 ) -> User:
@@ -197,7 +196,7 @@ async def get_refreshed_user(
     if refresh_token is None:
         raise ErrorException(
             errors=[],
-            message="Authorization required.",
+            message="Authorization required",
             status=401,
         )
 
@@ -209,7 +208,7 @@ async def get_refreshed_user(
     if payload is None:
         raise ErrorException(
             errors=[],
-            message="Invalid token.",
+            message="Invalid token",
             status=400,
         )
 
@@ -221,7 +220,7 @@ async def get_refreshed_user(
     if user is None:
         raise ErrorException(
             errors=[],
-            message="Invalid token.",
+            message="Invalid token",
             status=400,
         )
 
