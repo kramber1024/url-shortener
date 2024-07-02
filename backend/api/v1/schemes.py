@@ -60,7 +60,7 @@ class SuccessResponse(BaseModel):
 
 class UserRegistration(BaseModel):
     first_name: FirstName
-    last_name: LastName | None
+    last_name: LastName | None = None
     email: Email
     password: Password
     terms: Annotated[
@@ -80,7 +80,7 @@ class UserLogin(BaseModel):
 class User(BaseModel):
     id: Id
     first_name: FirstName
-    last_name: LastName | None
+    last_name: LastName | None = None
     email: Email
 
     @classmethod
