@@ -15,7 +15,7 @@ class Error(BaseModel):
                 "Error message. "
                 "Should not be used as feedback for a user."
             ),
-            examples=["Password length is incorrect."],
+            examples=["Password length is incorrect"],
         ),
     ]
     type: Annotated[
@@ -41,7 +41,7 @@ class ErrorResponse(BaseModel):
         str,
         Field(
             description="Generic error message.",
-            examples=["Validation error."],
+            examples=["Validation error"],
         ),
     ]
     status: HTTPStatus
@@ -52,7 +52,7 @@ class SuccessResponse(BaseModel):
         str,
         Field(
             description="Success message.",
-            examples=["Operation completed successfully."],
+            examples=["Operation completed successfully"],
         ),
     ]
     status: HTTPStatus
