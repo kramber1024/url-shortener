@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Annotated
+from typing import Annotated
 
 from fastapi import APIRouter, Body, Depends, status
 from fastapi.responses import JSONResponse
@@ -13,9 +13,7 @@ from backend.api.v1.schemes import UserRegistration as UserRegistrationScheme
 from backend.core.auth import jwt_auth
 from backend.core.config import settings
 from backend.core.database import db
-
-if TYPE_CHECKING:
-    from backend.core.database.models import User
+from backend.core.database.models import User
 
 router: APIRouter = APIRouter(prefix="/auth")
 
@@ -245,97 +243,94 @@ async def authenticate_user(
     return response
 
 
-# @router.post(
-#     "/refresh",
-#     summary="Refresh access token",
-#     description="Refreshes the access token using the refresh token.",
-#     status_code=200,
-#     responses={
-#         200: {
-#             "description": "Tokens refreshed successfully.",
-#             "model": SuccessResponseScheme,
-#             "content": {
-#                 "application/json": {
-#                     "example": {
-#                         "message": "Tokens refreshed successfully.",
-#                         "status": 200,
-#                     },
-#                 },
-#             },
-#         },
-#         400: {
-#             "description": "Provided token is not valid.",
-#             "model": ErrorResponseScheme,
-#             "content": {
-#                 "application/json": {
-#                     "example": {
-#                         "errors": [],
-#                         "message": "Invalid token.",
-#                         "status": 400,
-#                     },
-#                 },
-#             },
-#         },
-#         401: {
-#             "description": "Authorization required. Provide a valid token in headers.",
-#             "model": ErrorResponseScheme,
-#             "content": {
-#                 "application/json": {
-#                     "example": {
-#                         "errors": [],
-#                         "message": "Authorization required.",
-#                         "status": 401,
-#                     },
-#                 },
-#             },
-#         },
-#         422: {
-#             "description": "Provided token is not valid.",
-#             "model": ErrorResponseScheme,
-#             "content": {
-#                 "application/json": {
-#                     "example": {
-#                         "errors": [],
-#                         "message": "Invalid token.",
-#                         "status": 400,
-#                     },
-#                 },
-#             },
-#         },
-#     },
-# )
-# async def refresh_user(
-#     user: Annotated[
-#         User,
-#         Depends(jwt_auth.get_refreshed_user),
-#     ],
-# ) -> JSONResponse:
+@router.post(
+    "/refresh",
+    summary="Refresh access token",
+    description="Refreshes the access token using the refresh token.",
+    status_code=200,
+    responses={
+        200: {
+            "description": "Tokens refreshed successfully.",
+            "model": SuccessResponseScheme,
+            "content": {
+                "application/json": {
+                    "example": {
+                        "message": "Tokens refreshed successfully",
+                        "status": 200,
+                    },
+                },
+            },
+        },
+        400: {
+            "description": "Provided token is not valid.",
+            "model": ErrorResponseScheme,
+            "content": {
+                "application/json": {
+                    "example": {
+                        "errors": [],
+                        "message": "Invalid token",
+                        "status": 400,
+                    },
+                },
+            },
+        },
+        401: {
+            "description": "Authorization required. Provide a valid token in headers.",
+            "model": ErrorResponseScheme,
+            "content": {
+                "application/json": {
+                    "example": {
+                        "errors": [],
+                        "message": "Authorization required",
+                        "status": 401,
+                    },
+                },
+            },
+        },
+        422: {
+            "description": "Provided token is not valid.",
+            "model": ErrorResponseScheme,
+            "content": {
+                "application/json": {
+                    "example": {
+                        "errors": [],
+                        "message": "Invalid token",
+                        "status": 400,
+                    },
+                },
+            },
+        },
+    },
+)
+async def refresh_user(
+    user: Annotated[
+        User,
+        Depends(jwt_auth.get_refreshed_user),
+    ],
+) -> JSONResponse:
 
-#     access_token: str = jwt_auth.generate_access_token(user.id, user.name, user.email)
-#     refresh_token: str = jwt_auth.generate_refresh_token(user.id, user.name, user.email)
+    success_response: SuccessResponseScheme = SuccessResponseScheme(
+        message="Tokens refreshed successfully",
+        status=status.HTTP_200_OK,
+    )
 
-#     success_response: SuccessResponseScheme = SuccessResponseScheme(
-#         message="Tokens refreshed successfully.",
-#         status=status.HTTP_200_OK,
-#     )
+    response: JSONResponse = JSONResponse(
+        content=success_response.model_dump(),
+        status_code=status.HTTP_200_OK,
+    )
+    response.set_cookie(
+        key="access_token",
+        value=jwt_auth.generate_access_token(user.id, user.email),
+        max_age=settings.jwt.ACCESS_TOKEN_EXPIRES_MINUTES * 60,
+        secure=True,
+        httponly=True,
+    )
+    response.set_cookie(
+        key="refresh_token",
+        value=jwt_auth.generate_refresh_token(user.id, user.email),
+        max_age=settings.jwt.REFRESH_TOKEN_EXPIRES_DAYS * 24 * 60 * 60,
+        secure=True,
+        httponly=True,
+    )
 
-#     response: JSONResponse = JSONResponse(
-#         content=success_response.model_dump(),
-#         status_code=status.HTTP_200_OK,
-#     )
-#     response.set_cookie(
-#         key="access_token",
-#         value=access_token,
-#         max_age=settings.jwt.ACCESS_TOKEN_EXPIRES_MINUTES * 60,
-#         secure=True,
-#         httponly=True,
-#     )
-#     response.set_cookie(
-#         key="refresh_token",
-#         value=refresh_token,
-#         max_age=settings.jwt.REFRESH_TOKEN_EXPIRES_DAYS * 24 * 60 * 60,
-#         secure=True,
-#         httponly=True,
-#     )
-
-#     return response
+    return response
