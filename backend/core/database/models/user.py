@@ -4,6 +4,8 @@ import bcrypt
 from sqlalchemy import String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
+from backend.core.config import settings
+
 from .bases import IDBase
 
 if TYPE_CHECKING:
@@ -49,9 +51,9 @@ class User(IDBase):
         super().__init__()
         self.first_name = first_name
         self.last_name = last_name
-        self.email = email
+        self.email = self._format_email(email)
         self.phone = None
-        self.password = password
+        self.password = self._hash_password(password)
 
     @property
     def display_name(self) -> str:
@@ -62,6 +64,19 @@ class User(IDBase):
             password.encode("utf-8"),
             self.password.encode("utf-8"),
         )
+
+    def _format_email(self, email: str) -> str:
+        if "@" not in email:
+            return email
+
+        email_splitted: list[str] = email.split("@")
+        return f"{email_splitted[0]}@{email_splitted[1].lower()}"
+
+    def _hash_password(self, password: str) -> str:
+        return bcrypt.hashpw(
+            password.encode("utf-8"),
+            bcrypt.gensalt(rounds=settings.db.SALT_ROUNDS),
+        ).decode("utf-8")
 
     def __repr__(self) -> str:
         return f"<User {self.id}>"
