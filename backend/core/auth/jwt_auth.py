@@ -74,8 +74,7 @@ def generate_refresh_token(
         },
     )
 
-# TODO(kramber): Update example
-# 001
+
 def get_token_payload(
     token: str,
     jwt_type: Literal["access", "refresh"],
@@ -98,11 +97,13 @@ def get_token_payload(
 
     Example:
     -------
-        >>> token = "eyJhbGciOiJIUzasdasd5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwib\
-        FtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNasdasdyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+        >>> token = "eyJhbGciOiJIUzI1NiIsInR5cCI6ImFjY2VzcyJ9.eyJzdWIiOiIxM\
+            jM0NTY3ODkwIiwiZW1haWwiOiJleGFtcGxlQGVtYWlsLnRsZCIsImV4cCI6MTcx\
+            OTk1OTk3MiwiaWF0IjoxNzE5OTU2MzcyfQ.SU7oI8z5-MVI4GpiOdMtv1eVB-J2bMovCyyfXsHw-Vo"
         >>> jwt_type = "access"
         >>> get_token_payload(token, jwt_type)
-        {'sub': '1234567890', 'name': 'John Doe', 'iat': 1516239022}
+        {"sub": "1234567890", "email": "example@email.tld",
+        "exp": 1719959972, "iat": 1719956372}
 
     """
     try:
