@@ -1,22 +1,27 @@
+from typing import TYPE_CHECKING
+
 import pytest
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend import crud
-from backend.core.database.models import Status, User
+
+if TYPE_CHECKING:
+    from backend.core.database.models import Status
 
 
 @pytest.mark.asyncio()
 async def test_create_status(
     session: AsyncSession,
-    db_user: User,
 ) -> None:
+
+    id_: int = 11231231234124
 
     status: Status = await crud.create_status(
         session=session,
-        user_id=db_user.id,
+        user_id=id_,
     )
 
-    assert status.user_id == db_user.id
+    assert status.user_id == id_
     assert status.email_verified is False
     assert status.phone_verified is False
     assert status.active is True
@@ -26,16 +31,17 @@ async def test_create_status(
 @pytest.mark.asyncio()
 async def test_create_status_inactive(
     session: AsyncSession,
-    db_user: User,
 ) -> None:
+
+    id_: int = 5124124124124124
 
     status: Status = await crud.create_status(
         session=session,
-        user_id=db_user.id,
+        user_id=id_,
         active=False,
     )
 
-    assert status.user_id == db_user.id
+    assert status.user_id == id_
     assert status.email_verified is False
     assert status.phone_verified is False
     assert status.active is False
@@ -45,16 +51,17 @@ async def test_create_status_inactive(
 @pytest.mark.asyncio()
 async def test_create_status_premium(
     session: AsyncSession,
-    db_user: User,
 ) -> None:
+
+    id_: int = 5124124124124124
 
     status: Status = await crud.create_status(
         session=session,
-        user_id=db_user.id,
+        user_id=id_,
         premium=True,
     )
 
-    assert status.user_id == db_user.id
+    assert status.user_id == id_
     assert status.email_verified is False
     assert status.phone_verified is False
     assert status.active is True

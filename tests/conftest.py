@@ -9,7 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_scoped_session
 from backend.core.config import settings
 from backend.core.database import Database
 from backend.core.database import db as database
-from backend.core.database.models import User
+from backend.core.database.models import Status, User
 from backend.main import app
 from tests import utils
 
@@ -77,7 +77,17 @@ async def db_user(session: AsyncSession) -> AsyncGenerator[User, None]:
     await session.commit()
     await session.refresh(user)
 
+    status: Status = Status(
+        user_id=user.id,
+        active=True,
+        premium=False,
+    )
+    session.add(status)
+    await session.commit()
+    await session.refresh(user)
+
     yield user
 
+    await session.delete(status)
     await session.delete(user)
     await session.commit()
