@@ -30,19 +30,37 @@
         <h2 class="dialog__title">Sign up</h2>
         <form novalidate="novalidate" target="_self">
           <div class="dialog__form">
-            <label for="name">Name</label>
-            <input
-              id="name"
-              name="name"
-              type="text"
-              class="form__input"
-              placeholder="John Smith"
-              autocomplete="name"
-              data-msg-required="Please enter your name"
-              data-msg-minlength="Name must be at least 3 characters long"
-              data-msg-maxlength="Name must be at most 32 characters long"
-              required
-            >
+            <div class="form__splitted-input">
+              <div class="splitted-input__input-container">
+                <label for="first_name">First name</label>
+                <input
+                  id="first_name"
+                  name="first_name"
+                  type="text"
+                  class="form__input"
+                  placeholder="John"
+                  autocomplete="given-name"
+                  data-msg-required="Please enter first name"
+                  data-msg-minlength="Too short"
+                  data-msg-maxlength="Too long"
+                  required
+                >
+              </div>
+              <div class="splitted-input__input-container">
+                <label for="last_name">Last name</label>
+                <input
+                  id="last_name"
+                  name="last_name"
+                  type="text"
+                  class="form__input"
+                  placeholder="Smith"
+                  autocomplete="family-name"
+                  data-msg-minlength="Too short"
+                  data-msg-maxlength="Too long"
+                  required
+                >
+              </div>
+            </div>
             <label for="email">Email</label>
             <input
               id="email"
@@ -51,7 +69,7 @@
               class="form__input"
               placeholder="name@email.tld"
               autocomplete="email"
-              data-msg-required="Please enter your email address"
+              data-msg-required="Please enter email address"
               data-msg-invalid="Please enter a valid email address"
               data-msg-conflict="This email address is already linked to an account"
               required
@@ -64,21 +82,21 @@
               class="form__input"
               placeholder="••••••••"
               autocomplete="new-password"
-              data-msg-required="Please enter your password"
+              data-msg-required="Please enter password"
               data-msg-minlength="Password must be at least 8 characters long"
               data-msg-maxlength="Password must be at most 256 characters long"
               required
             >
             <div class="form__terms-container">
               <input
-                id="checkbox"
-                name="checkbox"
+                id="terms"
+                name="terms"
                 type="checkbox"
                 class="terms-container__checkbox"
                 data-msg-required="You need to accept our terms of use"
                 required
               >
-              <label for="checkbox">I agree to the <a href="/terms">terms of use</a></label>
+              <label for="terms">I agree to the <a href="/terms">terms of use</a></label>
             </div>
             <button class="form__button" type="submit">Create Account</button>
           </div>

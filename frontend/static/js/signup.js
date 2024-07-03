@@ -1,7 +1,7 @@
 /**
  * Creates an error label element.
  * 
- * @param {"name" | "email" | "password" | "checkbox"} type The type of the input element.
+ * @param {"first_name" | "last_name" | "email" | "password" | "terms"} type The type of the input element.
  * @param {string} message The error message to display.
  * @returns {HTMLLabelElement} The created error label element.
  */
@@ -17,7 +17,7 @@ function createErrorLabel(type, message) {
 /**
  * Displays an error message for a specific input type.
  * 
- * @param {"name" | "email" | "password" | "checkbox"} type The type of input field that contains errors.
+ * @param {"first_name" | "last_name" | "email" | "password" | "terms"} type The type of input field that contains errors.
  * @param {string} message Error message to display.
  * @returns {void}
  */
@@ -26,7 +26,7 @@ function showError(type, message) {
 
     if (!errorLabel) {
         errorLabel = createErrorLabel(type, message);
-        if (type === "checkbox") {
+        if (type === "terms") {
             document.querySelector(".form__terms-container")?.insertAdjacentElement("afterend", errorLabel);
         }
         else {
@@ -40,7 +40,7 @@ function showError(type, message) {
 /**
  * Hides an error message for a specific input type.
  * 
- * @param {"name" | "email" | "password" | "checkbox"} type The type of input field that contains errors.
+ * @param {"first_name" | "last_name" | "email" | "password" | "terms"} type The type of input field that contains errors.
  * @returns {void}
  */
 function hideError(type) {
@@ -73,33 +73,49 @@ function stopLoading() {
 }
 
 const form = document.querySelector("form");
-const nameInput = document.getElementById("name");
+const firstNameInput = document.getElementById("first_name");
+const lastNameInput = document.getElementById("last_name");
 const emailInput = document.getElementById("email");
 const passwordInput = document.getElementById("password");
-const checkboxInput = document.getElementById("checkbox");
+const checkboxInput = document.getElementById("terms");
 form?.addEventListener("submit", async (e) => {
     e.preventDefault();
 
     const formData = new FormData(form);
     let isFormValid = true;
 
-    const name = formData.get("name")?.toString().trim();
+    const first_name = formData.get("first_name")?.toString().trim();
+    const last_name = formData.get("last_name")?.toString().trim() ?? "";
     const email = formData.get("email")?.toString().trim();
     const password = formData.get("password")?.toString();
-    const terms = formData.get("checkbox")?.toString() ? "on" : undefined;
+    const terms = formData.get("terms")?.toString() ? "on" : undefined;
 
-    // Check name
-    if (!name) {
+    // Check first name
+    if (!first_name) {
         isFormValid = false;
-        showError("name", nameInput?.getAttribute("data-msg-required") ?? "");
-    } else if (name.length < 3) {
+        showError("first_name", firstNameInput?.getAttribute("data-msg-required") ?? "");
+    } else if (first_name.length < 3) {
         isFormValid = false;
-        showError("name", nameInput?.getAttribute("data-msg-minlength") ?? "");
-    } else if (name.length > 32) {
+        showError("first_name", firstNameInput?.getAttribute("data-msg-minlength") ?? "");
+    } else if (first_name.length > 32) {
         isFormValid = false;
-        showError("name", nameInput?.getAttribute("data-msg-maxlength") ?? "");
+        showError("first_name", firstNameInput?.getAttribute("data-msg-maxlength") ?? "");
     } else {
-        hideError("name");
+        hideError("first_name");
+    }
+
+    // Check last name
+    if (!last_name) {
+        formData.delete("last_name");
+    }
+    if (last_name.length < 3 && last_name.length > 0) {
+        isFormValid = false;
+        showError("last_name", lastNameInput?.getAttribute("data-msg-minlength") ?? "");
+    } else if (last_name.length > 32) {
+        isFormValid = false;
+        showError("last_name", lastNameInput?.getAttribute("data-msg-maxlength") ?? "");
+    } else {
+        hideError("last_name");
     }
 
     // Check email
@@ -130,9 +146,9 @@ form?.addEventListener("submit", async (e) => {
     // Check terms
     if (!terms) {
         isFormValid = false;
-        showError("checkbox", checkboxInput?.getAttribute("data-msg-required") ?? "");
+        showError("terms", checkboxInput?.getAttribute("data-msg-required") ?? "");
     } else {
-        hideError("checkbox");
+        hideError("terms");
     }
 
     if (!isFormValid) {
@@ -140,7 +156,7 @@ form?.addEventListener("submit", async (e) => {
     }
 
     startLoading();
-    const body = JSON.stringify({ name, email, password, terms });
+    const body = JSON.stringify(Object.fromEntries(formData.entries())); 
     let response = await fetch("/api/v1/auth/register", {
         method: "POST",
         headers: {
