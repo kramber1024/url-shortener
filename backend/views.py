@@ -33,6 +33,18 @@ async def signin(request: Request) -> HTMLResponse:
         },
     )
 
+
+@router.get("/app", response_class=HTMLResponse)
+async def app(request: Request) -> HTMLResponse:
+    return templates.TemplateResponse(
+        "templates/app.html",
+        {
+            "request": request,
+            "brand_name": settings.app.NAME,
+        },
+    )
+
+
 # TODO(kramber): Disable /api/docs when in production
 # as well as /openapi.json
 # 000
