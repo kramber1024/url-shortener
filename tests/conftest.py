@@ -45,6 +45,7 @@ async def session(db: Database) -> AsyncGenerator[AsyncSession, None]:
         async with async_session() as session:
             yield session
             await session.execute(delete(User))
+            await session.execute(delete(Status))
             await session.commit()
 
     finally:

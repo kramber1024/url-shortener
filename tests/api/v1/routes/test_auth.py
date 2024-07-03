@@ -14,26 +14,20 @@ if TYPE_CHECKING:
     from httpx import Response
     from sqlalchemy.engine import Result
 
-# TODO(kramber): Rewrite tests using fixtures user
-# to reduce code duplication and improve readability.
-# 001
 
 @pytest.mark.asyncio()
 async def test_register_user(
     session: AsyncSession,
     client: AsyncClient,
+    user_credentials: User,
 ) -> None:
 
-    name: str = "Vernon Barton"
-    email: str = "Alison_Rempel36@YAHOO.com"
-    password: str = "2RFTO5_Wx3aFDni"
-    terms: str = "on"
-
     json: dict[str, str] = {
-        "name": name,
-        "email": email,
-        "password": password,
-        "terms": terms,
+        "first_name": user_credentials.first_name,
+        "last_name": str(user_credentials.last_name),
+        "email": user_credentials.email,
+        "password": utils.DB_USER_PASSWORD,
+        "terms": "on",
     }
 
     response: Response = await client.post(
@@ -42,40 +36,88 @@ async def test_register_user(
     )
 
     result: Result[tuple[User]] = await session.execute(
-        select(User).filter(User.email == utils.format_email(email)),
+        select(User).filter(User.email == user_credentials.email),
     )
     user: User | None = result.scalars().first()
 
     assert response.status_code == status.HTTP_201_CREATED
-    assert len(response.json().get("errors", "")) == 0
     assert response.json().get("message", "") != ""
     assert response.json().get("status", 0) == status.HTTP_201_CREATED
     assert user
-    assert isinstance(user, User)
-    assert isinstance(user.id, int)
-    assert user.name == name
-    assert user.email == utils.format_email(email)
-    assert user.password != password
-    assert user.is_password_valid(password)
-    assert user.active
+    assert user.id in utils.SNOWFLAKE_RANGE
+    assert user.first_name == user_credentials.first_name
+    assert user.last_name == user_credentials.last_name
+    assert user.email == user_credentials.email
+    assert user.phone is None
+    assert user.password != utils.DB_USER_PASSWORD
+    assert user.is_password_valid(utils.DB_USER_PASSWORD)
+    assert user.status.user_id == user.id
+    assert not user.status.email_verified
+    assert not user.status.phone_verified
+    assert user.status.active
+    assert not user.status.premium
+
+
+@pytest.mark.asyncio()
+async def test_register_user_no_last_name(
+    session: AsyncSession,
+    client: AsyncClient,
+    user_credentials: User,
+) -> None:
+
+    json: dict[str, str] = {
+        "first_name": user_credentials.first_name,
+        "email": user_credentials.email,
+        "password": utils.DB_USER_PASSWORD,
+        "terms": "on",
+    }
+
+    response: Response = await client.post(
+        "api/v1/auth/register",
+        json=json,
+    )
+
+    result: Result[tuple[User]] = await session.execute(
+        select(User).filter(User.email == user_credentials.email),
+    )
+    user: User | None = result.scalars().first()
+
+    assert response.status_code == status.HTTP_201_CREATED
+    assert response.json().get("message", "") != ""
+    assert response.json().get("status", 0) == status.HTTP_201_CREATED
+    assert user
+    assert user.id in utils.SNOWFLAKE_RANGE
+    assert user.first_name == user_credentials.first_name
+    assert user.last_name is None
+    assert user.email == user_credentials.email
+    assert user.phone is None
+    assert user.password != utils.DB_USER_PASSWORD
+    assert user.is_password_valid(utils.DB_USER_PASSWORD)
+    assert user.status.user_id == user.id
+    assert not user.status.email_verified
+    assert not user.status.phone_verified
+    assert user.status.active
+    assert not user.status.premium
 
 
 @pytest.mark.asyncio()
 async def test_register_user_uppercase(
     session: AsyncSession,
     client: AsyncClient,
+    user_credentials: User,
 ) -> None:
 
-    name: str = "IDELLA_UPTON376"
-    email: str = "PEARLIE8@EXAMPLE.NET"
-    password: str = "MAMMMM_T3QJZ123"
-    terms: str = "on"
+    first_name: str = user_credentials.first_name.upper()
+    last_name: str = str(user_credentials.last_name).upper()
+    email: str = user_credentials.email.upper()
+    password: str = utils.DB_USER_PASSWORD.upper()
 
     json: dict[str, str] = {
-        "name": name,
+        "first_name": first_name,
+        "last_name": last_name,
         "email": email,
         "password": password,
-        "terms": terms,
+        "terms": "on",
     }
 
     response: Response = await client.post(
@@ -89,83 +131,37 @@ async def test_register_user_uppercase(
     user: User | None = result.scalars().first()
 
     assert response.status_code == status.HTTP_201_CREATED
-    assert len(response.json().get("errors", "")) == 0
     assert response.json().get("message", "") != ""
     assert response.json().get("status", 0) == status.HTTP_201_CREATED
     assert user
-    assert isinstance(user, User)
-    assert isinstance(user.id, int)
-    assert user.name == name
+    assert user.id in utils.SNOWFLAKE_RANGE
+    assert user.first_name == first_name
+    assert user.last_name == last_name
     assert user.email == utils.format_email(email)
+    assert user.phone is None
     assert user.password != password
     assert user.is_password_valid(password)
-    assert user.active
+    assert user.status.user_id == user.id
+    assert not user.status.email_verified
+    assert not user.status.phone_verified
+    assert user.status.active
+    assert not user.status.premium
+
 
 
 @pytest.mark.asyncio()
 async def test_register_user_email_conflict(
     session: AsyncSession,
     client: AsyncClient,
+    db_user: User,
+    user_credentials: User,
 ) -> None:
 
-    name: str = "Julian49"
-    email: str = "Alisha_Borer@hotmail.com"
-    password: str = "2ePl_ncWd_Ea0Vg"
-    terms: str = "on"
-
-    user: User = User(
-        name=name,
-        email=email,
-        password=password,
-        salt_rounds=4,
-    )
-
-    session.add(user)
-    await session.commit()
-    await session.refresh(user)
-
     json: dict[str, str] = {
-        "name": name,
-        "email": email,
-        "password": password,
-        "terms": terms,
-    }
-
-    response: Response = await client.post(
-        "api/v1/auth/register",
-        json=json,
-    )
-
-    assert response.status_code == status.HTTP_409_CONFLICT
-    assert len(response.json().get("errors", "")) == 0
-    assert response.json().get("message", "") != ""
-    assert response.json().get("status", 0) == status.HTTP_409_CONFLICT
-    assert user
-    assert isinstance(user, User)
-    assert isinstance(user.id, int)
-    assert user.name == name
-    assert user.email == utils.format_email(email)
-    assert user.password != password
-    assert user.is_password_valid(password)
-    assert user.active
-
-
-@pytest.mark.asyncio()
-async def test_register_user_invalid_name(
-    session: AsyncSession,
-    client: AsyncClient,
-) -> None:
-
-    name: str = "12"
-    email: str = "Leta.Hartmann@hotmail.com"
-    password: str = "eSB7Y6DxFFFkckZ"
-    terms: str = "on"
-
-    json: dict[str, str] = {
-        "name": name,
-        "email": email,
-        "password": password,
-        "terms": terms,
+        "first_name": user_credentials.first_name,
+        "email": db_user.email,
+        "password": utils.DB_USER_PASSWORD,
+        "terms": "on",
     }
 
     response: Response = await client.post(
@@ -174,33 +170,41 @@ async def test_register_user_invalid_name(
     )
 
     result: Result[tuple[User]] = await session.execute(
-        select(User).filter(User.email == utils.format_email(email)),
+        select(User).filter(User.email == utils.format_email(db_user.email)),
     )
     user: User | None = result.scalars().first()
 
-    assert user is None
-    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
-    assert len(response.json().get("errors", "")) == 1
-    assert utils.error_type_exists(response.json(), "name")
+    assert response.status_code == status.HTTP_409_CONFLICT
+    assert len(response.json().get("errors", [0])) == 0
     assert response.json().get("message", "") != ""
-    assert response.json().get("status", 0) == status.HTTP_422_UNPROCESSABLE_ENTITY
+    assert response.json().get("status", 0) == status.HTTP_409_CONFLICT
+    assert user
+    assert user.id in utils.SNOWFLAKE_RANGE
+    assert user.first_name == db_user.first_name
+    assert user.last_name == db_user.last_name
+    assert user.email == db_user.email
+    assert user.phone is None
+    assert user.password != utils.DB_USER_PASSWORD
+    assert user.is_password_valid(utils.DB_USER_PASSWORD)
+    assert user.status.user_id == user.id
+    assert not user.status.email_verified
+    assert not user.status.phone_verified
+    assert user.status.active
+    assert not user.status.premium
 
 
 @pytest.mark.asyncio()
-async def test_register_user_invalid_email(
+async def test_register_user_invalid_first_name(
+    session: AsyncSession,
     client: AsyncClient,
+    user_credentials: User,
 ) -> None:
 
-    name: str = "Curtis Lehner"
-    email: str = "mymail.com"
-    password: str = "TIB5SMrQIfQx6Jo"
-    terms: str = "on"
-
     json: dict[str, str] = {
-        "name": name,
-        "email": email,
-        "password": password,
-        "terms": terms,
+        "first_name": "Hi",
+        "email": user_credentials.email,
+        "password": utils.DB_USER_PASSWORD,
+        "terms": "on",
     }
 
     response: Response = await client.post(
@@ -208,29 +212,98 @@ async def test_register_user_invalid_email(
         json=json,
     )
 
+    result: Result[tuple[User]] = await session.execute(
+        select(User).filter(User.email == user_credentials.email),
+    )
+    user: User | None = result.scalars().first()
+
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
-    assert len(response.json().get("errors", "")) == 1
+    assert len(response.json().get("errors", [0])) == 1
+    assert utils.error_type_exists(response.json(), "first_name")
+    assert response.json().get("message", "") != ""
+    assert response.json().get("status", 0) == status.HTTP_422_UNPROCESSABLE_ENTITY
+    assert user is None
+
+
+@pytest.mark.asyncio()
+async def test_register_user_invalid_last_name(
+    session: AsyncSession,
+    client: AsyncClient,
+    user_credentials: User,
+) -> None:
+
+    json: dict[str, str] = {
+        "first_name": user_credentials.first_name,
+        "last_name": "Hi",
+        "email": user_credentials.email,
+        "password":utils.DB_USER_PASSWORD,
+        "terms": "on",
+    }
+
+    response: Response = await client.post(
+        "api/v1/auth/register",
+        json=json,
+    )
+
+    result: Result[tuple[User]] = await session.execute(
+        select(User).filter(User.email == user_credentials.email),
+    )
+    user: User | None = result.scalars().first()
+
+    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+    assert len(response.json().get("errors", [0])) == 1
+    assert utils.error_type_exists(response.json(), "last_name")
+    assert response.json().get("message", "") != ""
+    assert response.json().get("status", 0) == status.HTTP_422_UNPROCESSABLE_ENTITY
+    assert user is None
+
+
+@pytest.mark.asyncio()
+async def test_register_user_invalid_email(
+    session: AsyncSession,
+    client: AsyncClient,
+    user_credentials: User,
+) -> None:
+
+    invalid_email: str = "a@a."
+
+    json: dict[str, str] = {
+        "first_name": user_credentials.first_name,
+        "email": invalid_email,
+        "password": utils.DB_USER_PASSWORD,
+        "terms": "on",
+    }
+
+    response: Response = await client.post(
+        "api/v1/auth/register",
+        json=json,
+    )
+
+    result: Result[tuple[User]] = await session.execute(
+        select(User).filter(User.email == utils.format_email(invalid_email)),
+    )
+    user: User | None = result.scalars().first()
+
+    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+    assert len(response.json().get("errors", [0])) == 1
     assert utils.error_type_exists(response.json(), "email")
     assert response.json().get("message", "") != ""
     assert response.json().get("status", 0) == status.HTTP_422_UNPROCESSABLE_ENTITY
+    assert user is None
 
 
 @pytest.mark.asyncio()
 async def test_register_user_invalid_password(
     session: AsyncSession,
     client: AsyncClient,
+    user_credentials: User,
 ) -> None:
 
-    name: str = "Aglae_Upton"
-    email: str = "Kamryn65@example.org"
-    password: str = "1234567"
-    terms: str = "on"
-
     json: dict[str, str] = {
-        "name": name,
-        "email": email,
-        "password": password,
-        "terms": terms,
+        "first_name": user_credentials.first_name,
+        "email": user_credentials.email,
+        "password": "123",
+        "terms": "on",
     }
 
     response: Response = await client.post(
@@ -239,34 +312,30 @@ async def test_register_user_invalid_password(
     )
 
     result: Result[tuple[User]] = await session.execute(
-        select(User).filter(User.email == utils.format_email(email)),
+        select(User).filter(User.email == user_credentials.email),
     )
     user: User | None = result.scalars().first()
 
-    assert user is None
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
-    assert len(response.json().get("errors", "")) == 1
+    assert len(response.json().get("errors", [0])) == 1
     assert utils.error_type_exists(response.json(), "password")
     assert response.json().get("message", "") != ""
     assert response.json().get("status", 0) == status.HTTP_422_UNPROCESSABLE_ENTITY
+    assert user is None
 
 
 @pytest.mark.asyncio()
 async def test_register_user_invalid_terms(
     session: AsyncSession,
     client: AsyncClient,
+    user_credentials: User,
 ) -> None:
 
-    name: str = "Sigurd.Douglas57"
-    email: str = "Raheem48@hotmail.com"
-    password: str = "3upLT0fNnAyB0E8"
-    terms: str = "i_dont_accept_these_terms"
-
     json: dict[str, str] = {
-        "name": name,
-        "email": email,
-        "password": password,
-        "terms": terms,
+        "first_name": user_credentials.first_name,
+        "email": user_credentials.email,
+        "password": user_credentials.password,
+        "terms": "off",
     }
 
     response: Response = await client.post(
@@ -275,33 +344,35 @@ async def test_register_user_invalid_terms(
     )
 
     result: Result[tuple[User]] = await session.execute(
-        select(User).filter(User.email == utils.format_email(email)),
+        select(User).filter(User.email == user_credentials.email),
     )
     user: User | None = result.scalars().first()
 
-    assert user is None
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
-    assert len(response.json().get("errors", "")) == 1
+    assert len(response.json().get("errors", [0])) == 1
     assert utils.error_type_exists(response.json(), "terms")
     assert response.json().get("message", "") != ""
     assert response.json().get("status", 0) == status.HTTP_422_UNPROCESSABLE_ENTITY
+    assert user is None
 
 
 @pytest.mark.asyncio()
 async def test_register_user_invalid_all(
+    session: AsyncSession,
     client: AsyncClient,
 ) -> None:
 
-    name: str = "12"
-    email: str = "@example.org"
-    password: str = "1234567"
-    terms: str = "i_dont_agree"
+    invalid_first_name: str = "26"
+    invalid_last_name: str = "26"
+    invalid_email: str = "26"
+    invalid_password: str = "26"
 
     json: dict[str, str] = {
-        "name": name,
-        "email": email,
-        "password": password,
-        "terms": terms,
+        "first_name": invalid_first_name,
+        "last_name": invalid_last_name,
+        "email": invalid_email,
+        "password": invalid_password,
+        "terms": "26",
     }
 
     response: Response = await client.post(
@@ -309,64 +380,63 @@ async def test_register_user_invalid_all(
         json=json,
     )
 
-    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
-    assert len(response.json().get("errors", "")) == len(
-        ["name", "email", "password", "terms"],
+    result: Result[tuple[User]] = await session.execute(
+        select(User).filter(User.email == utils.format_email(invalid_email)),
     )
-    assert utils.error_type_exists(response.json(), "name")
+    user: User | None = result.scalars().first()
+
+    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+    assert len(response.json().get("errors", [0])) == len([
+        "first_name", "last_name", "email", "password", "terms",
+    ])
+    assert utils.error_type_exists(response.json(), "first_name")
+    assert utils.error_type_exists(response.json(), "last_name")
     assert utils.error_type_exists(response.json(), "email")
     assert utils.error_type_exists(response.json(), "password")
     assert utils.error_type_exists(response.json(), "terms")
     assert response.json().get("message", "") != ""
     assert response.json().get("status", 0) == status.HTTP_422_UNPROCESSABLE_ENTITY
+    assert user is None
 
 
 @pytest.mark.asyncio()
 async def test_register_user_empty(
+    session: AsyncSession,
     client: AsyncClient,
 ) -> None:
 
-    json: dict[str, str] = {}
-
     response: Response = await client.post(
         "api/v1/auth/register",
-        json=json,
+        json={},
     )
 
-    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
-    assert len(response.json().get("errors", "")) == len(
-        ["name", "email", "password", "terms"],
+    result: Result[tuple[User]] = await session.execute(
+        select(User).filter(User.email == ""),
     )
-    assert utils.error_type_exists(response.json(), "name")
+    user: User | None = result.scalars().first()
+
+    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+    assert len(response.json().get("errors", [0])) == len([
+        "first_name", "email", "password", "terms",
+    ])
+    assert utils.error_type_exists(response.json(), "first_name")
     assert utils.error_type_exists(response.json(), "email")
     assert utils.error_type_exists(response.json(), "password")
     assert utils.error_type_exists(response.json(), "terms")
     assert response.json().get("message", "") != ""
     assert response.json().get("status", 0) == status.HTTP_422_UNPROCESSABLE_ENTITY
+    assert user is None
 
 
 @pytest.mark.asyncio()
 async def test_authenticate_user(
-    session: AsyncSession,
     client: AsyncClient,
+    db_user: User,
 ) -> None:
 
-    email: str = "Michael0@hotmail.com"
-    password: str = "cU5EAv8itwutUO9"
-
-    session.add(
-        User(
-            name="Destini_Hyatt52",
-            email=email,
-            password=password,
-            salt_rounds=4,
-        ),
-    )
-    await session.commit()
-
     json: dict[str, str] = {
-        "email": email,
-        "password": password,
+        "email": db_user.email,
+        "password": utils.DB_USER_PASSWORD,
     }
 
     response: Response = await client.post(
@@ -383,27 +453,13 @@ async def test_authenticate_user(
 
 @pytest.mark.asyncio()
 async def test_authenticate_user_incorrect_email(
-    session: AsyncSession,
     client: AsyncClient,
+    db_user: User,
 ) -> None:
 
-    name: str = "Nathen_OConner"
-    email: str = "Dusty_Klocko33@hotmail.com"
-    password: str = "uZAsWQ6k_8uuQ2r"
-
-    session.add(
-        User(
-            name=name,
-            email=email,
-            password=password,
-            salt_rounds=4,
-        ),
-    )
-    await session.commit()
-
     json: dict[str, str] = {
-        "email": "Beth.Bernier@gmail.com",
-        "password": password,
+        "email": db_user.email + "a",
+        "password": utils.DB_USER_PASSWORD,
     }
 
     response: Response = await client.post(
@@ -412,34 +468,22 @@ async def test_authenticate_user_incorrect_email(
     )
 
     assert response.status_code == status.HTTP_401_UNAUTHORIZED
-    assert len(response.json().get("errors", "")) == 0
+    assert len(response.json().get("errors", [0])) == 0
     assert response.json().get("message", "") != ""
     assert response.json().get("status", 0) == status.HTTP_401_UNAUTHORIZED
+    assert response.cookies.get("access_token", "") == ""
+    assert response.cookies.get("refresh_token", "") == ""
 
 
 @pytest.mark.asyncio()
 async def test_authenticate_user_incorrect_password(
-    session: AsyncSession,
     client: AsyncClient,
+    db_user: User,
 ) -> None:
 
-    name: str = "Bessie Haag"
-    email: str = "Marcel33@yahoo.com"
-    password: str = "HNAzs_gQ4zGI2FF"
-
-    session.add(
-        User(
-            name=name,
-            email=email,
-            password=password,
-            salt_rounds=4,
-        ),
-    )
-    await session.commit()
-
     json: dict[str, str] = {
-        "email": email,
-        "password": "mSdewoS6vAmL8LP",
+        "email": db_user.email,
+        "password": utils.DB_USER_PASSWORD[::-1],
     }
 
     response: Response = await client.post(
@@ -448,34 +492,22 @@ async def test_authenticate_user_incorrect_password(
     )
 
     assert response.status_code == status.HTTP_401_UNAUTHORIZED
-    assert len(response.json().get("errors", "")) == 0
+    assert len(response.json().get("errors", [0])) == 0
     assert response.json().get("message", "") != ""
     assert response.json().get("status", 0) == status.HTTP_401_UNAUTHORIZED
+    assert response.cookies.get("access_token", "") == ""
+    assert response.cookies.get("refresh_token", "") == ""
 
 
 @pytest.mark.asyncio()
 async def test_authenticate_user_incorrect_all(
-    session: AsyncSession,
     client: AsyncClient,
+    db_user: User,
 ) -> None:
 
-    name: str = "Eliezer_Hilll"
-    email: str = "Ivy.Hammes7@yahoo.com"
-    password: str = "YT5MqVCjlICQxLA"
-
-    session.add(
-        User(
-            name=name,
-            email=email,
-            password=password,
-            salt_rounds=4,
-        ),
-    )
-    await session.commit()
-
     json: dict[str, str] = {
-        "email": email + "ma",
-        "password": password + "1",
+        "email": db_user.email + "a",
+        "password": utils.DB_USER_PASSWORD[::-1],
     }
 
     response: Response = await client.post(
@@ -484,22 +516,22 @@ async def test_authenticate_user_incorrect_all(
     )
 
     assert response.status_code == status.HTTP_401_UNAUTHORIZED
-    assert len(response.json().get("errors", "")) == 0
+    assert len(response.json().get("errors", [0])) == 0
     assert response.json().get("message", "") != ""
     assert response.json().get("status", 0) == status.HTTP_401_UNAUTHORIZED
+    assert response.cookies.get("access_token", "") == ""
+    assert response.cookies.get("refresh_token", "") == ""
 
 
 @pytest.mark.asyncio()
 async def test_authenticate_user_invalid_email(
     client: AsyncClient,
+    user_credentials: User,
 ) -> None:
 
-    email: str = "mymailllll.com"
-    password: str = "OzjVn2XgleJ8Mo0"
-
     json: dict[str, str] = {
-        "email": email,
-        "password": password,
+        "email": "........",
+        "password": user_credentials.password,
     }
 
     response: Response = await client.post(
@@ -508,7 +540,7 @@ async def test_authenticate_user_invalid_email(
     )
 
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
-    assert len(response.json().get("errors", "")) == 1
+    assert len(response.json().get("errors", [0])) == 1
     assert utils.error_type_exists(response.json(), "email")
     assert response.json().get("message", "") != ""
     assert response.json().get("status", 0) == status.HTTP_422_UNPROCESSABLE_ENTITY
@@ -517,14 +549,12 @@ async def test_authenticate_user_invalid_email(
 @pytest.mark.asyncio()
 async def test_authenticate_user_invalid_password(
     client: AsyncClient,
+    user_credentials: User,
 ) -> None:
 
-    email: str = "Marilou5@hotmail.com"
-    password: str = "268"
-
     json: dict[str, str] = {
-        "email": email,
-        "password": password,
+        "email": user_credentials.email,
+        "password": "12345",
     }
 
     response: Response = await client.post(
@@ -533,7 +563,7 @@ async def test_authenticate_user_invalid_password(
     )
 
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
-    assert len(response.json().get("errors", "")) == 1
+    assert len(response.json().get("errors", [0])) == 1
     assert utils.error_type_exists(response.json(), "password")
     assert response.json().get("message", "") != ""
     assert response.json().get("status", 0) == status.HTTP_422_UNPROCESSABLE_ENTITY
@@ -544,14 +574,9 @@ async def test_authenticate_user_invalid_all(
     client: AsyncClient,
 ) -> None:
 
-    name: str = "22"
-    email: str = "Stanford81yahoocom"
-    password: str = "YP2m6v"
-
     json: dict[str, str] = {
-        "name": name,
-        "email": email,
-        "password": password,
+        "email": "...",
+        "password": "...",
     }
 
     response: Response = await client.post(
@@ -560,7 +585,7 @@ async def test_authenticate_user_invalid_all(
     )
 
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
-    assert len(response.json().get("errors", "")) == len(["email", "password"])
+    assert len(response.json().get("errors", [0])) == len(["email", "password"])
     assert utils.error_type_exists(response.json(), "email")
     assert utils.error_type_exists(response.json(), "password")
     assert response.json().get("message", "") != ""
@@ -572,15 +597,13 @@ async def test_authenticate_user_empty(
     client: AsyncClient,
 ) -> None:
 
-    json: dict[str, str] = {}
-
     response: Response = await client.post(
         "api/v1/auth/login",
-        json=json,
+        json={},
     )
 
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
-    assert len(response.json().get("errors", "")) == len(["email", "password"])
+    assert len(response.json().get("errors", [0])) == len(["email", "password"])
     assert utils.error_type_exists(response.json(), "email")
     assert utils.error_type_exists(response.json(), "password")
     assert response.json().get("message", "") != ""
@@ -589,29 +612,13 @@ async def test_authenticate_user_empty(
 
 @pytest.mark.asyncio()
 async def test_refresh_user(
-    session: AsyncSession,
     client: AsyncClient,
+    db_user: User,
 ) -> None:
 
-    name: str = "Mrs. Alyssa Lueilwitz"
-    email: str = "Maia_Osinski@hotmail.com"
-    password: str = "G9rA8h3u5XUoqxn"
-
-    user: User = User(
-        name=name,
-        email=email,
-        password=password,
-        salt_rounds=4,
-    )
-
-    session.add(user)
-    await session.commit()
-    await session.refresh(user)
-
     refresh_token: str = jwt_auth.generate_refresh_token(
-        user_id=user.id,
-        name=user.name,
-        email=user.email,
+        user_id=db_user.id,
+        email=db_user.email,
     )
 
     client.cookies.set("refresh_token", refresh_token)
@@ -624,18 +631,10 @@ async def test_refresh_user(
     assert response.json().get("status", 0) == status.HTTP_200_OK
     assert response.cookies.get("access_token", "") != ""
     assert response.cookies.get("refresh_token", "") != ""
-    assert user
-    assert isinstance(user, User)
-    assert isinstance(user.id, int)
-    assert user.name == name
-    assert user.email == utils.format_email(email)
-    assert user.password != password
-    assert user.is_password_valid(password)
-    assert user.active
 
 
 @pytest.mark.asyncio()
-async def test_refresh_user_invalid_token(
+async def test_refresh_user_incorrect_token(
     client: AsyncClient,
 ) -> None:
 
@@ -651,7 +650,7 @@ async def test_refresh_user_invalid_token(
     )
 
     assert response.status_code == status.HTTP_400_BAD_REQUEST
-    assert len(response.json().get("errors", "")) == 0
+    assert len(response.json().get("errors", [0])) == 0
     assert response.json().get("message", "") != ""
     assert response.json().get("status", 0) == status.HTTP_400_BAD_REQUEST
     assert response.cookies.get("access_token", "") == ""
@@ -660,29 +659,13 @@ async def test_refresh_user_invalid_token(
 
 @pytest.mark.asyncio()
 async def test_refresh_user_access_token(
-    session: AsyncSession,
     client: AsyncClient,
+    db_user: User,
 ) -> None:
 
-    name: str = "Jermaine Howe"
-    email: str = "Riley.Wilkinson91@yahoo.com"
-    password: str = "NIucXOsGNhCXRkI"
-
-    user: User = User(
-        name=name,
-        email=email,
-        password=password,
-        salt_rounds=4,
-    )
-
-    session.add(user)
-    await session.commit()
-    await session.refresh(user)
-
     access_token: str = jwt_auth.generate_access_token(
-        user_id=user.id,
-        name=user.name,
-        email=user.email,
+        user_id=db_user.id,
+        email=db_user.email,
     )
 
     client.cookies.set("refresh_token", access_token)
@@ -691,7 +674,7 @@ async def test_refresh_user_access_token(
     )
 
     assert response.status_code == status.HTTP_400_BAD_REQUEST
-    assert len(response.json().get("errors", "")) == 0
+    assert len(response.json().get("errors", [0])) == 0
     assert response.json().get("message", "") != ""
     assert response.json().get("status", 0) == status.HTTP_400_BAD_REQUEST
     assert response.cookies.get("access_token", "") == ""
@@ -700,32 +683,17 @@ async def test_refresh_user_access_token(
 
 @pytest.mark.asyncio()
 async def test_refresh_user_no_authorization(
-    session: AsyncSession,
     client: AsyncClient,
+    db_user: User,
 ) -> None:
-
-    name: str = "Mrs. Geneva Kemmer"
-    email: str = "Leonor60@gmail.com"
-    password: str = "s8g_xP1R6a56y1C"
-
-    user: User = User(
-        name=name,
-        email=email,
-        password=password,
-        salt_rounds=4,
-    )
-
-    session.add(user)
-    await session.commit()
-    await session.refresh(user)
 
     response: Response = await client.post(
         "api/v1/auth/refresh",
     )
 
     assert response.status_code == status.HTTP_401_UNAUTHORIZED
-    assert len(response.json().get("errors", "")) == 0
+    assert len(response.json().get("errors", [0])) == 0
     assert response.json().get("message", "") != ""
-    assert response.json().get("status", 0) == status.HTTP_401_UNAUTHORIZED
+    assert response.json().get("status", db_user.id) == status.HTTP_401_UNAUTHORIZED
     assert response.cookies.get("access_token", "") == ""
     assert response.cookies.get("refresh_token", "") == ""
