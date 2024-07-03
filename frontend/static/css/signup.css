@@ -119,10 +119,14 @@ body {
     width: 100%;
 }
 
+.splitted-input__input-container:first-child {
+    margin-right: 20px;
+}
+
 .splitted-input__input-container {
     display: flex;
     flex-direction: column;
-    width: 160px;
+    flex: 1;
 }
 
 .form__input {
