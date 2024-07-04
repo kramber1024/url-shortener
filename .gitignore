@@ -9,3 +9,4 @@ __pycache__
 .coverage
 .env
 htmlcov
+*.css.map
