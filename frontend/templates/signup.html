@@ -6,107 +6,104 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1">
   <meta name="description" content="Create new {{ brand_name }} account">
   <!-- css -->
-	<link rel="stylesheet" href="static/css/signup.css">
-  <link rel="stylesheet" href="static/css/colors.css">
+	<link rel="stylesheet" href="static/css/signup.min.css">
   <!-- fonts -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap">
   <!-- favicon -->
   <link rel="icon" type="image/x-icon" href="static/ico/favicon.ico">
 </head>
-<body data-theme="light">
+<body>
 	<div class="fullpage">
 		<nav class="navbar-container">
       <div class="navbar">
-        <a class="navbar__brand-link" href="/">
+        <a class="brand-link" href="/">
           <div class="brand-link__logo-wrapper">
             {% include "static/svg/logo.svg" %}
           </div>
-          <h1 class="brand-link__brand-name no-select">{{ brand_name }}</h1>
+          <span class="brand-link__brand-name no-select">{{ brand_name }}</h1>
         </a>
       </div>
     </nav>
     <main class="content">
-      <div class="dialog">
-        <h2 class="dialog__title">Sign up</h2>
+      <div class="form-dialog">
+        <h1>Sign up</h1>
         <form novalidate="novalidate" target="_self">
-          <div class="dialog__form">
-            <div class="form__splitted-input">
-              <div class="splitted-input__input-container">
-                <label for="first_name">First name</label>
-                <input
-                  id="first_name"
-                  name="first_name"
-                  type="text"
-                  class="form__input"
-                  placeholder="John"
-                  autocomplete="given-name"
-                  data-msg-required="Please enter first name"
-                  data-msg-minlength="Too short"
-                  data-msg-maxlength="Too long"
-                  required
-                >
-              </div>
-              <div class="splitted-input__input-container">
-                <label for="last_name">Last name</label>
-                <input
-                  id="last_name"
-                  name="last_name"
-                  type="text"
-                  class="form__input"
-                  placeholder="Smith"
-                  autocomplete="family-name"
-                  data-msg-minlength="Too short"
-                  data-msg-maxlength="Too long"
-                  required
-                >
-              </div>
-            </div>
-            <label for="email">Email</label>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              class="form__input"
-              placeholder="name@email.tld"
-              autocomplete="email"
-              data-msg-required="Please enter email address"
-              data-msg-invalid="Please enter a valid email address"
-              data-msg-conflict="This email address is already linked to an account"
-              required
-            >
-            <label for="password">Password</label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              class="form__input"
-              placeholder="••••••••"
-              autocomplete="new-password"
-              data-msg-required="Please enter password"
-              data-msg-minlength="Password must be at least 8 characters long"
-              data-msg-maxlength="Password must be at most 256 characters long"
-              required
-            >
-            <div class="form__terms-container">
+          <div class="splitted-input">
+            <div class="splitted-input__input-container">
+              <label for="first_name">First name</label>
               <input
-                id="terms"
-                name="terms"
-                type="checkbox"
-                class="terms-container__checkbox"
-                data-msg-required="You need to accept our terms of use"
+                id="first_name"
+                name="first_name"
+                type="text"
+                class="form__input"
+                placeholder="John"
+                autocomplete="given-name"
+                data-msg-required="Please enter first name"
+                data-msg-minlength="Too short"
+                data-msg-maxlength="Too long"
                 required
               >
-              <label for="terms">I agree to the <a href="/terms">terms of use</a></label>
             </div>
-            <button class="form__button" type="submit">Create Account</button>
+            <div class="splitted-input__input-container">
+              <label for="last_name">Last name</label>
+              <input
+                id="last_name"
+                name="last_name"
+                type="text"
+                class="form__input"
+                placeholder="Smith"
+                autocomplete="family-name"
+                data-msg-minlength="Too short"
+                data-msg-maxlength="Too long"
+                required
+              >
+            </div>
           </div>
+          <label for="email">Email</label>
+          <input
+            id="email"
+            name="email"
+            type="email"
+            class="form__input"
+            placeholder="name@email.tld"
+            autocomplete="email"
+            data-msg-required="Please enter email address"
+            data-msg-invalid="Please enter a valid email address"
+            data-msg-conflict="This email address is already linked to an account"
+            required
+          >
+          <label for="password">Password</label>
+          <input
+            id="password"
+            name="password"
+            type="password"
+            class="form__input"
+            placeholder="••••••••"
+            autocomplete="new-password"
+            data-msg-required="Please enter password"
+            data-msg-minlength="Password must be at least 8 characters long"
+            data-msg-maxlength="Password must be at most 256 characters long"
+            required
+          >
+          <div class="terms-container">
+            <input
+              id="terms"
+              name="terms"
+              type="checkbox"
+              class="checkbox"
+              data-msg-required="You need to accept our terms of use"
+              required
+            >
+            <label for="terms">I agree to the <a href="/terms" class="link">terms of use</a></label>
+          </div>
+          <button class="submit-button" type="submit">Create Account</button>
         </form>
       </div>
-      <div class="footer">
-        <p>Already have an account? <a href="{{ url_for('signin') }}">Login</a></p>
+      <div class="dialog-footer">
+        <p>Already have an account? <a href="{{ url_for('signin') }}" class="link">Login</a></p>
       </div>
-    </main>
-	</div>
+    </main>    
+  </div>
   <script src="static/js/signup.js" type="text/javascript"></script>
 </body>
 </html>
