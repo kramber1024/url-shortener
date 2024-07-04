@@ -1,0 +1,20 @@
+@import "../../variables";
+
+.loader {
+  width: 18px;
+  height: 18px;
+  border: 6px solid $bg;
+  border-left-color: transparent;
+  border-radius: 50%;
+  animation: spinnning 1s linear infinite;
+}
+
+@keyframes spinnning {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
