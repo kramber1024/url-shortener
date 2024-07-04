@@ -1,0 +1,36 @@
+@import "../../variables";
+
+@import "../../utilities/no-select";
+
+.brand-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
+  text-decoration: none;
+
+  &__logo-wrapper {
+    width: 32px;
+    height: 32px;
+
+    svg {
+      width: 100%;
+      height: 100%;
+
+      rect {
+        fill: $brand;
+      }
+
+      path {
+        stroke: $bg;
+      }
+    }
+  }
+
+  span {
+    @include font-properties("brand");
+    margin-left: 10px;
+    font-weight: weight("bold");
+    color: $bg-font-color;
+  }
+}
