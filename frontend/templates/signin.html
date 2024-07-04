@@ -6,62 +6,59 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1">
   <meta name="description" content="Sign in with {{ brand_name }} account">
   <!-- css -->
-	<link rel="stylesheet" href="static/css/signin.css">
-  <link rel="stylesheet" href="static/css/colors.css">
+	<link rel="stylesheet" href="static/css/signin.min.css">
   <!-- fonts -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap">
   <!-- favicon -->
   <link rel="icon" type="image/x-icon" href="static/ico/favicon.ico">
 </head>
-<body data-theme="light">
+<body>
 	<div class="fullpage">
 		<nav class="navbar-container">
       <div class="navbar">
-        <a class="navbar__brand-link" href="/">
+        <a class="brand-link" href="/">
           <div class="brand-link__logo-wrapper">
             {% include "static/svg/logo.svg" %}
           </div>
-          <h1 class="brand-link__brand-name no-select">{{ brand_name }}</h1>
+          <span class="brand-link__brand-name no-select">{{ brand_name }}</h1>
         </a>
       </div>
     </nav>
     <main class="content">
-      <div class="dialog">
-        <h2 class="dialog__title">Sign in</h2>
+      <div class="form-dialog">
+        <h1>Sign in</h1>
         <form novalidate="novalidate" target="_self">
-          <div class="dialog__form">
-            <label for="email">Email</label>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              class="form__input"
-              placeholder="name@email.tld"
-              autocomplete="email"
-              data-msg-required="Please enter your email address"
-              data-msg-invalid="Please enter a valid email address"
-              required
-            >
-            <div class="form__password-label-container">
-              <label for="password">Password</label>
-              <a href="#">Forgot password?</a>
-            </div>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              class="form__input"
-              placeholder="••••••••"
-              autocomplete="current-password"
-              data-msg-required="Please enter your password"
-              required
-            >
-            <button class="form__button" type="submit">Sign In</button>
+          <label for="email">Email</label>
+          <input
+            id="email"
+            name="email"
+            type="email"
+            class="form__input"
+            placeholder="name@email.tld"
+            autocomplete="email"
+            data-msg-required="Please enter your email address"
+            data-msg-invalid="Please enter a valid email address"
+            required
+          >
+          <div class="form__double-label-container">
+            <label for="password">Password</label>
+            <a href="#" class="link">Forgot password?</a>
           </div>
+          <input
+            id="password"
+            name="password"
+            type="password"
+            class="form__input"
+            placeholder="••••••••"
+            autocomplete="current-password"
+            data-msg-required="Please enter your password"
+            required
+          >
+          <button class="submit-button" type="submit">Sign In</button>
         </form>
       </div>
-      <div class="footer">
-        <p>Don't have an account? <a href="{{ url_for('signup') }}">Sign up</a></p>
+      <div class="dialog-footer">
+        <p>Don't have an account? <a href="{{ url_for('signup') }}" class="link">Sign up</a></p>
       </div>
     </main>
 	</div>

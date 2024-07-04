@@ -1,0 +1,45 @@
+@import "reset";
+@import "base";
+@import "variables";
+
+@import "mixins/responsive";
+
+@import "components/navbar/navbar";
+@import "components/brand/brand";
+@import "components/content/content";
+@import "components/form-dialog/form-dialog";
+@import "components/form-input/form-input";
+@import "components/link/link";
+@import "components/submit-button/submit-button";
+@import "components/loader/loader";
+
+.content {
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.form__double-label-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  @include font-properties("default");
+  font-weight: weight("medium");
+
+  & > .link {
+    margin: 20px 0 6px 0;
+  }
+}
+
+.submit-button {
+  margin-top: 14px;
+}
+
+.dialog-footer {
+  margin-top: 40px;
+  text-align: center;
+  text-decoration: none;
+  @include font-properties("default");
+  font-weight: weight("medium");
+  color: $bg-secondary-font-color;
+}
