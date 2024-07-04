@@ -11,23 +11,31 @@
   <!-- fonts -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap">
   <!-- favicon -->
-  <link rel="icon" type="image/x-icon" href="static/ico/favicon.ico">
+  <link rel="icon" type="image/x-icon" href="/static/ico/favicon.ico">
 </head>
 <body data-theme="light">
 	<div class="fullpage">
-    <div class="sidebar-container">
-
-    </div>
-    <main class="content">
-      <nav class="navbar-container">
-        <div class="navbar">
-          <a class="navbar__brand-link" href="/">
-            <div class="brand-link__logo-wrapper">
-              {% include "static/svg/logo.svg" %}
-            </div>
-            <h1 class="brand-link__brand-name no-select">{{ brand_name }}</h1>
-          </a>
+    <aside class="sidebar">
+      <a class="sidebar__brand-link" href="/">
+        <div class="brand-link__logo-wrapper">
+          {% include "static/svg/logo.svg" %}
         </div>
+        <h1 class="brand-link__brand-name no-select">{{ brand_name }}</h1>
+      </a>
+      <ul class="sidebar__channels">
+        <li class="channels__item">
+          <a class="item__link" href="/app/dashboard">
+            <div class="link__logo-wrapper">
+              {% include "static/svg/dashboard.svg" %}
+            </div>
+            <span>Dashboard</span>
+          </a>
+        </li>
+      </ul>
+    </aside>
+    <main class="base">
+      <nav class="navbar">
+
       </nav>
     </main>
 	</div>

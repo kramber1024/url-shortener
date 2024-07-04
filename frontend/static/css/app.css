@@ -15,6 +15,10 @@ body {
     color: var(--background-font-color);
 }
 
+ul {
+    list-style-type: none;
+}
+
 .no-select {
     -webkit-user-select: none;
     -moz-user-select: none;
@@ -30,30 +34,104 @@ body {
     background-color: var(--background);
 }
 
-.sidebar-container {
+.sidebar {
     width: 240px;
-    min-width: none;
-    background-color: rebeccapurple;
+    min-width: 240px;
+    height: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+    border-right: 1px solid var(--border-color);
 }
 
-.content {
-    flex: 1;
-    background-color: red;
-}
-
-.navbar-container {
+.sidebar__brand-link {
     display: flex;
-    justify-content: center;
     align-items: center;
-    height: 64px;
+    flex-direction: row;
+    text-decoration: none;
+}
+
+.brand-link__logo-wrapper {
+    height: 32px;
+    width: 32px;
+}
+
+.brand-link__logo-wrapper > svg {
     width: 100%;
-    border-bottom: 1px solid var(--border-color);
-    background-color: var(--background);
+    height: 100%;
+}
+
+.brand-link__logo-wrapper > svg > rect {
+    fill: var(--brand);
+}
+
+.brand-link__logo-wrapper > svg > path {
+    stroke: var(--background);
+}
+
+.brand-link__brand-name {
+    margin-left: 10px;
+    font-size: 1.6rem;
+    line-height: 2rem;
+    font-weight: 700;
+    color: var(--background-font-color);
+}
+
+.sidebar__channels {
+    width: 100%;
+    margin-top: 40px;
+}
+/* 7px rad */
+.channels__item {
+    display: flex;
+    width: 100%;
+    height: 48px;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+.item__link {
+    display: flex;
+    flex-direction: row;
+    text-decoration: none;
+    font-size: 1.25rem;
+    line-height: 1.5rem;
+    font-weight: 500;
+    color: var(--background-font-color);
+}
+
+.link__logo-wrapper {
+    height: 24px;
+    width: 24px;
+}
+
+.link__logo-wrapper > svg {
+    width: 100%;
+    height: 100%;
+}
+
+.link__logo-wrapper > svg > rect {
+    fill: var(--background-font-color);
+}
+
+
+
+
+
+
+
+
+.base {
+    flex: 1;
 }
 
 .navbar {
     display: flex;
     align-items: center;
-    width: 1340px;
-    height: 40px;
+    height: 64px;
+    width: 100%;
+    padding: 12px 0;
+    box-sizing: border-box;
+    border-bottom: 1px solid var(--border-color);
+    background-color: var(--background);
 }
+
