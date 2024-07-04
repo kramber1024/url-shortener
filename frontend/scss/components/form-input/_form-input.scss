@@ -37,10 +37,6 @@ label[for] {
   &.error {
     margin: 6px 0 0 0;
     color: $error-font-color;
-
-    &[for="terms"] {
-      margin-top: -2px;
-    }
   }
 }
 

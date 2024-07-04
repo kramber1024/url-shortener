@@ -49,6 +49,14 @@
   }
 }
 
+label[for="terms"] {
+  font-weight: weight("medium");
+
+  &.error {
+    margin-top: -2px;
+  }
+}
+
 .submit-button {
   margin-top: 14px;
 }
