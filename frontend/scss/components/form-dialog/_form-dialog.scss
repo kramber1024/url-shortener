@@ -1,5 +1,7 @@
 @import "../../variables";
 
+@import "../../mixins/responsive";
+
 .form-dialog {
   display: flex;
   flex-direction: column;
@@ -7,6 +9,7 @@
   border-radius: 30px;
   box-shadow: $dialog-box-shadow;
   background-color: $bg;
+  box-sizing: border-box;
 
   h1 {
     @include font-properties("h1");
@@ -18,5 +21,14 @@
     display: flex;
     flex-direction: column;
     width: 340px;
+  }
+
+  @include responsive($xs) {
+    width: 100%;
+    box-shadow: unset;
+
+    form {
+      width: 100%;
+    }
   }
 }
