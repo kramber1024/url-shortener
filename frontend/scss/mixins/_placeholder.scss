@@ -1,6 +1,6 @@
 @import "../variables";
 
-@mixin placeholder($font-size: 1rem, $font-weight: 500){
+@mixin placeholder($font-size: 1rem, $font-weight: 500) {
   &::placeholder
   &::-webkit-input-placeholder,
   &::-moz-placeholder,
