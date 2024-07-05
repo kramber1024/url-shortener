@@ -10,3 +10,6 @@ __pycache__
 .env
 htmlcov
 *.css.map
+node_modules
+package-lock.json
+package.json
