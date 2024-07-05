@@ -11,7 +11,3 @@ __pycache__
 htmlcov
 *.css.map
 node_modules
-package-lock.json
-package.json
-jsconfig.json
-tsconfig.json

@@ -1,0 +1,21 @@
+{
+    "compileOnSave": true,
+    "compilerOptions": {
+        "module": "ESNext",
+        "moduleResolution": "Bundler",
+        "target": "ES2016",
+        "jsx": "react",
+        "checkJs": true,
+        "experimentalDecorators": true,
+        "strictNullChecks": true,
+        "strictFunctionTypes": true,
+        "outDir": "./frontend/static/js/",
+        "baseUrl": "./frontend/ts/",
+    },
+    "exclude": [
+        "node_modules",
+        "**/node_modules/*",
+        "frontend/static/js/*",
+        "htmlcov/*",
+    ]
+}
