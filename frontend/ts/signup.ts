@@ -1,9 +1,5 @@
 import { showError, hideError, startLoading, stopLoading } from "./auth";
-
-interface Error {
-    message: string;
-    type: string;
-}
+import { Error } from "./schemes";
 
 const form = document.querySelector("form") as HTMLFormElement;
 const firstNameInput = document.getElementById("first_name") as HTMLInputElement;
