@@ -1,3 +1,5 @@
+import re
+
 from fastapi import APIRouter, Request
 from fastapi.openapi.docs import (
     get_redoc_html,
@@ -8,8 +10,20 @@ from fastapi.templating import Jinja2Templates
 
 from backend.core.config import settings
 
-templates: Jinja2Templates = Jinja2Templates(directory="frontend")
 router: APIRouter = APIRouter(include_in_schema=False)
+templates: Jinja2Templates = Jinja2Templates(directory="frontend")
+
+
+def name(input_: str) -> str:
+    name: re.Match[str] | None = re.search(r"\/(.*)\.html", str(input_))
+
+    if name is None:
+        return "unknown"
+
+    return name.group(1)
+
+
+templates.env.filters["name"] = name
 
 
 @router.get("/signup", response_class=HTMLResponse)
