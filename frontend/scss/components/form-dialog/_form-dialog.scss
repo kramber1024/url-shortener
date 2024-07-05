@@ -20,7 +20,7 @@
   form {
     display: flex;
     flex-direction: column;
-    width: 340px;
+    width: 350px;
   }
 
   @include responsive($xs) {
