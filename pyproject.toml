@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "app"
+name = "ushort - URL Shortener"
 version = "0.1.0"
 description = ""
 authors = ["kramber1024 <kramber268@gmail.com>"]
