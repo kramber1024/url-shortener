@@ -53,6 +53,7 @@ export function startLoading(): void {
     loaderDiv.className = "loader";
     const button = document.querySelector("button") as HTMLButtonElement;
     button.disabled = true;
+    button.dataset.message = button.textContent as string;
     button.textContent = "";
     button.appendChild(loaderDiv);
 }
@@ -63,5 +64,6 @@ export function startLoading(): void {
 export function stopLoading(): void {
     const button = document.querySelector("button") as HTMLButtonElement;
     button.disabled = false;
-    button.textContent = "Create Account";
+    button.textContent = button.dataset.message as string;
+    button.removeAttribute("data-message");
 }
