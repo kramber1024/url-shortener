@@ -1,5 +1,10 @@
 import { showError, hideError, startLoading, stopLoading } from "./auth";
 
+interface Error {
+    message: string;
+    type: string;
+}
+
 const form = document.querySelector("form") as HTMLFormElement;
 const firstNameInput = document.getElementById("first_name") as HTMLInputElement;
 const lastNameInput = document.getElementById("last_name") as HTMLInputElement;
@@ -17,8 +22,6 @@ form.addEventListener("submit", async (event) => {
     const email = (formData.get("email") as string).trim();
     const password = formData.get("password") as string;
     const terms = formData.get("terms") as string ? "on" : "off";
-
-    console.log({ firstName, lastName, email, password, terms });
 
     // Validate first name
     if (!firstName) {
@@ -80,15 +83,52 @@ form.addEventListener("submit", async (event) => {
     } else {
         hideError("terms");
     }
-    if (!isFormValid) {
-        return;
-    }
 
     if (!isFormValid) {
         return;
     }
-
-    console.log({ firstName, lastName, email, password, terms });
 
     startLoading();
+    let body = JSON.stringify(Object.fromEntries(formData.entries()));
+    let response: Response = await fetch("/api/v1/auth/register", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body,
+    });
+    const result = await response.json();
+    const errors: Error[] = result.errors;
+
+    switch (response.status) {
+        case 422: {
+            errors.forEach((error) => {
+                if (error.type === "email") {
+                    showError("email", emailInput.getAttribute("data-msg-invalid") as string);
+                }
+            });
+            break;
+        }
+        case 409: {
+            showError("email", emailInput.getAttribute("data-msg-conflict") as string);
+            break;
+        }
+        case 201: {
+            body = JSON.stringify({ email, password });
+            response = await fetch("/api/v1/auth/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body,
+            });
+            
+            if (response.status === 200) {
+                // go to app
+            } else {
+                window.location.href = "/login";
+            }
+        }
+    }
+    stopLoading();
 });
