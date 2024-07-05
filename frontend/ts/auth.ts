@@ -22,8 +22,8 @@ export function showError(type: errorType, message: string): void {
         errorLabel = createErrorLabel(type, message);
         
         if (type === "terms") {
-            // TODO: Add error label after the checkbox
-            // document.querySelector(".form__terms-container")?.insertAdjacentElement("afterend", errorLabel);
+            const termsContainerDiv = document.querySelector(".terms-container") as HTMLDivElement;
+            termsContainerDiv.insertAdjacentElement("afterend", errorLabel);
         }
         else {
             const inputElement = document.getElementById(type) as HTMLInputElement;
