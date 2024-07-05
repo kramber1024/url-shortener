@@ -29,9 +29,9 @@ export function showError(type: errorType, message: string): void {
             const inputElement = document.getElementById(type) as HTMLInputElement;
             inputElement.after(errorLabel);
         }
-
-        errorLabel.textContent = message;
     }
+
+    errorLabel.textContent = message;
 }
 
 /**
