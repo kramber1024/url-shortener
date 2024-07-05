@@ -124,6 +124,7 @@ form.addEventListener("submit", async (event) => {
             } else {
                 window.location.href = "/login";
             }
+            break;
         }
     }
     stopLoading();
