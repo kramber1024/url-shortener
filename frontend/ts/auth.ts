@@ -24,8 +24,7 @@ export function showError(type: errorType, message: string): void {
         if (type === "terms") {
             const termsContainerDiv = document.querySelector(".terms-container") as HTMLDivElement;
             termsContainerDiv.insertAdjacentElement("afterend", errorLabel);
-        }
-        else {
+        } else {
             const inputElement = document.getElementById(type) as HTMLInputElement;
             inputElement.after(errorLabel);
         }
