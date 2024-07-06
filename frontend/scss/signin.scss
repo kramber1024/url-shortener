@@ -22,7 +22,7 @@
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  @include font-properties("default");
+  @include font-properties("content-default");
   font-weight: weight("medium");
 
   & > .link {
@@ -38,7 +38,7 @@
   margin-top: 40px;
   text-align: center;
   text-decoration: none;
-  @include font-properties("default");
+  @include font-properties("content-default");
   font-weight: weight("medium");
   color: $bg-secondary-font-color;
 }

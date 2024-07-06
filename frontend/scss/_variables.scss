@@ -3,26 +3,30 @@ $fonts: (
     size: 1.6rem,
     height: 2rem
   ),
-  "h1": (
+  "content-title": (
     size: 1.25rem,
     height: 1.5rem
   ),
-  "default": (
+  "content-default": (
     size: 0.9375rem,
     height: 1.25rem
+  ),
+  "ui-title": (
+    size: 1.375rem,
+    height: 1.5rem
   ),
 );
 $font-weights: (
   "regular": 400,
   "medium": 500,
-  "bold": 700,
+  "bold": 600,  
 );
 
 $brand: #1463fa;
 $brand-font-color: #ffffff;
 
 $bg: #ffffff;
-$bg-font-color: #1A1919;
+$bg-font-color: #000000;
 $bg-secondary-font-color: #9a9daa;
 
 $input-bg: #fafafa;

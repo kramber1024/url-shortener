@@ -11,13 +11,13 @@
   background-color: $bg;
   box-sizing: border-box;
 
-  h1 {
-    @include font-properties("h1");
+  & > h1 {
+    @include font-properties("content-title");
     font-weight: weight("medium");
     color: $bg-font-color;
   }
 
-  form {
+  & > form {
     display: flex;
     flex-direction: column;
     width: 350px;
