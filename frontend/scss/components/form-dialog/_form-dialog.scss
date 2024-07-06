@@ -7,7 +7,7 @@
   flex-direction: column;
   padding: 20px;
   border-radius: 30px;
-  box-shadow: $dialog-box-shadow;
+  border: 1px solid $border;
   background-color: $bg;
   box-sizing: border-box;
 
@@ -25,9 +25,9 @@
 
   @include responsive($xs) {
     width: 100%;
-    box-shadow: unset;
+    border: unset;
 
-    form {
+    & > form {
       width: 100%;
     }
   }
