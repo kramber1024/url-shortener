@@ -1,0 +1,41 @@
+@use '../../abstracts/box-shadows' as box-shadows;
+@use '../../abstracts/colors' as colors;
+@use '../../abstracts/mixins' as mixins;
+
+$input-height: 43px;
+
+.input {
+  width: 100%;
+  height: $input-height;
+  box-sizing: border-box;
+  padding: 11px 15px;
+  @include mixins.font('content');
+  border: 1px solid colors.$border;
+  border-radius: 10px;
+  background-color: colors.$input-background;
+  transition: border 0.5s ease;
+
+  &:focus {
+    border: 1px solid colors.$brand;
+    box-shadow: box-shadows.$input-focus-box-shadow;
+    outline: none;
+  }
+
+  @include mixins.placeholder {
+    @include mixins.font('content', colors.$input-placeholder-font-color);
+  }
+
+  &[type='password'] {
+    letter-spacing: 0.15rem;
+  }
+}
+
+label[for] {
+  margin: 20px 0 6px 0;
+  @include mixins.font('content', colors.$background-font-color);
+
+  &.error {
+    margin: 6px 0 0 0;
+    color: colors.$error-font-color;
+  }
+}
