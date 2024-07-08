@@ -1,0 +1,43 @@
+@use '../../abstracts/breakpoints' as breakpoints;
+@use '../../abstracts/colors' as colors;
+@use '../../abstracts/mixins' as mixins;
+
+$form-width: 350px;
+$dialog-padding: 20px;
+$dialog-border-radius: 30px;
+
+.form-dialog {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  padding: $dialog-padding;
+  border-radius: $dialog-border-radius;
+  border: 1px solid colors.$border;
+  background-color: colors.$background;
+
+  & > h1 {
+    @include mixins.font('title');
+  }
+
+  & > form {
+    display: flex;
+    flex-direction: column;
+    width: $form-width;
+  }
+
+  & + .dialog-footer {
+    margin-top: 40px;
+    text-align: center;
+    text-decoration: none;
+    @include mixins.font("content", colors.$background-secondary-font-color);
+  }
+
+  @include mixins.responsive(breakpoints.$xs) {
+    width: 100%;
+    border: unset;
+
+    & > form {
+      width: 100%;
+    }
+  }
+}
