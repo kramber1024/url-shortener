@@ -28,14 +28,14 @@
       <div class="form-dialog">
         <h1>Sign up</h1>
         <form novalidate="novalidate" target="_self">
-          <div class="splitted-input">
+          <div class="form__splitted-input">
             <div class="splitted-input__input-container">
               <label for="first_name">First name</label>
               <input
                 id="first_name"
                 name="first_name"
                 type="text"
-                class="form__input"
+                class="input"
                 placeholder="John"
                 autocomplete="given-name"
                 data-msg-required="Please enter first name"
@@ -50,7 +50,7 @@
                 id="last_name"
                 name="last_name"
                 type="text"
-                class="form__input"
+                class="input"
                 placeholder="Smith"
                 autocomplete="family-name"
                 data-msg-minlength="Too short"
@@ -64,7 +64,7 @@
             id="email"
             name="email"
             type="email"
-            class="form__input"
+            class="input"
             placeholder="name@email.tld"
             autocomplete="email"
             data-msg-required="Please enter email address"
@@ -77,7 +77,7 @@
             id="password"
             name="password"
             type="password"
-            class="form__input"
+            class="input"
             placeholder="••••••••"
             autocomplete="new-password"
             data-msg-required="Please enter password"
@@ -85,7 +85,7 @@
             data-msg-maxlength="Password must be at most 256 characters long"
             required
           >
-          <div class="terms-container">
+          <div class="form__terms-container">
             <input
               id="terms"
               name="terms"
@@ -96,7 +96,7 @@
             >
             <label for="terms">I agree to the <a href="#" class="link">terms of use</a></label>
           </div>
-          <button class="submit-button" type="submit">Create Account</button>
+          <button class="button" type="submit">Create Account</button>
         </form>
       </div>
       <div class="dialog-footer">
