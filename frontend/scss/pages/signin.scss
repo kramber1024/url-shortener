@@ -1,0 +1,34 @@
+@use '../base/reset';
+@use '../base/base';
+
+@use '../abstracts/mixins' as mixins;
+@use '../abstracts/colors' as colors;
+
+@use '../layout/navbar/navbar';
+@use '../components/brand/brand';
+@use '../layout/dialog-form/dialog-form';
+@use '../components/input/input';
+@use '../components/link/link';
+@use '../components/button/button';
+@use '../components/loader/loader';
+
+.content {
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.form__double-label-container {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+
+  & > .link {
+    margin: 20px 0 6px 0;
+    @include mixins.font('content', colors.$brand);
+  }
+}
+
+.button {
+  margin-top: 14px;
+}
