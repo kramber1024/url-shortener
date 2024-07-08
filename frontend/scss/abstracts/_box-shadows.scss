@@ -1,7 +1,8 @@
-@use 'colors';
+@use 'colors' as colors;
 
 $input-focus-box-shadow: inset 0px 0px 0px 1px colors.$brand, 
                          0px 4px 8px rgba(colors.$brand, 0.15);
 $dialog-box-shadow: 0px 2px 3px -1px rgba(0, 0, 0, 0.1),
                     0px 1px 0px 0px rgba(25, 28, 33, 0.02),
                     0px 0px 0px 1px rgba(25, 28, 33, 0.08);
+$button-box-shadow: 0px 2px 4px rgba(colors.$brand, 0.22);
