@@ -1,0 +1,28 @@
+@use 'colors';
+@use 'fonts';
+
+@mixin placeholder {
+  &::placeholder
+  &::-webkit-input-placeholder,
+  &::-moz-placeholder,
+  &:-ms-input-placeholder,
+  &:-moz-placeholder {
+    opacity: 1;
+    @content;
+  }
+}
+
+@mixin responsive($query) {
+  @media screen and (max-width: $query) {
+    @content;
+  }
+}
+
+/// @param {string} $font - The font to use from the $fonts-map
+/// @param {hex} $color - The color to use for the font
+@mixin font($font: 'content', $color: colors.$background-font-color) {
+  font-size: map-get(map-get(fonts.$fonts-map, $font), size);
+  line-height: map-get(map-get(fonts.$fonts-map, $font), height);
+  font-weight: map-get(map-get(fonts.$fonts-map, $font), weight);
+  color: $color;
+}
