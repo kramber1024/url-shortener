@@ -9,8 +9,8 @@ module.exports = {
         signin: "./frontend/ts/signin.ts",
     },
     output: {
+        path: path.resolve(__dirname, "./frontend/static/js/"),
         filename: "[name].min.js",
-        path: path.resolve(__dirname, "frontend/static/js"),
     },
     resolve: {
         extensions: [".ts", ".js"],
