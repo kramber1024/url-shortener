@@ -1,6 +1,6 @@
-@use '../../abstracts/breakpoints';
-@use '../../abstracts/colors';
-@use '../../abstracts/mixins';
+@use '../../abstracts/breakpoints' as breakpoints;
+@use '../../abstracts/colors' as colors;
+@use '../../abstracts/mixins' as mixins;
 
 $navbar-height: 72px;
 $navbar-padding: 20px;
