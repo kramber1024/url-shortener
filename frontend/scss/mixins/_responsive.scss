@@ -1,5 +1,0 @@
-@mixin responsive($query) {
-  @media screen and (max-width: $query) {
-    @content;
-  }
-}
