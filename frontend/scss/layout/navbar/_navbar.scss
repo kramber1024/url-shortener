@@ -9,7 +9,7 @@ $navbar-content-max-width: 1340px;
 .navbar-container {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   box-sizing: border-box;
   width: 100%;
   height: calc($navbar-height + 1px);
