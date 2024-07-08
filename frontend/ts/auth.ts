@@ -22,7 +22,7 @@ export function showError(type: errorType, message: string): void {
         errorLabel = createErrorLabel(type, message);
         
         if (type === "terms") {
-            const termsContainerDiv = document.querySelector(".terms-container") as HTMLDivElement;
+            const termsContainerDiv = document.querySelector(".form__terms-container") as HTMLDivElement;
             termsContainerDiv.insertAdjacentElement("afterend", errorLabel);
         } else {
             const inputElement = document.getElementById(type) as HTMLInputElement;
