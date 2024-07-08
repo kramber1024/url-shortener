@@ -1,6 +1,5 @@
-@import "../../variables";
-
-@import "../../utilities/no-select";
+@use "../../abstracts/colors" as colors;
+@use "../../abstracts/mixins" as mixins;
 
 .brand-link {
   display: flex;
@@ -8,28 +7,26 @@
   flex-direction: row;
   text-decoration: none;
 
-  &__logo-wrapper {
+  & > &__logo-wrapper {
     width: 32px;
     height: 32px;
 
-    svg {
+    & > svg {
       width: 100%;
       height: 100%;
 
-      rect {
-        fill: $brand;
+      & > rect {
+        fill: colors.$brand;
       }
 
-      path {
-        stroke: $bg;
+      & > path {
+        stroke: colors.$background;
       }
     }
   }
 
-  span {
-    @include font-properties("brand");
+  & > span {
     margin-left: 10px;
-    font-weight: weight("bold");
-    color: $bg-font-color;
+    @include mixins.font('brand');
   }
 }
