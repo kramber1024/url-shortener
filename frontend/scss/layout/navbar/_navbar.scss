@@ -1,0 +1,36 @@
+@use '../../abstracts/breakpoints';
+@use '../../abstracts/colors';
+@use '../../abstracts/mixins';
+
+$navbar-height: 72px;
+$navbar-padding: 20px;
+$navbar-content-max-width: 1340px;
+
+.navbar-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+  width: 100%;
+  height: calc($navbar-height + 1px);
+  min-height: calc($navbar-height + 1px);
+  padding: $navbar-padding 0;
+  border-bottom: 1px solid colors.$border;
+  background-color: colors.$background;
+
+  .navbar {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    max-width: $navbar-content-max-width;
+
+    @include responsive($lg) {
+      width: 80%;
+    }
+
+    @include responsive($xs) {
+      width: 100%;
+      margin: 0 $navbar-padding;
+    }
+  }
+}
