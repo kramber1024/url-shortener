@@ -1,11 +1,11 @@
-@import "variables";
+@use "../abstracts/colors";
 
 body {
   font-family: "Inter", sans-serif;
   font-size: 16px;
-  letter-spacing: normal;
   font-weight: 500;
-  color: $bg;
+  letter-spacing: normal;
+  color: colors.$background-font-color;
 }
 
 .fullpage {
