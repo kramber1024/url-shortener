@@ -1,8 +1,8 @@
 @use '../base/reset';
 @use '../base/base';
 
-@use '../abstracts/mixins' as mixins;
 @use '../abstracts/colors' as colors;
+@use '../abstracts/mixins' as mixins;
 
 @use '../layout/navbar/navbar';
 @use '../components/brand/brand';
