@@ -1,6 +1,8 @@
 @use '../../abstracts/colors' as colors;
 @use '../../abstracts/mixins' as mixins;
 
+@use '../../utilities/no-select';
+
 .brand-link {
   display: flex;
   align-items: center;
