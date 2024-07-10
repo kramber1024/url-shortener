@@ -4,6 +4,8 @@
 
 $navbar-height: 72px;
 $navbar-padding: 20px;
+$navbar-background: colors.$background;
+$navbar-border: colors.$border;
 $navbar-content-max-width: 1340px;
 
 .navbar-container {
@@ -15,23 +17,23 @@ $navbar-content-max-width: 1340px;
   height: calc($navbar-height + 1px);
   min-height: calc($navbar-height + 1px);
   padding: $navbar-padding 0;
-  border-bottom: 1px solid colors.$border;
-  background-color: colors.$background;
+  border-bottom: 1px solid $navbar-border;
+  background-color: $navbar-background;
 
   & > .navbar {
     display: flex;
     align-items: center;
     width: 100%;
-    height: 100%;
     max-width: $navbar-content-max-width;
+    height: 100%;
+    margin: 0 $navbar-padding;
 
-    @include mixins.responsive(breakpoints.$lg) {
+    @include mixins.responsive(breakpoints.$S) {
       width: 80%;
     }
 
-    @include mixins.responsive(breakpoints.$xs) {
+    @include mixins.responsive(breakpoints.$L) {
       width: 100%;
-      margin: 0 $navbar-padding;
     }
   }
 }
