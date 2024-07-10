@@ -1,10 +1,6 @@
 @use '../base/reset';
 @use '../base/base';
 
-@use '../abstracts/breakpoints' as breakpoints;
-@use '../abstracts/colors' as colors;
-@use '../abstracts/mixins' as mixins;
-
 @use '../layout/navbar/navbar';
 @use '../components/brand/brand';
 @use '../layout/dialog-form/dialog-form';
@@ -43,10 +39,6 @@
   flex-direction: row;
   box-sizing: content-box;
   margin-top: 20px;
-
-  @include mixins.responsive(breakpoints.$xxs) {
-    margin-bottom: 38px;
-  }
 }
 
 label[for="terms"].error {

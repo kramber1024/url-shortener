@@ -24,8 +24,8 @@
   flex-direction: row;
 
   & > .link {
-    margin: 20px 0 6px 0;
     @include mixins.font('content', colors.$brand);
+    margin: 20px 0 6px 0;
   }
 }
 
