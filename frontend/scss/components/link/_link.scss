@@ -1,12 +1,14 @@
 @use '../../abstracts/colors' as colors;
 
+$link-color: colors.$brand;
+
 .link {
   font-family: inherit;
   font-size: inherit;
   line-height: inherit;
   letter-spacing: inherit;
   text-decoration: none;
-  color: colors.$brand;
+  color: $link-color;
   transition: opacity 0.5s ease;
 
   &:hover {

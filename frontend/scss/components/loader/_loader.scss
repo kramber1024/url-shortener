@@ -1,9 +1,11 @@
 @use '../../abstracts/colors' as colors;
 
+$loader-color: colors.$background;
+
 .loader {
   width: 24px;
   height: 24px;
-  border: 6px solid colors.$background;
+  border: 6px solid $loader-color;
   border-left-color: transparent;
   border-radius: 50%;
   animation: spinnning 1s linear infinite;
