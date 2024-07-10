@@ -13,7 +13,19 @@
 }
 
 @mixin responsive($query) {
-  @media screen and (max-width: $query) {
+  @media screen and (min-width: $query) {
+    @content;
+  }
+}
+
+@mixin responsive-landscape($query) {
+  @media screen and (min-width: $query) and (orientation: landscape) {
+    @content;
+  }
+}
+
+@mixin responsive-portrait($query) {
+  @media screen and (min-width: $query) and (orientation: portrait) {
     @content;
   }
 }
