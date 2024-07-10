@@ -28,7 +28,7 @@
   }
 
   & > span {
-    margin-left: 10px;
     @include mixins.font('brand');
+    margin-left: 10px;
   }
 }
