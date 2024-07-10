@@ -3,26 +3,34 @@
 @use '../../abstracts/mixins' as mixins;
 
 $input-height: 43px;
+$input-border: colors.$border;
+$input-border-radius: 10px;
+$input-background: colors.$input-background;
+$input-placeholder-font-color: colors.$input-placeholder-font-color;
+$input-focus-outline: colors.$brand;
+$input-focus-box-shadow: box-shadows.$input-focus-box-shadow;
+$label-font-color: colors.$background-font-color;
+$label-error-font-color: colors.$error-font-color;
 
 .input {
+  @include mixins.font('content');
+  box-sizing: border-box;
   width: 100%;
   height: $input-height;
-  box-sizing: border-box;
   padding: 11px 15px;
-  @include mixins.font('content');
-  border: 1px solid colors.$border;
-  border-radius: 10px;
-  background-color: colors.$input-background;
+  border: 1px solid $input-border;
+  border-radius: $input-border-radius;
+  background-color: $input-background;
   transition: border 0.5s ease;
 
   &:focus {
-    border: 1px solid colors.$brand;
-    box-shadow: box-shadows.$input-focus-box-shadow;
     outline: none;
+    border: 1px solid $input-focus-outline;
+    box-shadow: $input-focus-box-shadow;
   }
 
   @include mixins.placeholder {
-    @include mixins.font('content', colors.$input-placeholder-font-color);
+    @include mixins.font('content', $input-placeholder-font-color);
   }
 
   &[type='password'] {
@@ -31,11 +39,11 @@ $input-height: 43px;
 }
 
 label[for] {
+  @include mixins.font('content', $label-font-color);
   margin: 20px 0 6px 0;
-  @include mixins.font('content', colors.$background-font-color);
 
   &.error {
     margin: 6px 0 0 0;
-    color: colors.$error-font-color;
+    color: $label-error-font-color;
   }
 }
