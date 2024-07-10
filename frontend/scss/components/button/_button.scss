@@ -3,21 +3,26 @@
 @use '../../abstracts/mixins' as mixins;
 
 $button-height: 48px;
+$button-background: colors.$brand;
+$button-border: $button-background;
+$button-border-radius: 10px;
+$button-box-shadow: box-shadows.$button-box-shadow;
 
 .button {
+  @include mixins.font('content', colors.$background);
   display: flex;
   align-items: center;
   justify-content: center;
+  box-sizing: border-box;
   width: 100%;
   height: $button-height;
   padding: 14px 18px;
-  border-radius: 10px;
-  border: 1px solid colors.$brand;
-  @include mixins.font('content', colors.$background);
-  cursor: pointer;
+  border: 1px solid $button-border;
+  border-radius: $button-border-radius;
   outline: none;
-  box-shadow: box-shadows.$button-box-shadow;
-  background-color: colors.$brand;
+  cursor: pointer;
+  box-shadow: $button-box-shadow;
+  background-color: $button-background;
   transition: opacity 0.5s ease, scale 100ms ease;
 
   &:hover {
