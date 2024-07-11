@@ -38,7 +38,7 @@ form.addEventListener("submit", async (event) => {
 
     startLoading();
     let body = JSON.stringify(Object.fromEntries(formData.entries()));
-    let response: Response = await fetch("/api/v1/auth/login", {
+    let response: Response = await fetch("/api/auth/login", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",

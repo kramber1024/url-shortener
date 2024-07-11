@@ -86,7 +86,7 @@ form.addEventListener("submit", async (event) => {
 
     startLoading();
     let body = JSON.stringify(Object.fromEntries(formData.entries()));
-    let response: Response = await fetch("/api/v1/auth/register", {
+    let response: Response = await fetch("/api/auth/register", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -111,7 +111,7 @@ form.addEventListener("submit", async (event) => {
         }
         case 201: {
             body = JSON.stringify({ email, password });
-            response = await fetch("/api/v1/auth/login", {
+            response = await fetch("/api/auth/login", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
