@@ -1,4 +1,4 @@
-from backend.api.v1.schemes import User as UserScheme
+from backend.api.schemes import User as UserScheme
 from backend.core.database.models import User as UserModel
 
 

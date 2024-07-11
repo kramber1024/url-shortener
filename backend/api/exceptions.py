@@ -1,7 +1,7 @@
 from fastapi import HTTPException
 
-from backend.api.v1.schemes import Error as ErrorScheme
-from backend.api.v1.schemes import ErrorResponse as ErrorResponseScheme
+from backend.api.schemes import Error as ErrorScheme
+from backend.api.schemes import ErrorResponse as ErrorResponseScheme
 
 
 # TODO(kramber): Improve naming of this class

@@ -1,6 +1,25 @@
 from fastapi import APIRouter
 
-from backend.api.v1 import api_router as v1_api_router
+from .routes import auth, users
+from .schemes import ErrorResponse as ErrorResponseScheme
 
-apis_router: APIRouter = APIRouter(prefix="/api")
-apis_router.include_router(v1_api_router)
+api: APIRouter = APIRouter(
+    prefix="/api",
+    responses={
+        500: {
+            "description": "Something went very wrong. Please report this issue.",
+            "model": ErrorResponseScheme,
+            "content": {
+                "application/json": {
+                    "example": {
+                        "errors": [],
+                        "message": "Internal server error",
+                        "status": 500,
+                    },
+                },
+            },
+        },
+    },
+)
+api.include_router(users.router, tags=["Users"])
+api.include_router(auth.router, tags=["Auth"])

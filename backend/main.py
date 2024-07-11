@@ -5,9 +5,9 @@ from fastapi import FastAPI
 from fastapi.exceptions import RequestValidationError
 from fastapi.staticfiles import StaticFiles
 
-from backend.api import apis_router
-from backend.api.v1.exceptions import ErrorException
-from backend.api.v1.handlers import (
+from backend.api import api
+from backend.api.exceptions import ErrorException
+from backend.api.handlers import (
     error_exception_handler,
     server_error_exception_handler,
     validation_exception_handler,
@@ -23,7 +23,7 @@ app: FastAPI = FastAPI(
     root_path_in_servers=False,
 )
 app.mount("/static", StaticFiles(directory="frontend/static"), name="static")
-app.include_router(apis_router)
+app.include_router(api)
 app.include_router(views_router)
 app.add_exception_handler(RequestValidationError, validation_exception_handler)
 app.add_exception_handler(ErrorException, error_exception_handler)

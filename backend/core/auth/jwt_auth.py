@@ -143,7 +143,7 @@ async def get_current_user(
     ],
 ) -> User:
 
-    from backend.api.v1.exceptions import ErrorException
+    from backend.api.exceptions import ErrorException
 
     if access_token is None:
         raise ErrorException(
@@ -192,7 +192,7 @@ async def get_refreshed_user(
     ] = None,
 ) -> User:
 
-    from backend.api.v1.exceptions import ErrorException
+    from backend.api.exceptions import ErrorException
 
     if refresh_token is None:
         raise ErrorException(

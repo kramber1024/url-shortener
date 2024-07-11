@@ -31,7 +31,7 @@ async def test_register_user(
     }
 
     response: Response = await client.post(
-        "api/v1/auth/register",
+        "api/auth/register",
         json=json,
     )
 
@@ -73,7 +73,7 @@ async def test_register_user_no_last_name(
     }
 
     response: Response = await client.post(
-        "api/v1/auth/register",
+        "api/auth/register",
         json=json,
     )
 
@@ -121,7 +121,7 @@ async def test_register_user_uppercase(
     }
 
     response: Response = await client.post(
-        "api/v1/auth/register",
+        "api/auth/register",
         json=json,
     )
 
@@ -165,7 +165,7 @@ async def test_register_user_email_conflict(
     }
 
     response: Response = await client.post(
-        "api/v1/auth/register",
+        "api/auth/register",
         json=json,
     )
 
@@ -208,7 +208,7 @@ async def test_register_user_invalid_first_name(
     }
 
     response: Response = await client.post(
-        "api/v1/auth/register",
+        "api/auth/register",
         json=json,
     )
 
@@ -241,7 +241,7 @@ async def test_register_user_invalid_last_name(
     }
 
     response: Response = await client.post(
-        "api/v1/auth/register",
+        "api/auth/register",
         json=json,
     )
 
@@ -275,7 +275,7 @@ async def test_register_user_invalid_email(
     }
 
     response: Response = await client.post(
-        "api/v1/auth/register",
+        "api/auth/register",
         json=json,
     )
 
@@ -307,7 +307,7 @@ async def test_register_user_invalid_password(
     }
 
     response: Response = await client.post(
-        "api/v1/auth/register",
+        "api/auth/register",
         json=json,
     )
 
@@ -339,7 +339,7 @@ async def test_register_user_invalid_terms(
     }
 
     response: Response = await client.post(
-        "api/v1/auth/register",
+        "api/auth/register",
         json=json,
     )
 
@@ -376,7 +376,7 @@ async def test_register_user_invalid_all(
     }
 
     response: Response = await client.post(
-        "api/v1/auth/register",
+        "api/auth/register",
         json=json,
     )
 
@@ -406,7 +406,7 @@ async def test_register_user_empty(
 ) -> None:
 
     response: Response = await client.post(
-        "api/v1/auth/register",
+        "api/auth/register",
         json={},
     )
 
@@ -440,7 +440,7 @@ async def test_authenticate_user(
     }
 
     response: Response = await client.post(
-        "api/v1/auth/login",
+        "api/auth/login",
         json=json,
     )
 
@@ -463,7 +463,7 @@ async def test_authenticate_user_incorrect_email(
     }
 
     response: Response = await client.post(
-        "api/v1/auth/login",
+        "api/auth/login",
         json=json,
     )
 
@@ -487,7 +487,7 @@ async def test_authenticate_user_incorrect_password(
     }
 
     response: Response = await client.post(
-        "api/v1/auth/login",
+        "api/auth/login",
         json=json,
     )
 
@@ -511,7 +511,7 @@ async def test_authenticate_user_incorrect_all(
     }
 
     response: Response = await client.post(
-        "api/v1/auth/login",
+        "api/auth/login",
         json=json,
     )
 
@@ -535,7 +535,7 @@ async def test_authenticate_user_invalid_email(
     }
 
     response: Response = await client.post(
-        "api/v1/auth/login",
+        "api/auth/login",
         json=json,
     )
 
@@ -558,7 +558,7 @@ async def test_authenticate_user_invalid_password(
     }
 
     response: Response = await client.post(
-        "api/v1/auth/login",
+        "api/auth/login",
         json=json,
     )
 
@@ -580,7 +580,7 @@ async def test_authenticate_user_invalid_all(
     }
 
     response: Response = await client.post(
-        "api/v1/auth/login",
+        "api/auth/login",
         json=json,
     )
 
@@ -598,7 +598,7 @@ async def test_authenticate_user_empty(
 ) -> None:
 
     response: Response = await client.post(
-        "api/v1/auth/login",
+        "api/auth/login",
         json={},
     )
 
@@ -623,7 +623,7 @@ async def test_refresh_user(
 
     client.cookies.set("refresh_token", refresh_token)
     response: Response = await client.post(
-        "api/v1/auth/refresh",
+        "api/auth/refresh",
     )
 
     assert response.status_code == status.HTTP_200_OK
@@ -646,7 +646,7 @@ async def test_refresh_user_incorrect_token(
 
     client.cookies.set("refresh_token", refresh_token)
     response: Response = await client.post(
-        "api/v1/auth/refresh",
+        "api/auth/refresh",
     )
 
     assert response.status_code == status.HTTP_400_BAD_REQUEST
@@ -670,7 +670,7 @@ async def test_refresh_user_access_token(
 
     client.cookies.set("refresh_token", access_token)
     response: Response = await client.post(
-        "api/v1/auth/refresh",
+        "api/auth/refresh",
     )
 
     assert response.status_code == status.HTTP_400_BAD_REQUEST
@@ -688,7 +688,7 @@ async def test_refresh_user_no_authorization(
 ) -> None:
 
     response: Response = await client.post(
-        "api/v1/auth/refresh",
+        "api/auth/refresh",
     )
 
     assert response.status_code == status.HTTP_401_UNAUTHORIZED

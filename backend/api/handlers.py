@@ -2,9 +2,9 @@ from fastapi import Request, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
-from backend.api.v1.exceptions import ErrorException
-from backend.api.v1.schemes import Error as ErrorScheme
-from backend.api.v1.schemes import ErrorResponse as ErrorResponseScheme
+from backend.api.exceptions import ErrorException
+from backend.api.schemes import Error as ErrorScheme
+from backend.api.schemes import ErrorResponse as ErrorResponseScheme
 
 
 async def validation_exception_handler(

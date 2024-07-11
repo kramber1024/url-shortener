@@ -5,7 +5,7 @@ import pytest
 from fastapi import status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from backend.api.v1.exceptions import ErrorException
+from backend.api.exceptions import ErrorException
 from backend.core.auth import jwt_auth
 from backend.core.config import settings
 from backend.core.database.models import User

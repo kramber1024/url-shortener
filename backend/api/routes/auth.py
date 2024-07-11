@@ -5,11 +5,11 @@ from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend import crud
-from backend.api.v1.exceptions import ErrorException
-from backend.api.v1.schemes import ErrorResponse as ErrorResponseScheme
-from backend.api.v1.schemes import SuccessResponse as SuccessResponseScheme
-from backend.api.v1.schemes import UserLogin as UserLoginScheme
-from backend.api.v1.schemes import UserRegistration as UserRegistrationScheme
+from backend.api.exceptions import ErrorException
+from backend.api.schemes import ErrorResponse as ErrorResponseScheme
+from backend.api.schemes import SuccessResponse as SuccessResponseScheme
+from backend.api.schemes import UserLogin as UserLoginScheme
+from backend.api.schemes import UserRegistration as UserRegistrationScheme
 from backend.core.auth import jwt_auth
 from backend.core.config import settings
 from backend.core.database import db
