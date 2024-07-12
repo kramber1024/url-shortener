@@ -121,4 +121,4 @@ def test_user_repr() -> None:
         password="",
     )
 
-    assert user.__repr__() == f"<User {user.first_name} {user.id}>"
+    assert repr(user) == f"<User {user.first_name} {user.id}>"

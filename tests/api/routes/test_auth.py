@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     from sqlalchemy.engine import Result
 
 
-@pytest.mark.asyncio()
+@pytest.mark.asyncio
 async def test_register_user(
     session: AsyncSession,
     client: AsyncClient,
@@ -41,7 +41,7 @@ async def test_register_user(
     user: User | None = result.scalars().first()
 
     assert response.status_code == status.HTTP_201_CREATED
-    assert response.json().get("message", "") != ""
+    assert response.json().get("message", "")
     assert response.json().get("status", 0) == status.HTTP_201_CREATED
     assert user
     assert user.id in utils.SNOWFLAKE_RANGE
@@ -58,7 +58,7 @@ async def test_register_user(
     assert not user.status.premium
 
 
-@pytest.mark.asyncio()
+@pytest.mark.asyncio
 async def test_register_user_no_last_name(
     session: AsyncSession,
     client: AsyncClient,
@@ -83,7 +83,7 @@ async def test_register_user_no_last_name(
     user: User | None = result.scalars().first()
 
     assert response.status_code == status.HTTP_201_CREATED
-    assert response.json().get("message", "") != ""
+    assert response.json().get("message", "")
     assert response.json().get("status", 0) == status.HTTP_201_CREATED
     assert user
     assert user.id in utils.SNOWFLAKE_RANGE
@@ -100,7 +100,7 @@ async def test_register_user_no_last_name(
     assert not user.status.premium
 
 
-@pytest.mark.asyncio()
+@pytest.mark.asyncio
 async def test_register_user_uppercase(
     session: AsyncSession,
     client: AsyncClient,
@@ -131,7 +131,7 @@ async def test_register_user_uppercase(
     user: User | None = result.scalars().first()
 
     assert response.status_code == status.HTTP_201_CREATED
-    assert response.json().get("message", "") != ""
+    assert response.json().get("message", "")
     assert response.json().get("status", 0) == status.HTTP_201_CREATED
     assert user
     assert user.id in utils.SNOWFLAKE_RANGE
@@ -148,8 +148,7 @@ async def test_register_user_uppercase(
     assert not user.status.premium
 
 
-
-@pytest.mark.asyncio()
+@pytest.mark.asyncio
 async def test_register_user_email_conflict(
     session: AsyncSession,
     client: AsyncClient,
@@ -176,7 +175,7 @@ async def test_register_user_email_conflict(
 
     assert response.status_code == status.HTTP_409_CONFLICT
     assert len(response.json().get("errors", [0])) == 0
-    assert response.json().get("message", "") != ""
+    assert response.json().get("message", "")
     assert response.json().get("status", 0) == status.HTTP_409_CONFLICT
     assert user
     assert user.id in utils.SNOWFLAKE_RANGE
@@ -193,7 +192,7 @@ async def test_register_user_email_conflict(
     assert not user.status.premium
 
 
-@pytest.mark.asyncio()
+@pytest.mark.asyncio
 async def test_register_user_invalid_first_name(
     session: AsyncSession,
     client: AsyncClient,
@@ -220,12 +219,12 @@ async def test_register_user_invalid_first_name(
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
     assert len(response.json().get("errors", [0])) == 1
     assert utils.error_type_exists(response.json(), "first_name")
-    assert response.json().get("message", "") != ""
+    assert response.json().get("message", "")
     assert response.json().get("status", 0) == status.HTTP_422_UNPROCESSABLE_ENTITY
     assert user is None
 
 
-@pytest.mark.asyncio()
+@pytest.mark.asyncio
 async def test_register_user_invalid_last_name(
     session: AsyncSession,
     client: AsyncClient,
@@ -236,7 +235,7 @@ async def test_register_user_invalid_last_name(
         "first_name": user_credentials.first_name,
         "last_name": "Hi",
         "email": user_credentials.email,
-        "password":utils.DB_USER_PASSWORD,
+        "password": utils.DB_USER_PASSWORD,
         "terms": "on",
     }
 
@@ -253,12 +252,12 @@ async def test_register_user_invalid_last_name(
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
     assert len(response.json().get("errors", [0])) == 1
     assert utils.error_type_exists(response.json(), "last_name")
-    assert response.json().get("message", "") != ""
+    assert response.json().get("message", "")
     assert response.json().get("status", 0) == status.HTTP_422_UNPROCESSABLE_ENTITY
     assert user is None
 
 
-@pytest.mark.asyncio()
+@pytest.mark.asyncio
 async def test_register_user_invalid_email(
     session: AsyncSession,
     client: AsyncClient,
@@ -287,12 +286,12 @@ async def test_register_user_invalid_email(
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
     assert len(response.json().get("errors", [0])) == 1
     assert utils.error_type_exists(response.json(), "email")
-    assert response.json().get("message", "") != ""
+    assert response.json().get("message", "")
     assert response.json().get("status", 0) == status.HTTP_422_UNPROCESSABLE_ENTITY
     assert user is None
 
 
-@pytest.mark.asyncio()
+@pytest.mark.asyncio
 async def test_register_user_invalid_password(
     session: AsyncSession,
     client: AsyncClient,
@@ -319,12 +318,12 @@ async def test_register_user_invalid_password(
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
     assert len(response.json().get("errors", [0])) == 1
     assert utils.error_type_exists(response.json(), "password")
-    assert response.json().get("message", "") != ""
+    assert response.json().get("message", "")
     assert response.json().get("status", 0) == status.HTTP_422_UNPROCESSABLE_ENTITY
     assert user is None
 
 
-@pytest.mark.asyncio()
+@pytest.mark.asyncio
 async def test_register_user_invalid_terms(
     session: AsyncSession,
     client: AsyncClient,
@@ -351,12 +350,12 @@ async def test_register_user_invalid_terms(
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
     assert len(response.json().get("errors", [0])) == 1
     assert utils.error_type_exists(response.json(), "terms")
-    assert response.json().get("message", "") != ""
+    assert response.json().get("message", "")
     assert response.json().get("status", 0) == status.HTTP_422_UNPROCESSABLE_ENTITY
     assert user is None
 
 
-@pytest.mark.asyncio()
+@pytest.mark.asyncio
 async def test_register_user_invalid_all(
     session: AsyncSession,
     client: AsyncClient,
@@ -394,16 +393,18 @@ async def test_register_user_invalid_all(
     assert utils.error_type_exists(response.json(), "email")
     assert utils.error_type_exists(response.json(), "password")
     assert utils.error_type_exists(response.json(), "terms")
-    assert response.json().get("message", "") != ""
+    assert response.json().get("message", "")
     assert response.json().get("status", 0) == status.HTTP_422_UNPROCESSABLE_ENTITY
     assert user is None
 
 
-@pytest.mark.asyncio()
+@pytest.mark.asyncio
 async def test_register_user_empty(
     session: AsyncSession,
     client: AsyncClient,
 ) -> None:
+
+    email: str = ""
 
     response: Response = await client.post(
         "api/auth/register",
@@ -411,7 +412,7 @@ async def test_register_user_empty(
     )
 
     result: Result[tuple[User]] = await session.execute(
-        select(User).filter(User.email == ""),
+        select(User).filter(User.email == email),
     )
     user: User | None = result.scalars().first()
 
@@ -423,12 +424,12 @@ async def test_register_user_empty(
     assert utils.error_type_exists(response.json(), "email")
     assert utils.error_type_exists(response.json(), "password")
     assert utils.error_type_exists(response.json(), "terms")
-    assert response.json().get("message", "") != ""
+    assert response.json().get("message", "")
     assert response.json().get("status", 0) == status.HTTP_422_UNPROCESSABLE_ENTITY
     assert user is None
 
 
-@pytest.mark.asyncio()
+@pytest.mark.asyncio
 async def test_authenticate_user(
     client: AsyncClient,
     db_user: User,
@@ -445,13 +446,13 @@ async def test_authenticate_user(
     )
 
     assert response.status_code == status.HTTP_200_OK
-    assert response.json().get("message", "") != ""
+    assert response.json().get("message", "")
     assert response.json().get("status", 0) == status.HTTP_200_OK
-    assert response.cookies.get("access_token", "") != ""
-    assert response.cookies.get("refresh_token", "") != ""
+    assert response.cookies.get("access_token", "")
+    assert response.cookies.get("refresh_token", "")
 
 
-@pytest.mark.asyncio()
+@pytest.mark.asyncio
 async def test_authenticate_user_incorrect_email(
     client: AsyncClient,
     db_user: User,
@@ -469,13 +470,13 @@ async def test_authenticate_user_incorrect_email(
 
     assert response.status_code == status.HTTP_401_UNAUTHORIZED
     assert len(response.json().get("errors", [0])) == 0
-    assert response.json().get("message", "") != ""
+    assert response.json().get("message", "")
     assert response.json().get("status", 0) == status.HTTP_401_UNAUTHORIZED
-    assert response.cookies.get("access_token", "") == ""
-    assert response.cookies.get("refresh_token", "") == ""
+    assert not response.cookies.get("access_token", "")
+    assert not response.cookies.get("refresh_token", "")
 
 
-@pytest.mark.asyncio()
+@pytest.mark.asyncio
 async def test_authenticate_user_incorrect_password(
     client: AsyncClient,
     db_user: User,
@@ -493,13 +494,13 @@ async def test_authenticate_user_incorrect_password(
 
     assert response.status_code == status.HTTP_401_UNAUTHORIZED
     assert len(response.json().get("errors", [0])) == 0
-    assert response.json().get("message", "") != ""
+    assert response.json().get("message", "")
     assert response.json().get("status", 0) == status.HTTP_401_UNAUTHORIZED
-    assert response.cookies.get("access_token", "") == ""
-    assert response.cookies.get("refresh_token", "") == ""
+    assert not response.cookies.get("access_token", "")
+    assert not response.cookies.get("refresh_token", "")
 
 
-@pytest.mark.asyncio()
+@pytest.mark.asyncio
 async def test_authenticate_user_incorrect_all(
     client: AsyncClient,
     db_user: User,
@@ -517,13 +518,13 @@ async def test_authenticate_user_incorrect_all(
 
     assert response.status_code == status.HTTP_401_UNAUTHORIZED
     assert len(response.json().get("errors", [0])) == 0
-    assert response.json().get("message", "") != ""
+    assert response.json().get("message", "")
     assert response.json().get("status", 0) == status.HTTP_401_UNAUTHORIZED
-    assert response.cookies.get("access_token", "") == ""
-    assert response.cookies.get("refresh_token", "") == ""
+    assert not response.cookies.get("access_token", "")
+    assert not response.cookies.get("refresh_token", "")
 
 
-@pytest.mark.asyncio()
+@pytest.mark.asyncio
 async def test_authenticate_user_invalid_email(
     client: AsyncClient,
     user_credentials: User,
@@ -542,11 +543,11 @@ async def test_authenticate_user_invalid_email(
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
     assert len(response.json().get("errors", [0])) == 1
     assert utils.error_type_exists(response.json(), "email")
-    assert response.json().get("message", "") != ""
+    assert response.json().get("message", "")
     assert response.json().get("status", 0) == status.HTTP_422_UNPROCESSABLE_ENTITY
 
 
-@pytest.mark.asyncio()
+@pytest.mark.asyncio
 async def test_authenticate_user_invalid_password(
     client: AsyncClient,
     user_credentials: User,
@@ -565,11 +566,11 @@ async def test_authenticate_user_invalid_password(
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
     assert len(response.json().get("errors", [0])) == 1
     assert utils.error_type_exists(response.json(), "password")
-    assert response.json().get("message", "") != ""
+    assert response.json().get("message", "")
     assert response.json().get("status", 0) == status.HTTP_422_UNPROCESSABLE_ENTITY
 
 
-@pytest.mark.asyncio()
+@pytest.mark.asyncio
 async def test_authenticate_user_invalid_all(
     client: AsyncClient,
 ) -> None:
@@ -588,11 +589,11 @@ async def test_authenticate_user_invalid_all(
     assert len(response.json().get("errors", [0])) == len(["email", "password"])
     assert utils.error_type_exists(response.json(), "email")
     assert utils.error_type_exists(response.json(), "password")
-    assert response.json().get("message", "") != ""
+    assert response.json().get("message", "")
     assert response.json().get("status", 0) == status.HTTP_422_UNPROCESSABLE_ENTITY
 
 
-@pytest.mark.asyncio()
+@pytest.mark.asyncio
 async def test_authenticate_user_empty(
     client: AsyncClient,
 ) -> None:
@@ -606,11 +607,11 @@ async def test_authenticate_user_empty(
     assert len(response.json().get("errors", [0])) == len(["email", "password"])
     assert utils.error_type_exists(response.json(), "email")
     assert utils.error_type_exists(response.json(), "password")
-    assert response.json().get("message", "") != ""
+    assert response.json().get("message", "")
     assert response.json().get("status", 0) == status.HTTP_422_UNPROCESSABLE_ENTITY
 
 
-@pytest.mark.asyncio()
+@pytest.mark.asyncio
 async def test_refresh_user(
     client: AsyncClient,
     db_user: User,
@@ -627,13 +628,13 @@ async def test_refresh_user(
     )
 
     assert response.status_code == status.HTTP_200_OK
-    assert response.json().get("message", "") != ""
+    assert response.json().get("message", "")
     assert response.json().get("status", 0) == status.HTTP_200_OK
-    assert response.cookies.get("access_token", "") != ""
-    assert response.cookies.get("refresh_token", "") != ""
+    assert response.cookies.get("access_token", "")
+    assert response.cookies.get("refresh_token", "")
 
 
-@pytest.mark.asyncio()
+@pytest.mark.asyncio
 async def test_refresh_user_incorrect_token(
     client: AsyncClient,
 ) -> None:
@@ -651,13 +652,13 @@ async def test_refresh_user_incorrect_token(
 
     assert response.status_code == status.HTTP_400_BAD_REQUEST
     assert len(response.json().get("errors", [0])) == 0
-    assert response.json().get("message", "") != ""
+    assert response.json().get("message", "")
     assert response.json().get("status", 0) == status.HTTP_400_BAD_REQUEST
-    assert response.cookies.get("access_token", "") == ""
-    assert response.cookies.get("refresh_token", "") == ""
+    assert not response.cookies.get("access_token", "")
+    assert not response.cookies.get("refresh_token", "")
 
 
-@pytest.mark.asyncio()
+@pytest.mark.asyncio
 async def test_refresh_user_access_token(
     client: AsyncClient,
     db_user: User,
@@ -675,13 +676,13 @@ async def test_refresh_user_access_token(
 
     assert response.status_code == status.HTTP_400_BAD_REQUEST
     assert len(response.json().get("errors", [0])) == 0
-    assert response.json().get("message", "") != ""
+    assert response.json().get("message", "")
     assert response.json().get("status", 0) == status.HTTP_400_BAD_REQUEST
-    assert response.cookies.get("access_token", "") == ""
-    assert response.cookies.get("refresh_token", "") == ""
+    assert not response.cookies.get("access_token", "")
+    assert not response.cookies.get("refresh_token", "")
 
 
-@pytest.mark.asyncio()
+@pytest.mark.asyncio
 async def test_refresh_user_no_authorization(
     client: AsyncClient,
     db_user: User,
@@ -693,7 +694,7 @@ async def test_refresh_user_no_authorization(
 
     assert response.status_code == status.HTTP_401_UNAUTHORIZED
     assert len(response.json().get("errors", [0])) == 0
-    assert response.json().get("message", "") != ""
+    assert response.json().get("message", "")
     assert response.json().get("status", db_user.id) == status.HTTP_401_UNAUTHORIZED
-    assert response.cookies.get("access_token", "") == ""
-    assert response.cookies.get("refresh_token", "") == ""
+    assert not response.cookies.get("access_token", "")
+    assert not response.cookies.get("refresh_token", "")

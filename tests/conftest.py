@@ -15,7 +15,7 @@ from tests import utils
 
 
 @pytest_asyncio.fixture(scope="session", autouse=True)
-async def setup() -> None:
+def setup() -> None:
     settings.db.SALT_ROUNDS = 4
     settings.db.URL = settings.db.URL.replace(
         "database.sqlite3",
@@ -57,9 +57,10 @@ async def client(db: Database) -> AsyncGenerator[AsyncClient, None]:
     app.dependency_overrides[database.scoped_session] = db.scoped_session
 
     async with AsyncClient(
-        transport=ASGITransport(app=app), # type: ignore[arg-type]
+        transport=ASGITransport(app=app),  # type: ignore[arg-type]
         base_url="http://127.0.0.1:8000",
         headers={"Content-Type": "application/json"},
+        timeout=10,
     ) as c:
         yield c
 

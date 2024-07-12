@@ -9,7 +9,7 @@ if TYPE_CHECKING:
     from backend.core.database.models import Status
 
 
-@pytest.mark.asyncio()
+@pytest.mark.asyncio
 async def test_create_status(
     session: AsyncSession,
 ) -> None:
@@ -28,7 +28,7 @@ async def test_create_status(
     assert status.premium is False
 
 
-@pytest.mark.asyncio()
+@pytest.mark.asyncio
 async def test_create_status_inactive(
     session: AsyncSession,
 ) -> None:
@@ -48,7 +48,7 @@ async def test_create_status_inactive(
     assert status.premium is False
 
 
-@pytest.mark.asyncio()
+@pytest.mark.asyncio
 async def test_create_status_premium(
     session: AsyncSession,
 ) -> None:

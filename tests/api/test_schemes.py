@@ -21,4 +21,3 @@ def test_user_scheme() -> None:
     assert user_scheme.first_name == user_model.first_name
     assert user_scheme.last_name == user_model.last_name
     assert user_scheme.email == user_model.email
-

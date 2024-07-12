@@ -5,7 +5,7 @@ from tests import utils
 
 
 @pytest_asyncio.fixture(scope="function")
-async def user_credentials() -> User:
+def user_credentials() -> User:
     user: User = User(
         first_name="Humberto",
         last_name="Howell",

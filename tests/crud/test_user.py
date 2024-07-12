@@ -6,7 +6,7 @@ from backend.core.database.models import User
 from tests import utils
 
 
-@pytest.mark.asyncio()
+@pytest.mark.asyncio
 async def test_create_user(
     session: AsyncSession,
 ) -> None:
@@ -33,7 +33,7 @@ async def test_create_user(
     assert user.is_password_valid(password)
 
 
-@pytest.mark.asyncio()
+@pytest.mark.asyncio
 async def test_create_user_uppercase(
     session: AsyncSession,
 ) -> None:
@@ -60,29 +60,33 @@ async def test_create_user_uppercase(
     assert user.is_password_valid(password)
 
 
-@pytest.mark.asyncio()
+@pytest.mark.asyncio
 async def test_create_user_empty(
     session: AsyncSession,
 ) -> None:
 
+    first_name: str = ""
+    email: str = ""
+    password: str = ""
+
     user: User = await crud.create_user(
         session=session,
-        first_name="",
+        first_name=first_name,
         last_name=None,
-        email="",
-        password="",
+        email=email,
+        password=password,
     )
 
     assert user.id in utils.SNOWFLAKE_RANGE
-    assert user.first_name == ""
+    assert user.first_name == first_name
     assert user.last_name is None
-    assert user.email == ""
+    assert user.email == email
     assert user.phone is None
-    assert user.password != ""
+    assert user.password != password
     assert user.is_password_valid("")
 
 
-@pytest.mark.asyncio()
+@pytest.mark.asyncio
 async def test_get_user_by_email(
     session: AsyncSession,
     db_user: User,
@@ -103,7 +107,7 @@ async def test_get_user_by_email(
     assert user.is_password_valid(utils.DB_USER_PASSWORD)
 
 
-@pytest.mark.asyncio()
+@pytest.mark.asyncio
 async def test_get_user_by_email_not_found(
     session: AsyncSession,
     db_user: User,
@@ -117,7 +121,7 @@ async def test_get_user_by_email_not_found(
     assert user is None
 
 
-@pytest.mark.asyncio()
+@pytest.mark.asyncio
 async def test_get_user_by_id(
     session: AsyncSession,
     db_user: User,
@@ -138,7 +142,7 @@ async def test_get_user_by_id(
     assert user.is_password_valid(utils.DB_USER_PASSWORD)
 
 
-@pytest.mark.asyncio()
+@pytest.mark.asyncio
 async def test_get_user_by_id_not_found(
     session: AsyncSession,
     db_user: User,
@@ -146,7 +150,7 @@ async def test_get_user_by_id_not_found(
 
     user: User | None = await crud.get_user_by_id(
         session=session,
-        id_=db_user.id-1,
+        id_=db_user.id - 1,
     )
 
     assert user is None

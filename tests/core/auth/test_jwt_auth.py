@@ -45,11 +45,11 @@ def test__encode_jwt_access(
     assert decoded_payload["email"] == db_user.email
     assert decoded_payload["exp"] in range(
         int(decoded_payload["iat"]),
-        int(decoded_payload["iat"])+settings.jwt.ACCESS_TOKEN_EXPIRES_MINUTES*61,
+        int(decoded_payload["iat"]) + settings.jwt.ACCESS_TOKEN_EXPIRES_MINUTES * 61,
     )
     assert decoded_payload["iat"] in range(
         int(datetime.datetime.now(datetime.UTC).timestamp()),
-        int(datetime.datetime.now(datetime.UTC).timestamp())+61,
+        int(datetime.datetime.now(datetime.UTC).timestamp()) + 61,
     )
 
 
@@ -86,11 +86,12 @@ def test__encode_jwt_refresh(
     assert decoded_payload["email"] == db_user.email
     assert decoded_payload["exp"] in range(
         int(decoded_payload["iat"]),
-        int(decoded_payload["iat"])+settings.jwt.REFRESH_TOKEN_EXPIRES_DAYS*24*60*61,
+        int(decoded_payload["iat"])
+            + settings.jwt.REFRESH_TOKEN_EXPIRES_DAYS * 24 * 60 * 61,
     )
     assert decoded_payload["iat"] in range(
         int(datetime.datetime.now(datetime.UTC).timestamp()),
-        int(datetime.datetime.now(datetime.UTC).timestamp())+61,
+        int(datetime.datetime.now(datetime.UTC).timestamp()) + 61,
     )
 
 
@@ -122,11 +123,11 @@ def test_generate_access_token(
     assert decoded_payload["email"] == db_user.email
     assert decoded_payload["exp"] in range(
         int(decoded_payload["iat"]),
-        int(decoded_payload["iat"])+settings.jwt.ACCESS_TOKEN_EXPIRES_MINUTES*61,
+        int(decoded_payload["iat"]) + settings.jwt.ACCESS_TOKEN_EXPIRES_MINUTES * 61,
     )
     assert decoded_payload["iat"] in range(
         int(datetime.datetime.now(datetime.UTC).timestamp()),
-        int(datetime.datetime.now(datetime.UTC).timestamp())+61,
+        int(datetime.datetime.now(datetime.UTC).timestamp()) + 61,
     )
 
 
@@ -158,11 +159,12 @@ def test_generate_refresh_token(
     assert decoded_payload["email"] == db_user.email
     assert decoded_payload["exp"] in range(
         int(decoded_payload["iat"]),
-        int(decoded_payload["iat"])+settings.jwt.REFRESH_TOKEN_EXPIRES_DAYS*24*60*61,
+        int(decoded_payload["iat"])
+            + settings.jwt.REFRESH_TOKEN_EXPIRES_DAYS * 24 * 60 * 61,
     )
     assert decoded_payload["iat"] in range(
         int(datetime.datetime.now(datetime.UTC).timestamp()),
-        int(datetime.datetime.now(datetime.UTC).timestamp())+60,
+        int(datetime.datetime.now(datetime.UTC).timestamp()) + 60,
     )
 
 
@@ -194,11 +196,11 @@ def test_get_token_payload_access(
     assert decoded_payload["email"] == db_user.email
     assert int(decoded_payload["exp"]) in range(
         int(decoded_payload["iat"]),
-        int(decoded_payload["iat"])+settings.jwt.ACCESS_TOKEN_EXPIRES_MINUTES*61,
+        int(decoded_payload["iat"]) + settings.jwt.ACCESS_TOKEN_EXPIRES_MINUTES * 61,
     )
     assert int(decoded_payload["iat"]) in range(
         int(datetime.datetime.now(datetime.UTC).timestamp()),
-        int(datetime.datetime.now(datetime.UTC).timestamp())+61,
+        int(datetime.datetime.now(datetime.UTC).timestamp()) + 61,
     )
 
 
@@ -230,11 +232,12 @@ def test_get_token_payload_refresh(
     assert decoded_payload["email"] == db_user.email
     assert decoded_payload["exp"] in range(
         int(decoded_payload["iat"]),
-        int(decoded_payload["iat"])+settings.jwt.REFRESH_TOKEN_EXPIRES_DAYS*24*60*61,
+        int(decoded_payload["iat"])
+            + settings.jwt.REFRESH_TOKEN_EXPIRES_DAYS * 24 * 60 * 61,
     )
     assert decoded_payload["iat"] in range(
         int(datetime.datetime.now(datetime.UTC).timestamp()),
-        int(datetime.datetime.now(datetime.UTC).timestamp())+60,
+        int(datetime.datetime.now(datetime.UTC).timestamp()) + 60,
     )
 
 
@@ -271,15 +274,15 @@ def test_get_token_payload_invalid_type(
 
 
 def test_get_token_payload_invalid_signature() -> None:
-    key: str = "mG?!a.Ab=_C5aiQ1eS5Z{r,@(jDFyC"*10
+    key: str = "mG?!a.Ab=_C5aiQ1eS5Z{r,@(jDFyC" * 10
     now: int = int(datetime.datetime.now(datetime.UTC).timestamp())
 
     payload: dict[str, str | int] = {
         "sub": 1234561231227890,
         "name": "Lorenzo Swift",
         "email": "Garnet.Herman83@yahoo.com",
-        "exp": now+24*60*60,
-        "iat": now-24*60*60,
+        "exp": now + 24 * 60 * 60,
+        "iat": now - 24 * 60 * 60,
     }
 
     token: str = jwt.encode(
@@ -299,7 +302,7 @@ def test_get_token_payload_invalid_signature() -> None:
     assert decoded_payload is None
 
 
-@pytest.mark.asyncio()
+@pytest.mark.asyncio
 async def test_get_current_user(
     session: AsyncSession,
     db_user: User,
@@ -324,7 +327,7 @@ async def test_get_current_user(
     assert current_user.is_password_valid(utils.DB_USER_PASSWORD)
 
 
-@pytest.mark.asyncio()
+@pytest.mark.asyncio
 async def test_get_current_user_none_token(
     session: AsyncSession,
 ) -> None:
@@ -337,11 +340,11 @@ async def test_get_current_user_none_token(
 
     assert exc.value.status_code == status.HTTP_401_UNAUTHORIZED
     assert exc.value.response.get("errors", "") == []
-    assert exc.value.response.get("message", "") != ""
+    assert exc.value.response.get("message", "")
     assert exc.value.response.get("status", 0) == status.HTTP_401_UNAUTHORIZED
 
 
-@pytest.mark.asyncio()
+@pytest.mark.asyncio
 async def test_get_current_user_no_user(
     session: AsyncSession,
 ) -> None:
@@ -362,11 +365,11 @@ async def test_get_current_user_no_user(
 
     assert exc.value.status_code == status.HTTP_400_BAD_REQUEST
     assert exc.value.response.get("errors", "") == []
-    assert exc.value.response.get("message", "") != ""
+    assert exc.value.response.get("message", "")
     assert exc.value.response.get("status", 0) == status.HTTP_400_BAD_REQUEST
 
 
-@pytest.mark.asyncio()
+@pytest.mark.asyncio
 async def test_get_current_user_invalid_token(
     session: AsyncSession,
 ) -> None:
@@ -374,16 +377,20 @@ async def test_get_current_user_invalid_token(
     with pytest.raises(ErrorException) as exc:
         await jwt_auth.get_current_user(
             session=session,
-            access_token=f"{"c114:a6f1:2cb2:f14d:3384:4e71:753f:ebb1"*10}.{"Nestor.Lind43@yahoo.com"*20}.{"1"*100}",
+            access_token=(
+                f"{"c114:a6f1:2cb2:f14d:3384:4e71:753f:ebb1" * 10}."
+                f"{"Nestor.Lind43@yahoo.com" * 20}."
+                f"{"1" * 100}"
+            ),
         )
 
     assert exc.value.status_code == status.HTTP_400_BAD_REQUEST
     assert exc.value.response.get("errors", "") == []
-    assert exc.value.response.get("message", "") != ""
+    assert exc.value.response.get("message", "")
     assert exc.value.response.get("status", 0) == status.HTTP_400_BAD_REQUEST
 
 
-@pytest.mark.asyncio()
+@pytest.mark.asyncio
 async def test_get_refreshed_user(
     session: AsyncSession,
     db_user: User,
@@ -408,7 +415,7 @@ async def test_get_refreshed_user(
     assert refreshed_user.is_password_valid(utils.DB_USER_PASSWORD)
 
 
-@pytest.mark.asyncio()
+@pytest.mark.asyncio
 async def test_get_refreshed_user_none_token(
     session: AsyncSession,
 ) -> None:
@@ -421,11 +428,11 @@ async def test_get_refreshed_user_none_token(
 
     assert exc.value.status_code == status.HTTP_401_UNAUTHORIZED
     assert exc.value.response.get("errors", "") == []
-    assert exc.value.response.get("message", "") != ""
+    assert exc.value.response.get("message", "")
     assert exc.value.response.get("status", 0) == status.HTTP_401_UNAUTHORIZED
 
 
-@pytest.mark.asyncio()
+@pytest.mark.asyncio
 async def test_get_refreshed_user_no_token(
     session: AsyncSession,
 ) -> None:
@@ -437,11 +444,11 @@ async def test_get_refreshed_user_no_token(
 
     assert exc.value.status_code == status.HTTP_401_UNAUTHORIZED
     assert exc.value.response.get("errors", "") == []
-    assert exc.value.response.get("message", "") != ""
+    assert exc.value.response.get("message", "")
     assert exc.value.response.get("status", 0) == status.HTTP_401_UNAUTHORIZED
 
 
-@pytest.mark.asyncio()
+@pytest.mark.asyncio
 async def test_get_refreshed_user_no_user(
     session: AsyncSession,
 ) -> None:
@@ -462,11 +469,11 @@ async def test_get_refreshed_user_no_user(
 
     assert exc.value.status_code == status.HTTP_400_BAD_REQUEST
     assert exc.value.response.get("errors", "") == []
-    assert exc.value.response.get("message", "") != ""
+    assert exc.value.response.get("message", "")
     assert exc.value.response.get("status", 0) == status.HTTP_400_BAD_REQUEST
 
 
-@pytest.mark.asyncio()
+@pytest.mark.asyncio
 async def test_get_refreshed_user_invalid_token(
     session: AsyncSession,
     db_user: User,
@@ -475,10 +482,14 @@ async def test_get_refreshed_user_invalid_token(
     with pytest.raises(ErrorException) as exc:
         await jwt_auth.get_refreshed_user(
             session=session,
-            refresh_token=f"{db_user.email*2}.{db_user.first_name*2}.{db_user.password*2}",
+            refresh_token=(
+                f"{db_user.email * 2}."
+                f"{db_user.first_name * 2}."
+                f"{db_user.password * 2}"
+            ),
         )
 
     assert exc.value.status_code == status.HTTP_400_BAD_REQUEST
     assert exc.value.response.get("errors", "") == []
-    assert exc.value.response.get("message", "") != ""
+    assert exc.value.response.get("message", "")
     assert exc.value.response.get("status", 0) == status.HTTP_400_BAD_REQUEST
