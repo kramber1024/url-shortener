@@ -1,0 +1,38 @@
+line-length = 88
+indent-width = 4
+target-version = "py312"
+exclude = [
+    ".git",
+    ".mypy_cache",
+    ".pytest_cache",
+    ".ruff_cache",
+    ".venv",
+    ".vscode"
+]
+
+[lint]
+select = ["ALL"]
+ignore = [
+    "D100",   # Disable check for missing docstring in public module
+    "D101",   # Disable check for missing docstring in public class
+    "D102",   # Disable check for missing docstring in public method
+    "D103",   # Disable check for missing docstring in public function
+    "D104",   # Disable check for missing docstring in public package
+    "D105",   # Disable check for missing docstring in magic method
+    "D106",   # Disable check for missing docstring in public nested class
+    "D107",   # Disable check for missing docstring in __init__
+    "ANN101", # Disable check for missing type annotation for self in method
+    "CPY001", # Disable check for copyright notice
+]
+fixable = ["ALL"]
+unfixable = []
+
+[lint.per-file-ignores]
+"**test**" = [
+    "S101",   # Disable check for use of assert in tests
+    "SLF001", # Disable check for use of private members in tests
+] 
+
+[format]
+quote-style = "double"
+indent-style = "space"
