@@ -7,7 +7,7 @@ from backend.api.schemes import Error as ErrorScheme
 from backend.api.schemes import ErrorResponse as ErrorResponseScheme
 
 
-async def validation_exception_handler(
+def validation_exception_handler(
     _: Request,
     exc: RequestValidationError | Exception,
 ) -> JSONResponse:
@@ -57,7 +57,7 @@ async def validation_exception_handler(
     )
 
 
-async def error_exception_handler(
+def error_exception_handler(
     _: Request,
     exc: ErrorException | Exception,
 ) -> JSONResponse:
@@ -80,7 +80,7 @@ async def error_exception_handler(
     )
 
 
-async def server_error_exception_handler(
+def server_error_exception_handler(
     _: Request,
     __: Exception,
 ) -> JSONResponse:

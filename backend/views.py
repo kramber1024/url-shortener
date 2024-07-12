@@ -27,7 +27,7 @@ templates.env.filters["name"] = name
 
 
 @router.get("/signup", response_class=HTMLResponse)
-async def signup(request: Request) -> HTMLResponse:
+def signup(request: Request) -> HTMLResponse:
     return templates.TemplateResponse(
         "templates/signup.html",
         {
@@ -38,7 +38,7 @@ async def signup(request: Request) -> HTMLResponse:
 
 
 @router.get("/login", response_class=HTMLResponse)
-async def signin(request: Request) -> HTMLResponse:
+def signin(request: Request) -> HTMLResponse:
     return templates.TemplateResponse(
         "templates/signin.html",
         {
@@ -49,7 +49,7 @@ async def signin(request: Request) -> HTMLResponse:
 
 
 @router.get("/app", response_class=HTMLResponse)
-async def app(request: Request) -> HTMLResponse:
+def app(request: Request) -> HTMLResponse:
     return templates.TemplateResponse(
         "templates/app.html",
         {
@@ -63,7 +63,7 @@ async def app(request: Request) -> HTMLResponse:
 # as well as /openapi.json
 # 000
 @router.get("/api/docs")
-async def swagger() -> HTMLResponse:
+def swagger() -> HTMLResponse:
     return get_swagger_ui_html(
         openapi_url="/openapi.json",
         title=settings.app.NAME + " - Swagger UI",
@@ -71,10 +71,11 @@ async def swagger() -> HTMLResponse:
         swagger_css_url="https://unpkg.com/swagger-ui-dist@5/swagger-ui.css",
     )
 
+
 # TODO(kramber): Disable /api/redoc when in production
 # 000
 @router.get("/api/redoc")
-async def redoc() -> HTMLResponse:
+def redoc() -> HTMLResponse:
     return get_redoc_html(
         openapi_url="/openapi.json",
         title=settings.app.NAME + " - ReDoc",

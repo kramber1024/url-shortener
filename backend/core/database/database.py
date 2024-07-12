@@ -55,7 +55,7 @@ class Database:
                 await connection.run_sync(Base.metadata.create_all)
 
 
-db: Database =  Database(
+db: Database = Database(
     url=settings.db.URL,
     debug=settings.app.state.DEBUG,
 )

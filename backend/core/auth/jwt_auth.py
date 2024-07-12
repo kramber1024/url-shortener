@@ -7,6 +7,7 @@ from fastapi.security import APIKeyCookie
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend import crud
+from backend.api.exceptions import ErrorException
 from backend.core.config import settings
 from backend.core.database import db
 from backend.core.database.models import User
@@ -143,8 +144,6 @@ async def get_current_user(
     ],
 ) -> User:
 
-    from backend.api.exceptions import ErrorException
-
     if access_token is None:
         raise ErrorException(
             errors=[],
@@ -191,8 +190,6 @@ async def get_refreshed_user(
         ),
     ] = None,
 ) -> User:
-
-    from backend.api.exceptions import ErrorException
 
     if refresh_token is None:
         raise ErrorException(

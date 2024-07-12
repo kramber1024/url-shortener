@@ -63,10 +63,10 @@ LastName = Annotated[
 ]
 
 __all__ = (
+    "Email",
+    "FirstName",
     "HTTPStatus",
     "Id",
-    "Email",
-    "Password",
-    "FirstName",
     "LastName",
+    "Password",
 )

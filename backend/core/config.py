@@ -8,12 +8,13 @@ BASE_DIRERCTORY = Path(__file__).parent
 
 
 class SnowflakeSettings(BaseSettings):
-    WORKER_ID: int = 999 # Value in range [1, 1023]
+    WORKER_ID: int = 999  # Value in range [1, 1023]
 
 
 class DatabaseSettings(BaseSettings):
     gen: SnowflakeSettings = SnowflakeSettings()
-    URL: str = f"sqlite+aiosqlite:///{BASE_DIRERCTORY/"database"/"database.sqlite3"}"
+    SCHEME: str = "sqlite+aiosqlite:///"
+    URL: str = SCHEME + str(BASE_DIRERCTORY / "database" / "database.sqlite3")
     SALT_ROUNDS: int = 16
 
 
@@ -31,7 +32,7 @@ class StateSettings(BaseSettings):
 
 class AppSettings(BaseSettings):
     NAME: str = "ushort"
-    state: StateSettings = StateSettings() # type: ignore[call-arg]
+    state: StateSettings = StateSettings()  # type: ignore[call-arg]
 
 
 class EmailSettings(BaseSettings):
@@ -40,7 +41,7 @@ class EmailSettings(BaseSettings):
 
 class Settings(BaseSettings):
     db: DatabaseSettings = DatabaseSettings()
-    jwt: JWTSettings = JWTSettings() # type: ignore[call-arg]
+    jwt: JWTSettings = JWTSettings()  # type: ignore[call-arg]
     email: EmailSettings = EmailSettings()
     app: AppSettings = AppSettings()
 
@@ -49,5 +50,6 @@ class Settings(BaseSettings):
         env_file_encoding="utf-8",
         extra="ignore",
     )
+
 
 settings: Settings = Settings()

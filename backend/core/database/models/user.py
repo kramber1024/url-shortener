@@ -75,14 +75,16 @@ class User(IDBase):
             self.password.encode("utf-8"),
         )
 
-    def _format_email(self, email: str) -> str:
+    @staticmethod
+    def _format_email(email: str) -> str:
         if "@" not in email:
             return email
 
         email_splitted: list[str] = email.split("@")
         return f"{email_splitted[0]}@{email_splitted[1].lower()}"
 
-    def _hash_password(self, password: str) -> str:
+    @staticmethod
+    def _hash_password(password: str) -> str:
         return bcrypt.hashpw(
             password.encode("utf-8"),
             bcrypt.gensalt(rounds=settings.db.SALT_ROUNDS),
