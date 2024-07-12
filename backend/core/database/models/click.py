@@ -26,7 +26,11 @@ class Click(IDBase):
         nullable=False,
     )
 
-    link: Mapped["Link"] = relationship(back_populates="clicks", lazy="selectin")
+    link: Mapped["Link"] = relationship(
+        "Link",
+        back_populates="clicks",
+        lazy="selectin",
+    )
 
     def __init__(
         self,

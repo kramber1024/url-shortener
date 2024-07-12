@@ -9,6 +9,8 @@ from backend.core.config import settings
 from .bases import IDBase
 
 if TYPE_CHECKING:
+    from backend.core.database.models.link import Link
+
     from .status import Status
 
 
@@ -37,7 +39,15 @@ class User(IDBase):
         nullable=False,
     )
 
-    status: Mapped["Status"] = relationship("Status", lazy="selectin")
+    status: Mapped["Status"] = relationship(
+        "Status",
+        lazy="selectin",
+    )
+    links: Mapped["Link"] = relationship(
+        "Link",
+        back_populates="author",
+        lazy="selectin",
+    )
 
     def __init__(
         self,

@@ -34,11 +34,13 @@ class Link(IDBase):
         nullable=False,
     )
 
-    user: Mapped["User"] = relationship(
+    author: Mapped["User"] = relationship(
+        "User",
         back_populates="links",
         lazy="selectin",
     )
     clicks: Mapped[list["Click"]] = relationship(
+        "Click",
         back_populates="link",
         lazy="selectin",
     )
