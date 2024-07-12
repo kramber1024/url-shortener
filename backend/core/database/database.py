@@ -11,7 +11,7 @@ from sqlalchemy.ext.asyncio import (
 )
 
 from backend.core.config import settings
-from backend.core.database.models import Base
+from backend.core.database.models.bases import Base
 
 
 class Database:
