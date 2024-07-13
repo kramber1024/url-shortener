@@ -36,7 +36,7 @@ async def main() -> None:
     uvicorn.run(
         "main:app",
         host="127.0.0.1",
-        port=8000,
+        port=26800,
         reload=True,
         reload_includes=["*.html", "*.css", "*js"],
     )
