@@ -1,6 +1,6 @@
 from backend.core.config import settings
 from backend.core.database.models import User
-from tests import utils
+from backend.tests import utils
 
 
 def test_user_display_name() -> None:

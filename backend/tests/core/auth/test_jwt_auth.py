@@ -9,7 +9,7 @@ from backend.api.exceptions import ErrorException
 from backend.core.auth import jwt_auth
 from backend.core.config import settings
 from backend.core.database.models import User
-from tests import utils
+from backend.tests import utils
 
 
 def test__encode_jwt_access(

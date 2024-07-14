@@ -11,7 +11,7 @@ from backend.core.database import Database
 from backend.core.database import db as database
 from backend.core.database.models import Status, User
 from backend.main import app
-from tests import utils
+from backend.tests import utils
 
 
 @pytest_asyncio.fixture(scope="session", autouse=True)

@@ -1,7 +1,7 @@
 import pytest_asyncio
 
 from backend.core.database.models import User
-from tests import utils
+from backend.tests import utils
 
 
 @pytest_asyncio.fixture(scope="function")

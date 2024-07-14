@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend import crud
 from backend.core.database.models import User
-from tests import utils
+from backend.tests import utils
 
 
 @pytest.mark.asyncio

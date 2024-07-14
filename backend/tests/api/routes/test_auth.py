@@ -8,7 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.core.auth import jwt_auth
 from backend.core.database.models import User
-from tests import utils
+from backend.tests import utils
 
 if TYPE_CHECKING:
     from httpx import Response
