@@ -1,3 +1,5 @@
+name: ushort
+
 services:
   nginx:
     container_name: nginx
