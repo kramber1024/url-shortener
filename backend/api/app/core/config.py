@@ -20,19 +20,19 @@ class DatabaseSettings(BaseSettings):
 
 class JWTSettings(BaseSettings):
     ALGORITHM: Literal["HS256"] = "HS256"
-    SECRET: Annotated[str, Field(env="JWT_SECRET")]
+    SECRET: Annotated[str, Field(json_schema_extra={"env": "JWT_SECRET"})] = ""
     ACCESS_TOKEN_EXPIRES_MINUTES: int = 60
     REFRESH_TOKEN_EXPIRES_DAYS: int = 30
 
 
 class StateSettings(BaseSettings):
-    PRODUCTION: Annotated[bool, Field(env="PRODUCTION")]
-    DEBUG: Annotated[bool, Field(env="DEBUG")]
+    PRODUCTION: Annotated[bool, Field(json_schema_extra={"env": "PRODUCTION"})] = False
+    DEBUG: Annotated[bool, Field(json_schema_extra={"env": "DEBUG"})] = False
 
 
 class AppSettings(BaseSettings):
     NAME: str = "ushort"
-    state: StateSettings = StateSettings()  # type: ignore[call-arg]
+    state: StateSettings = StateSettings()
 
 
 class EmailSettings(BaseSettings):
@@ -41,7 +41,7 @@ class EmailSettings(BaseSettings):
 
 class Settings(BaseSettings):
     db: DatabaseSettings = DatabaseSettings()
-    jwt: JWTSettings = JWTSettings()  # type: ignore[call-arg]
+    jwt: JWTSettings = JWTSettings()
     email: EmailSettings = EmailSettings()
     app: AppSettings = AppSettings()
 
