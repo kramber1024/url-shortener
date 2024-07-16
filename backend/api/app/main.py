@@ -3,7 +3,6 @@ import asyncio
 import uvicorn
 from fastapi import FastAPI
 from fastapi.exceptions import RequestValidationError
-from fastapi.staticfiles import StaticFiles
 
 from app.api import api
 from app.api.exceptions import ErrorException
@@ -14,7 +13,6 @@ from app.api.handlers import (
 )
 from app.core.config import settings
 from app.core.database import db
-from app.views import router as views_router
 
 app: FastAPI = FastAPI(
     title=f"{settings.app.NAME} API",
@@ -22,9 +20,7 @@ app: FastAPI = FastAPI(
     redoc_url="/api/redoc",
     root_path_in_servers=False,
 )
-app.mount("/static", StaticFiles(directory="frontend/static"), name="static")
 app.include_router(api)
-app.include_router(views_router)
 app.add_exception_handler(RequestValidationError, validation_exception_handler)
 app.add_exception_handler(ErrorException, error_exception_handler)
 app.add_exception_handler(Exception, server_error_exception_handler)
@@ -38,7 +34,6 @@ async def main() -> None:
         host="127.0.0.1",
         port=26800,
         reload=True,
-        reload_includes=["*.html", "*.css", "*js"],
     )
 
 
