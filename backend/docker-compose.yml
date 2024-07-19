@@ -2,7 +2,7 @@ name: ushort
 
 services:
   nginx:
-    container_name: nginx
+    container_name: Nginx
     build: ./nginx
     ports:
       - "80:80"
@@ -10,6 +10,16 @@ services:
     restart: always
     networks:
       - default
+    depends_on:
+      - api
+
+  api:
+    container_name: API
+    build: ./api
+    restart: always
+    networks:
+      - default
+    tty: true
 
 networks:
   default:
